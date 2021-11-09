@@ -28,15 +28,17 @@ type RadialSet struct {
 	// longitude of origin
 	Lon float64
 	// The distance from the origin to the edge of the radial image in meters
-	Radius  int
-	Radials []*Radial
+	Radius         int
+	ElevationAngle float64
+	Radials        []*Radial
 }
 
 func RadialSetFromLevel2(m31s []*archive2.Message31, product string) (*RadialSet, error) {
 	s := &RadialSet{
-		Lat:    float64(m31s[0].VolumeData.Lat),
-		Lon:    float64(m31s[0].VolumeData.Long),
-		Radius: 460 * 1000,
+		Lat:            float64(m31s[0].VolumeData.Lat),
+		Lon:            float64(m31s[0].VolumeData.Long),
+		Radius:         460 * 1000,
+		ElevationAngle: float64(m31s[0].Header.ElevationAngle),
 	}
 
 	for _, m31 := range m31s {
@@ -78,6 +80,7 @@ func RadialSetFromLevel3(l3 *level3.Level3File) (*RadialSet, error) {
 		Lat:    float64(l3.ProductDescriptionMessage.Lat) / 1000,
 		Lon:    float64(l3.ProductDescriptionMessage.Long) / 1000,
 		Radius: 460 * 1000,
+		// TODO: ElevationAngle
 	}
 
 	for _, l3radial := range l3.Radials {
