@@ -1,112 +1,123 @@
 package render
 
-type Point struct {
-	// east/west
-	X float64
-	// north/south
-	Y float64
-	// elevation
-	Z float64
-}
+import (
+	"fmt"
+	"io"
+	"math"
+	"sort"
 
-func pointFrom(elv *RadialSet, radial *Radial, gateIdx int) Point {
-}
+	"github.com/fogleman/mc"
+)
 
-// Assumes elvs are sorted lowest to highest
-func CreateMesh(elvs []*RadialSet, thresholds []float64) []Point {
-	minThreshold := thresholds[0]
-	for _, t := range thresholds {
-		if t < minThreshold {
-			minThreshold = t
-		}
+type ElevationSet []*RadialSet
+
+func (es ElevationSet) Len() int           { return len(es) }
+func (es ElevationSet) Less(i, j int) bool { return es[i].ElevationAngle < es[j].ElevationAngle }
+func (es ElevationSet) Swap(i, j int)      { es[i], es[j] = es[j], es[i] }
+
+// http://opengmsteam.com/articles/3D%20modelling%20strategy%20for%20weather%20radar%20data%20analysis.pdf
+// tl;dr
+//   * subsample data to have a consistent number of (and consistent placement of) radials
+//     * but we don't have to because NEXRAD is consistent
+//   * construct hexahedrons between sectors (adjacent elevations)
+//   * do marching cubes on the hexahedrons
+// Resulting tris are Z up
+func CreateIsosurface(elvs ElevationSet, threshold float64) []mc.Triangle {
+	sort.Sort(elvs)
+
+	for _, elv := range elvs {
+		sort.Sort(elv.Radials)
 	}
 
-	points := []Point{}
+	// MarchingCubesGrid iterates with d(epth) as the outer-most loop, which corresponds to
+	// elevations for us
+	// w
+	nGates := len(elvs[0].Radials[0].Gates)
+	// h
+	nRadials := len(elvs[0].Radials)
+	// d
+	nElvs := len(elvs)
 
-	// for each elv, radial, gate: if the current gate's value is > threshold and the one we're comparing against isn't,
-	// add the current point to the point cloud.
-	for elvIdx, elv := range elvs {
-		prevElvIdx := elvIdx - 1
-		if elvIdx == 0 {
-			prevElvIdx = 0
-		}
-		prevElv := elvs[prevElvIdx]
-		nextElvIdx := elvIdx + 1
-		if nextElvIdx == len(elvs) {
-			nextElvIdx = len(elvs) - 1
-		}
-		nextElv := elvs[nextElvIdx]
+	// the target azimuthResolution. must be >= the max azimuthResolution in any radial
+	// since we currently only repeat radials with a smaller resolution
+	azimuthResolution := elvs[0].Radials[0].AzimuthResolution
 
-		for radialIdx, radial := range elv.Radials {
-			prevRadialIdx := radialIdx - 1
-			if radialIdx == 0 {
-				prevRadialIdx = len(elv.Radials) - 1
-			}
-			prevRadial := elv.Radials[prevRadialIdx]
-			nextRadialIdx := (radialIdx + 1) % len(elv.Radials)
-			nextRadial := elv.Radials[nextRadialIdx]
+	data := make([]float64, nElvs*nRadials*nGates)
+	idx := 0
 
-			for gateIdx, gate := range radial.Gates {
-				if gate < minThreshold {
-					continue
+	for _, elv := range elvs {
+		for _, rad := range elv.Radials {
+			// ex: azimuthResolution = 0.5, this radial is 1 so repeat = 2
+			repeat := int(rad.AzimuthResolution / azimuthResolution)
+			for i := 0; i < repeat; i++ {
+				// TODO: truncate rad.Gates to nGates? idk if any elevation will have more gates than the first
+				copied := copy(data[idx:], rad.Gates)
+
+				// pad out to nGates
+				// for at least one file i'm testing with, elv 0 has 1832 gates, elv 1 has 1192,
+				// then elv 2 is back to 1832, elv 3 back to 1192, etc.
+				// would it make more sense to skip the "shorter" ones entirely?
+				// esp because at these low elvs we're talking 0.3deg difference,
+				// so skipping one doesn't have a great effect on resolution even at 460km out
+
+				// could also interp between above and below?
+				for ; copied < nGates; copied++ {
+					data[copied] = GateEmptyValue
 				}
 
-				// for each threshold that this gate is less than
-				for _, threshold := range thresholds {
-					if gate < threshold {
-						continue
-					}
-
-					// Above some threshold, now see if this is the first point past the threshold
-					// Need to check one over in each direction, e.g. if we're on x, each * in:
-					//    * *
-					//    |/
-					// *--x--*
-					//   /|
-					//  * *
-
-					// Check prev gate
-					// First gate should be a part of the point cloud if past the threshold
-					if gateIdx == 0 || radial.Gates[gateIdx-1] < threshold {
-						points = append(points, pointFrom(elv, radial, gateIdx))
-						break
-					}
-
-					// Check next gate
-					// Last gate should be a part of the point cloud if past the threshold
-					if gateIdx == len(radial.Gates)-1 || radial.Gates[gateIdx+1] < threshold {
-						points = append(points, pointFrom(elv, radial, gateIdx))
-						break
-					}
-
-					// Check prev radial, wrapping around if idx == 0
-					if prevRadial.Gates[gateIdx] < threshold {
-						points = append(points, pointFrom(elv, radial, gateIdx))
-						break
-					}
-
-					// Check next radial, wrapping around if idx == len - 1
-					if nextRadial.Gates[gateIdx] < threshold {
-						points = append(points, pointFrom(elv, radial, gateIdx))
-						break
-					}
-
-					// Check prev elv
-					// If this gate in the first elevation is > threshold, it should be a part of the cloud regardless
-					if elvIdx == 0 || prevElv.Radials[radialIdx].Gates[gateIdx] < threshold {
-						points = append(points, pointFrom(elv, radial, gateIdx))
-						break
-					}
-
-					// Check next elv
-					if elvIdx == len(elvs)-1 || nextElv.Radials[radialIdx].Gates[gateIdx] < threshold {
-						points = append(points, pointFrom(elv, radial, gateIdx))
-						break
-					}
-				}
+				idx += copied
 			}
 		}
 	}
 
-	return points
+	if idx != len(data) {
+		panic("Didn't fill data array??")
+	}
+
+	tris := mc.MarchingCubesGrid(nGates, nRadials, nElvs, data, threshold)
+	for i, tri := range tris {
+		tris[i] = mc.Triangle{
+			V1: radialToCartesian(tri.V1, elvs),
+			V2: radialToCartesian(tri.V2, elvs),
+			V3: radialToCartesian(tri.V3, elvs),
+		}
+	}
+
+	return tris
+}
+
+func radialToCartesian(v mc.Vector, elvs ElevationSet) mc.Vector {
+	// v.X is gate index
+	// v.Y is radial index
+	// v.Z is elevation index
+	// all can be interpolated (so non-integer indices)
+
+	// Elevation varies enough it's worth it to lerp here
+	elvLow := elvs[int(math.Floor(v.Z))].ElevationAngle
+	elvHigh := elvs[int(math.Ceil(v.Z))].ElevationAngle
+	elvAngle := elvLow + ((elvHigh - elvLow) * (v.Z - math.Floor(v.Z)))
+
+	// Assumes all elevations share the same radial distribution
+	// also assumes azimuth resolution is small enough that we don't need to care about
+	// interpolating between angles for the floor/ceil indices
+	radial := elvs[0].Radials[int(math.Round(v.Y))]
+	azimuth := radial.AzimuthAngle
+
+	gateIdx := v.X
+	gateDist := radial.StartRange + (gateIdx * radial.GateInterval)
+
+	return mc.Vector{
+		X: math.Cos(azimuth*(math.Pi/180.0)) * gateDist,
+		Y: math.Sin(azimuth*(math.Pi/180.0)) * gateDist,
+		Z: math.Sin(elvAngle*(math.Pi/180.0)) * gateDist,
+	}
+}
+
+func WriteOBJ(tris []mc.Triangle, w io.Writer) {
+	for i, tri := range tris {
+		w.Write([]byte(fmt.Sprintf("v %v %v %v\n", tri.V1.X, tri.V1.Y, tri.V1.Z)))
+		w.Write([]byte(fmt.Sprintf("v %v %v %v\n", tri.V2.X, tri.V2.Y, tri.V2.Z)))
+		w.Write([]byte(fmt.Sprintf("v %v %v %v\n", tri.V3.X, tri.V3.Y, tri.V3.Z)))
+		w.Write([]byte(fmt.Sprintf("f %d %d %d\n", i*3+1, i*3+2, i*3+3)))
+	}
 }

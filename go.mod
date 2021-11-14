@@ -6,6 +6,7 @@ require (
 	cloud.google.com/go/storage v1.18.2
 	github.com/aws/aws-sdk-go v1.40.39
 	github.com/dsnet/compress v0.0.1
+	github.com/fogleman/mc v0.0.0-20200516034030-c30b20ace55a // indirect
 	github.com/gin-contrib/cache v1.1.0
 	github.com/gin-gonic/gin v1.7.4
 	github.com/go-playground/validator/v10 v10.9.0 // indirect

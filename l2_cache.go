@@ -108,6 +108,10 @@ func (cm *Archive2ChunkCacheManager) GetMeta(filename string) (Archive2Metadata,
 	return meta, ar2, nil
 }
 
+func (cm *Archive2ChunkCacheManager) GetFile(filename string) (*archive2.Archive2, error) {
+	return loadArchive2(filename)
+}
+
 func (cm *Archive2ChunkCacheManager) GetFileWithElevation(filename string, elv int) (*archive2.Archive2, error) {
 	meta, ar2, err := cm.GetMeta(filename)
 	if err != nil {

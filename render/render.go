@@ -151,8 +151,8 @@ func render(rs *RadialSet, imageSize int, lut func(float64) color.Color) *image.
 		angleDelta := float64(azimuthSpacing * (math.Pi / 180.0)) /* clockwise in radians */
 
 		// start drawing gates from the start of the first gate
-		firstGatePx := (float64(radial.StartRange) / 1000) * pxPerKm
-		gateIntervalKm := float64(radial.GateInterval) / 1000
+		firstGatePx := (radial.StartRange / 1000) * pxPerKm
+		gateIntervalKm := radial.GateInterval / 1000
 		gateWidthPx := gateIntervalKm * pxPerKm
 		distanceX, distanceY := firstGatePx, firstGatePx
 		gc.SetLineWidth(gateWidthPx + 1)

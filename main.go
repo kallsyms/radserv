@@ -19,8 +19,9 @@ func main() {
 	r.GET("/l2", cache.CachePage(store, 24*time.Hour, l2ListSitesHandler))
 	r.GET("/l2/:site", cache.CachePage(store, 1*time.Minute, l2ListFilesHandler))
 	r.GET("/l2/:site/:fn", cache.CachePage(store, 1*time.Hour, l2FileMetaHandler))
-	r.GET("/l2/:site/:fn/:elv/:product/radial", l2FileRadialHandler)
-	r.GET("/l2/:site/:fn/:elv/:product/render", l2FileRenderHandler)
+	r.GET("/l2/:site/:fn/:product/isosurface/:threshold", cache.CachePage(store, 1*time.Hour, l2FileIsosurfaceHandler))
+	r.GET("/l2/:site/:fn/:product/:elv/radial", l2FileRadialHandler)
+	r.GET("/l2/:site/:fn/:product/:elv/render", l2FileRenderHandler)
 
 	r.GET("/l2-realtime/:site/:volume", realtimeMetaHandler)
 	r.GET("/l2-realtime/:site/:volume/:elv/:product/render", realtimeRenderHandler)

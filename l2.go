@@ -104,6 +104,39 @@ func l2FileMetaHandler(c *gin.Context) {
 	c.JSON(200, meta)
 }
 
+func l2FileIsosurfaceHandler(c *gin.Context) {
+	fn := c.Param("fn")
+	threshold, err := strconv.ParseFloat(c.Param("threshold"), 64)
+	if err != nil {
+		c.AbortWithError(http.StatusBadRequest, errors.New("Invalid threshold"))
+		return
+	}
+
+	product := strings.ToLower(c.Param("product"))
+
+	ar2, err := ChunkCache.GetFile(fn)
+	if err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+
+	elevations := render.ElevationSet{}
+	for _, scan := range ar2.ElevationScans {
+		elv, err := render.RadialSetFromLevel2(scan, product)
+		if err != nil {
+			c.AbortWithError(http.StatusInternalServerError, err)
+			return
+		}
+		elevations = append(elevations, elv)
+	}
+
+	tris := render.CreateIsosurface(elevations, threshold)
+
+	c.Status(http.StatusOK)
+	c.Header("Content-Type", "text/plain")
+	render.WriteOBJ(tris, c.Writer)
+}
+
 func l2FileRadialHandler(c *gin.Context) {
 	fn := c.Param("fn")
 	elv, err := strconv.Atoi(c.Param("elv"))
@@ -132,7 +165,7 @@ func l2FileRadialHandler(c *gin.Context) {
 func l2FileRenderHandler(c *gin.Context) {
 	fn := c.Param("fn")
 	elv, err := strconv.Atoi(c.Param("elv"))
-	if err != nil {
+	if err != nil || elv < 1 {
 		c.AbortWithError(http.StatusBadRequest, errors.New("Invalid elv"))
 		return
 	}
