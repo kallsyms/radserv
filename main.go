@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"time"
 
 	"github.com/gin-contrib/cache"
@@ -10,8 +11,12 @@ import (
 )
 
 func main() {
-	// TODO: env or -v check
-	logrus.SetLevel(logrus.DebugLevel)
+	verbose := flag.Bool("verbose", false, "Verbose mode")
+	flag.Parse()
+
+	if *verbose {
+		logrus.SetLevel(logrus.DebugLevel)
+	}
 
 	r := gin.Default()
 	store := persistence.NewInMemoryStore(time.Minute)

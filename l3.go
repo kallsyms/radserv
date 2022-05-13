@@ -46,13 +46,13 @@ func listGCS(ctx context.Context, bucket *storage.BucketHandle, prefix string) (
 }
 
 func l3ListSitesHandler(c *gin.Context) {
-	client, err := storage.NewClient(context.Background(), option.WithCredentialsFile("service_account.json"))
+	client, err := storage.NewClient(c.Request.Context(), option.WithCredentialsFile("service_account.json"))
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
 	defer client.Close()
-	_, sites := listGCS(context.Background(), client.Bucket(L3_BUCKET), "NIDS/")
+	_, sites := listGCS(c.Request.Context(), client.Bucket(L3_BUCKET), "NIDS/")
 
 	c.JSON(200, sites)
 }
@@ -60,13 +60,13 @@ func l3ListSitesHandler(c *gin.Context) {
 func l3ListProductsHandler(c *gin.Context) {
 	site := c.Param("site")
 
-	client, err := storage.NewClient(context.Background(), option.WithCredentialsFile("service_account.json"))
+	client, err := storage.NewClient(c.Request.Context(), option.WithCredentialsFile("service_account.json"))
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
 	defer client.Close()
-	_, products := listGCS(context.Background(), client.Bucket(L3_BUCKET), "NIDS/"+site+"/")
+	_, products := listGCS(c.Request.Context(), client.Bucket(L3_BUCKET), "NIDS/"+site+"/")
 
 	c.JSON(200, products)
 }
@@ -75,13 +75,13 @@ func l3ListFilesHandler(c *gin.Context) {
 	site := c.Param("site")
 	product := c.Param("product")
 
-	client, err := storage.NewClient(context.Background(), option.WithCredentialsFile("service_account.json"))
+	client, err := storage.NewClient(c.Request.Context(), option.WithCredentialsFile("service_account.json"))
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
 	defer client.Close()
-	files, _ := listGCS(context.Background(), client.Bucket(L3_BUCKET), "NIDS/"+site+"/"+product+"/")
+	files, _ := listGCS(c.Request.Context(), client.Bucket(L3_BUCKET), "NIDS/"+site+"/"+product+"/")
 
 	c.JSON(200, files)
 }
@@ -91,14 +91,14 @@ func l3FileMetaHandler(c *gin.Context) {
 	product := c.Param("product")
 	fn := c.Param("fn")
 
-	client, err := storage.NewClient(context.Background(), option.WithCredentialsFile("service_account.json"))
+	client, err := storage.NewClient(c.Request.Context(), option.WithCredentialsFile("service_account.json"))
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
 	defer client.Close()
 
-	radFileReader, err := client.Bucket(L3_BUCKET).Object("NIDS/" + site + "/" + product + "/" + fn).NewReader(context.Background())
+	radFileReader, err := client.Bucket(L3_BUCKET).Object("NIDS/" + site + "/" + product + "/" + fn).NewReader(c.Request.Context())
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
@@ -118,10 +118,10 @@ func l3radial(c *gin.Context) (*render.RadialSet, error) {
 	product := c.Param("product")
 	fn := c.Param("fn")
 
-	client, err := storage.NewClient(context.Background(), option.WithCredentialsFile("service_account.json"))
+	client, err := storage.NewClient(c.Request.Context(), option.WithCredentialsFile("service_account.json"))
 	defer client.Close()
 
-	radFileReader, err := client.Bucket(L3_BUCKET).Object("NIDS/" + site + "/" + product + "/" + fn).NewReader(context.Background())
+	radFileReader, err := client.Bucket(L3_BUCKET).Object("NIDS/" + site + "/" + product + "/" + fn).NewReader(c.Request.Context())
 	if err != nil {
 		return nil, err
 	}

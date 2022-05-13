@@ -118,58 +118,21 @@ type Level3File struct {
 	Radials                   []*Radial
 }
 
-// https://github.com/jjhelmus/nexrad_level3/blob/master/nexrad_level3.py#L490
+// https://www.weather.gov/media/tg/noaaport_radar_products.pdf
 var SUPPORTED_PRODUCTS = [...]int16{
-	19, // Base Reflectivity
-	20, // Base Reflectivity
-	25, // Base Velocity
-	27, // Base Velocity
-	28, // Base Spectrum Width
-	30, // Base Spectrum Width
-	32, // Digital Hybrid Scan
-	34, // Clutter Filter Control
-	56, // Storm Relative Mean
-	// Radial Velocity
-	78, // Surface Rainfall Accum.
-	// (1 hr)
-	79, // Surface Rainfall Accum.
-	// (3 hr)
-	80, // Storm Total Rainfall
-	// Accumulation
-	94, // Base Reflectivity Data
-	// Array
-	99, // Base Velocity Data
-	// Array
-	134, // High Resolution VIL
-	135, // Enhanced Echo Tops
-	138, // Digital Storm Total
-	// Precipitation
-	159, // Digital Differential
-	// Reflectivity
-	161, // Digital Correlation
-	// Coefficient
-	163, // Digital Specific
-	// Differential Phase
-	165, // Digital Hydrometeor
-	// Classification
-	169, // One Hour Accumulation
-	170, // Digital Accumulation
-	// Array
-	171, // Storm Total
-	// Accumulation
-	172, // Digital Storm Total
-	// Accumulation
-	173, // Digital User-Selectable
-	// Accumulation
-	174, // Digital One-Hour
-	// Difference Accumulation
-	175, // Digital Storm Total
-	// Difference Accumulation
-	177, // Hybrid Hydrometeor
-	// Classification
-	181, // Base Reflectivity
-	182, // Base Velocity
-	186, // Base Reflectivity
+	153, // N_B - base reflectivity 248nmi
+	154, // N_G - base radial vel 162nmi
+	32,  // DHR - digital hybrid reflectivity
+	37,  // NCR - composite reflectivity 124nmi
+	135, // EET - echo tops
+	159, // N_X - differential reflectivity
+	161, // N_C - correlation coefficient
+	163, // N_K - differential phase
+	165, // N_H - hydrometeor classification
+	166, // N_M - melting layer
+	176, // DPR - instant precipitation rate
+	169, // OHA - one hour accumulation
+	172, // DTA - storm total accumulation
 }
 
 func NewLevel3(baseReader io.Reader) (*Level3File, error) {
