@@ -2,9 +2,15 @@ FROM golang:1.17-alpine
 
 RUN apk add gcc musl-dev gdal-dev
 
-COPY . /src
 WORKDIR /src
-RUN go build
+
+COPY go.mod ./
+COPY go.sum ./
+RUN go mod download
+
+COPY . ./
+
+RUN CGO_LDFLAGS="$CGO_LDFLAGS -lgdal" go build
 
 ENV GIN_MODE=release
 EXPOSE 8081

@@ -9,12 +9,6 @@ import (
 	"github.com/fogleman/mc"
 )
 
-type ElevationSet []*RadialSet
-
-func (es ElevationSet) Len() int           { return len(es) }
-func (es ElevationSet) Less(i, j int) bool { return es[i].ElevationAngle < es[j].ElevationAngle }
-func (es ElevationSet) Swap(i, j int)      { es[i], es[j] = es[j], es[i] }
-
 // http://opengmsteam.com/articles/3D%20modelling%20strategy%20for%20weather%20radar%20data%20analysis.pdf
 // tl;dr
 //   * subsample data to have a consistent number of (and consistent placement of) radials
