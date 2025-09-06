@@ -358,10 +358,24 @@ func l3FileRenderHandler(c *gin.Context) {
 	product := c.Param("product")
 	lut := render.DefaultLUT(product)
 
-	pngFile := render.RenderAndReproject(r, lut, 6000, 2600)
+	// If request canceled, bail early
+	select {
+	case <-c.Request.Context().Done():
+		return
+	default:
+	}
+	pngFile, err := render.RenderAndReproject(c.Request.Context(), r, lut, 6000, 2600)
+	if err != nil {
+		return
+	}
 	png, _ := ioutil.ReadAll(pngFile)
 	pngFile.Close()
-
+	// Skip writing if canceled after render/encode
+	select {
+	case <-c.Request.Context().Done():
+		return
+	default:
+	}
 	// Strong client caching for immutable rendered assets
 	c.Header("Cache-Control", "public, max-age=31536000, immutable")
 	c.Header("Expires", time.Now().UTC().AddDate(1, 0, 0).Format(http.TimeFormat))

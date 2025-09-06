@@ -24,16 +24,17 @@ export default function VolumeOverlay({ map, site, file, center, opacity = 0.7, 
     if (!map || !site || !file) return
     let cancelled = false
     onLoading(true)
+    const ctrl = new AbortController()
     ;(async () => {
       try {
         let grid: VolumeGrid | null = precomputedGrid ?? null
         if (!grid) {
-          const meta = await fetchL2Meta(site, file)
+          const meta = await fetchL2Meta(site, file, ctrl.signal)
           const elevations = (meta?.ElevationChunks || [])
             .map((arr: number[], idx: number) => (arr && arr.length > 0) ? idx + 1 : 0)
             .filter((e: number) => e > 0)
           const results: RadialSet[] = await Promise.all(
-            elevations.map((elv: number) => fetchL2Radial(site, file, 'ref', elv))
+            elevations.map((elv: number) => fetchL2Radial(site, file, 'ref', elv, ctrl.signal))
           )
           if (cancelled) return
           grid = buildVolumeGrid(results)
@@ -62,6 +63,7 @@ export default function VolumeOverlay({ map, site, file, center, opacity = 0.7, 
       }
     })()
     return () => {
+      try { ctrl.abort() } catch {}
       cancelled = true
       const id = layerIdRef.current
       try { if (map.getLayer(id)) map.removeLayer(id) } catch {}

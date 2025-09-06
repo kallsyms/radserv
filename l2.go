@@ -31,7 +31,7 @@ func l2ListSitesHandler(c *gin.Context) {
 	sites := make([]string, 0, 512)
 	var token *string
 	for {
-		resp, err := svc.ListObjectsV2(&s3.ListObjectsV2Input{
+		resp, err := svc.ListObjectsV2WithContext(c.Request.Context(), &s3.ListObjectsV2Input{
 			Bucket:            bucket,
 			Prefix:            aws.String(t.Format("2006/01/02/")),
 			Delimiter:         aws.String("/"),
@@ -70,7 +70,7 @@ func l2ListFilesHandler(c *gin.Context) {
 		var token *string
 		objs := make([]*s3.Object, 0, 1024)
 		for {
-			resp, err := svc.ListObjectsV2(&s3.ListObjectsV2Input{
+			resp, err := svc.ListObjectsV2WithContext(c.Request.Context(), &s3.ListObjectsV2Input{
 				Bucket:            bucket,
 				Prefix:            aws.String(prefix),
 				ContinuationToken: token,
@@ -183,7 +183,7 @@ func l2ListFilesHandler(c *gin.Context) {
 func l2FileMetaHandler(c *gin.Context) {
 	fn := c.Param("fn")
 
-	meta, _, err := ChunkCache.GetMeta(fn)
+	meta, _, err := ChunkCache.GetMeta(c.Request.Context(), fn)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
@@ -202,7 +202,7 @@ func l2FileIsosurfaceHandler(c *gin.Context) {
 
 	product := strings.ToLower(c.Param("product"))
 
-	ar2, err := ChunkCache.GetFile(fn)
+	ar2, err := ChunkCache.GetFile(c.Request.Context(), fn)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
@@ -218,8 +218,20 @@ func l2FileIsosurfaceHandler(c *gin.Context) {
 		elevations = append(elevations, elv)
 	}
 
-	tris := render.CreateIsosurface(elevations, threshold)
+	// If request already canceled, abort before heavy work
+	select {
+	case <-c.Request.Context().Done():
+		return
+	default:
+	}
+	tris := render.CreateIsosurface(c.Request.Context(), elevations, threshold)
 
+	// Check again before writing
+	select {
+	case <-c.Request.Context().Done():
+		return
+	default:
+	}
 	c.Status(http.StatusOK)
 	c.Header("Content-Type", "text/plain")
 	render.WriteOBJ(tris, c.Writer)
@@ -235,7 +247,7 @@ func l2FileRadialHandler(c *gin.Context) {
 
 	product := strings.ToLower(c.Param("product"))
 
-	ar2, err := ChunkCache.GetFileWithElevation(fn, elv)
+	ar2, err := ChunkCache.GetFileWithElevation(c.Request.Context(), fn, elv)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
@@ -260,7 +272,7 @@ func l2FileRenderHandler(c *gin.Context) {
 
 	product := strings.ToLower(c.Param("product"))
 
-	ar2, err := ChunkCache.GetFileWithElevation(fn, elv)
+	ar2, err := ChunkCache.GetFileWithElevation(c.Request.Context(), fn, elv)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
@@ -276,10 +288,24 @@ func l2FileRenderHandler(c *gin.Context) {
 		lut = render.DefaultLUT("")
 	}
 
-	pngFile := render.RenderAndReproject(r, lut, 6000, 2600)
+	// If request canceled, bail early
+	select {
+	case <-c.Request.Context().Done():
+		return
+	default:
+	}
+	pngFile, err := render.RenderAndReproject(c.Request.Context(), r, lut, 6000, 2600)
+	if err != nil {
+		return
+	}
 	png, _ := ioutil.ReadAll(pngFile)
 	pngFile.Close()
-
+	// If canceled during render/encode, skip writing response
+	select {
+	case <-c.Request.Context().Done():
+		return
+	default:
+	}
 	// Strong client caching: rendered outputs are immutable per file/product/elevation
 	c.Header("Cache-Control", "public, max-age=31536000, immutable")
 	// Optional Expires header for intermediaries that honor it

@@ -20,6 +20,7 @@ type Props = {
   showLoadingOverlay?: boolean
   crossfadeMs?: number
   loaderDebounceMs?: number
+  keepPreviousWhileLoading?: boolean
 }
 
 function ViewSync({ center, zoom, onViewChange }: { center: [number, number], zoom: number, onViewChange: (c:[number,number], z:number)=>void }) {
@@ -74,13 +75,15 @@ function Panes() {
   return null
 }
 
-export default function MapView({ imageUrl, opacity = 0.9, basemap = 'satellite', center, zoom, onViewChange, showLabels = true, showRoads = false, onLoadingChange, showLoadingOverlay = true, crossfadeMs = 20, loaderDebounceMs = 150 }: Props) {
+export default function MapView({ imageUrl, opacity = 0.9, basemap = 'satellite', center, zoom, onViewChange, showLabels = true, showRoads = false, onLoadingChange, showLoadingOverlay = true, crossfadeMs = 20, loaderDebounceMs = 150, keepPreviousWhileLoading = true }: Props) {
   // Double-buffer overlays to avoid blanking: keep base visible until top is loaded, then crossfade
   const [baseUrl, setBaseUrl] = React.useState<string | undefined>(imageUrl)
   const [topUrl, setTopUrl] = React.useState<string | undefined>(undefined)
   const [topOpacity, setTopOpacity] = React.useState(0)
   const fadeRef = React.useRef<number | null>(null)
   const showTimerRef = React.useRef<number | null>(null)
+  const fetchCtrlRef = React.useRef<AbortController | null>(null)
+  const createdBlobUrlsRef = React.useRef<Set<string>>(new Set())
   const [loadingActive, setLoadingActive] = React.useState(false)
   const [loadingVisible, setLoadingVisible] = React.useState(false)
 
@@ -105,8 +108,11 @@ export default function MapView({ imageUrl, opacity = 0.9, basemap = 'satellite'
     }
     // If the requested image is already the base, nothing to do
     if (imageUrl === baseUrl) return
-    // If a different top is in progress, replace it
-    setTopUrl(imageUrl)
+    // Abort any in-flight fetch for prior top
+    try { fetchCtrlRef.current?.abort() } catch {}
+    // Optionally clear base immediately to avoid ambiguity when target isn't loaded yet
+    if (!keepPreviousWhileLoading) setBaseUrl(undefined)
+    setTopUrl(undefined)
     setTopOpacity(0)
     setLoadingActive(true)
     if (showTimerRef.current) { window.clearTimeout(showTimerRef.current); showTimerRef.current = null }
@@ -115,9 +121,36 @@ export default function MapView({ imageUrl, opacity = 0.9, basemap = 'satellite'
       onLoadingChange && onLoadingChange(true)
       showTimerRef.current = null
     }, loaderDebounceMs)
+
+    // Fetch the image manually so we can cancel if source changes quickly
+    const ctrl = new AbortController()
+    fetchCtrlRef.current = ctrl
+    ;(async () => {
+      try {
+        const res = await fetch(imageUrl, { signal: ctrl.signal, cache: 'force-cache' })
+        if (!res.ok) throw new Error('image fetch failed')
+        const blob = await res.blob()
+        const objUrl = URL.createObjectURL(blob)
+        createdBlobUrlsRef.current.add(objUrl)
+        // Set as top URL (ImageOverlay will trigger load event promptly)
+        setTopUrl(objUrl)
+      } catch (e) {
+        if ((e as any)?.name === 'AbortError') return
+        // Error: clear loading state
+        setLoadingActive(false)
+        if (showTimerRef.current) { window.clearTimeout(showTimerRef.current); showTimerRef.current = null }
+        if (loadingVisible) { setLoadingVisible(false); onLoadingChange && onLoadingChange(false) }
+      }
+    })()
   }, [imageUrl])
 
-  React.useEffect(() => () => { if (fadeRef.current) cancelAnimationFrame(fadeRef.current) }, [])
+  React.useEffect(() => () => {
+    if (fadeRef.current) cancelAnimationFrame(fadeRef.current)
+    try { fetchCtrlRef.current?.abort() } catch {}
+    // Revoke created blob URLs
+    createdBlobUrlsRef.current.forEach(u => { try { URL.revokeObjectURL(u) } catch {} })
+    createdBlobUrlsRef.current.clear()
+  }, [])
   return (
     <MapContainer
       center={center}
@@ -207,6 +240,11 @@ export default function MapView({ imageUrl, opacity = 0.9, basemap = 'satellite'
                   fadeRef.current = requestAnimationFrame(step)
                 } else {
                   // Promote to base and clear top
+                  // Revoke previous base if it was a blob URL
+                  if (baseUrl && createdBlobUrlsRef.current.has(baseUrl)) {
+                    try { URL.revokeObjectURL(baseUrl) } catch {}
+                    createdBlobUrlsRef.current.delete(baseUrl)
+                  }
                   setBaseUrl(topUrl)
                   setTopUrl(undefined)
                   setTopOpacity(0)
@@ -222,6 +260,10 @@ export default function MapView({ imageUrl, opacity = 0.9, basemap = 'satellite'
             },
             error: () => {
               // On error, just swap immediately
+              if (baseUrl && createdBlobUrlsRef.current.has(baseUrl)) {
+                try { URL.revokeObjectURL(baseUrl) } catch {}
+                createdBlobUrlsRef.current.delete(baseUrl)
+              }
               setBaseUrl(topUrl)
               setTopUrl(undefined)
               setTopOpacity(0)

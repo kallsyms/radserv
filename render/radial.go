@@ -39,6 +39,9 @@ type RadialSet struct {
 }
 
 func RadialSetFromLevel2(m31s []*archive2.Message31, product string) (*RadialSet, error) {
+	if len(m31s) == 0 || m31s[0] == nil {
+		return nil, fmt.Errorf("no Level 2 messages for elevation")
+	}
 	s := &RadialSet{
 		Lat:            float64(m31s[0].VolumeData.Lat),
 		Lon:            float64(m31s[0].VolumeData.Long),
@@ -47,11 +50,9 @@ func RadialSetFromLevel2(m31s []*archive2.Message31, product string) (*RadialSet
 	}
 
 	for _, m31 := range m31s {
-		r := &Radial{
-			AzimuthAngle:      float64(m31.Header.AzimuthAngle),
-			AzimuthResolution: m31.Header.AzimuthResolutionSpacing(),
+		if m31 == nil {
+			continue
 		}
-
 		var moment *archive2.DataMoment
 		switch product {
 		case "ref":
@@ -61,10 +62,17 @@ func RadialSetFromLevel2(m31s []*archive2.Message31, product string) (*RadialSet
 		default:
 			return nil, fmt.Errorf("Invalid product %q", product)
 		}
-
-		r.StartRange = float64(moment.DataMomentRange)
-		r.GateInterval = float64(moment.DataMomentRangeSampleInterval)
-		r.Gates = make([]float64, len(moment.Data))
+		// Skip radials with no data for this product
+		if moment == nil || len(moment.Data) == 0 {
+			continue
+		}
+		r := &Radial{
+			AzimuthAngle:      float64(m31.Header.AzimuthAngle),
+			AzimuthResolution: m31.Header.AzimuthResolutionSpacing(),
+			StartRange:        float64(moment.DataMomentRange),
+			GateInterval:      float64(moment.DataMomentRangeSampleInterval),
+			Gates:             make([]float64, len(moment.Data)),
+		}
 		for i, d := range moment.ScaledData() {
 			if d != archive2.MomentDataBelowThreshold && d != archive2.MomentDataFolded {
 				r.Gates[i] = float64(d)
@@ -72,10 +80,11 @@ func RadialSetFromLevel2(m31s []*archive2.Message31, product string) (*RadialSet
 				r.Gates[i] = GateEmptyValue
 			}
 		}
-
 		s.Radials = append(s.Radials, r)
 	}
-
+	if len(s.Radials) == 0 {
+		return nil, fmt.Errorf("no data for product %q at this elevation", product)
+	}
 	return s, nil
 }
 

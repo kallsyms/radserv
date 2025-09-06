@@ -43,16 +43,17 @@ export default function IsoOverlayClient({ map, site, file, threshold, color, ce
     if (!map || !overlayRef.current || !center) return
     onLoading(true)
     const myGen = ++genRef.current
+    const ctrl = new AbortController()
     ;(async () => {
       try {
         let grid: VolumeGrid | null = precomputedGrid ?? null
         if (!grid) {
-          const meta = await fetchL2Meta(site, file)
+          const meta = await fetchL2Meta(site, file, ctrl.signal)
           const elevations = (meta?.ElevationChunks || [])
             .map((arr: number[], idx: number) => (arr && arr.length > 0) ? idx + 1 : 0)
             .filter((e: number) => e > 0)
           const results: RadialSet[] = await Promise.all(
-            elevations.map((elv: number) => fetchL2Radial(site, file, 'ref', elv))
+            elevations.map((elv: number) => fetchL2Radial(site, file, 'ref', elv, ctrl.signal))
           )
           if (genRef.current !== myGen) return
           grid = buildVolumeGrid(results)
@@ -84,6 +85,7 @@ export default function IsoOverlayClient({ map, site, file, threshold, color, ce
         if (genRef.current === myGen) onLoading(false)
       }
     })()
+    return () => { try { ctrl.abort() } catch {} }
   }, [map, site, file, center])
 
   // Recompute on threshold or center change without refetching

@@ -1,6 +1,7 @@
 package render
 
 import (
+	"context"
 	"fmt"
 	"io"
 	"math"
@@ -17,7 +18,7 @@ import (
 //   - do marching cubes on the hexahedrons
 //
 // Resulting tris are Z up
-func CreateIsosurface(elvs ElevationSet, threshold float64) []mc.Triangle {
+func CreateIsosurface(ctx context.Context, elvs ElevationSet, threshold float64) []mc.Triangle {
 	sort.Sort(elvs)
 
 	for _, elv := range elvs {
@@ -29,6 +30,11 @@ func CreateIsosurface(elvs ElevationSet, threshold float64) []mc.Triangle {
 	// width (nGates): use the maximum gate count across all radials/elevations so we never overflow.
 	nGates := 0
 	for _, elv := range elvs {
+		select {
+		case <-ctx.Done():
+			return nil
+		default:
+		}
 		for _, rad := range elv.Radials {
 			if len(rad.Gates) > nGates {
 				nGates = len(rad.Gates)
@@ -63,6 +69,11 @@ func CreateIsosurface(elvs ElevationSet, threshold float64) []mc.Triangle {
 	idx := 0
 
 	for _, elv := range elvs {
+		select {
+		case <-ctx.Done():
+			return nil
+		default:
+		}
 		for _, rad := range elv.Radials {
 			// ex: azimuthResolution = 0.5, this radial is 1 so repeat = 2
 			repeat := int(math.Round(rad.AzimuthResolution / azimuthResolution))
@@ -91,6 +102,12 @@ func CreateIsosurface(elvs ElevationSet, threshold float64) []mc.Triangle {
 		// no panic: allow minor mismatches
 	}
 
+	// Abort before heavy marching cubes
+	select {
+	case <-ctx.Done():
+		return nil
+	default:
+	}
 	tris := mc.MarchingCubesGrid(nGates, nRadials, nElvs, data, threshold)
 	for i, tri := range tris {
 		tris[i] = mc.Triangle{

@@ -1,6 +1,7 @@
 package render
 
 import (
+	"context"
 	"fmt"
 	"image"
 	"image/color"
@@ -17,12 +18,24 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func RenderAndReproject(rs *RadialSet, lut func(float64) color.Color, width, height int) io.ReadCloser {
+func RenderAndReproject(ctx context.Context, rs *RadialSet, lut func(float64) color.Color, width, height int) (io.ReadCloser, error) {
 	godal.RegisterAll()
 
 	// 1) Render the radial set to an RGBA image in Azimuthal Equidistant
 	intermediateSize := 1000 // initial render size before reprojection
-	renderImg := render(rs, intermediateSize, lut)
+	// Early cancel
+	select {
+	case <-ctx.Done():
+		return nil, ctx.Err()
+	default:
+	}
+	renderImg := render(ctx, rs, intermediateSize, lut)
+	// Cancel after render
+	select {
+	case <-ctx.Done():
+		return nil, ctx.Err()
+	default:
+	}
 
 	// 2) Create a MEM dataset with 4 bands (RGBA) and write pixels band-by-band
 	srcDS, err := godal.Create(godal.DriverName("MEM"), "", 4, godal.Byte, renderImg.Rect.Dx(), renderImg.Rect.Dy())
@@ -33,7 +46,7 @@ func RenderAndReproject(rs *RadialSet, lut func(float64) color.Color, width, hei
 			// last resort: return Go-encoded PNG of the unwarped render
 			f, _ := os.CreateTemp("", "*.png")
 			_ = pngenc.Encode(f, renderImg)
-			return f
+			return f, nil
 		}
 	}
 	defer srcDS.Close()
@@ -111,7 +124,7 @@ func RenderAndReproject(rs *RadialSet, lut func(float64) color.Color, width, hei
 		logrus.Errorf("godal.Warp failed: %v", err)
 		f, _ := os.CreateTemp("", "*.png")
 		_ = pngenc.Encode(f, renderImg)
-		return f
+		return f, nil
 	}
 	defer warpedDS.Close()
 
@@ -119,6 +132,12 @@ func RenderAndReproject(rs *RadialSet, lut func(float64) color.Color, width, hei
 	tmpf, _ := os.CreateTemp("", "*.png")
 	tmpname := tmpf.Name()
 	tmpf.Close()
+	// Cancel before translate/encode
+	select {
+	case <-ctx.Done():
+		return nil, ctx.Err()
+	default:
+	}
 	outDS, err := warpedDS.Translate(tmpname, []string{"-of", "PNG"})
 	if err != nil {
 		logrus.Errorf("godal.Translate failed: %v", err)
@@ -149,16 +168,16 @@ func RenderAndReproject(rs *RadialSet, lut func(float64) color.Color, width, hei
 			}
 			f, _ := os.CreateTemp("", "*.png")
 			_ = pngenc.Encode(f, img)
-			return f
+			return f, nil
 		}
 		// If we can't read bands, still return a valid (empty) PNG
 		f, _ := os.CreateTemp("", "*.png")
 		_ = pngenc.Encode(f, image.NewRGBA(image.Rect(0, 0, w, h)))
-		return f
+		return f, nil
 	}
 	outDS.Close()
 	f, _ := os.Open(tmpname)
-	return f
+	return f, nil
 }
 
 // little helper to keep both a GDAL dataset and the DS's backing Image together
@@ -189,7 +208,7 @@ func azimuthalEquidistantWKT(lat, lon float64) string {
 	)
 }
 
-func render(rs *RadialSet, imageSize int, lut func(float64) color.Color) *image.RGBA {
+func render(ctx context.Context, rs *RadialSet, imageSize int, lut func(float64) color.Color) *image.RGBA {
 	width := float64(imageSize)
 	height := float64(imageSize)
 
@@ -203,6 +222,11 @@ func render(rs *RadialSet, imageSize int, lut func(float64) color.Color) *image.
 	pxPerKm := width / 2 / (float64(rs.Radius) / 1000)
 
 	for _, radial := range rs.Radials {
+		select {
+		case <-ctx.Done():
+			return canvas
+		default:
+		}
 		// round to the nearest rounded azimuth for the given resolution.
 		// ex: for radial 20.5432, round to 20.5
 		azimuthAngle := float64(radial.AzimuthAngle) - 90
@@ -227,6 +251,13 @@ func render(rs *RadialSet, imageSize int, lut func(float64) color.Color) *image.
 
 		numGates := len(radial.Gates)
 		for i, v := range radial.Gates {
+			if i%256 == 0 { // periodic cancel check to reduce overhead
+				select {
+				case <-ctx.Done():
+					return canvas
+				default:
+				}
+			}
 			if v != GateEmptyValue {
 				gc.MoveTo(xc+math.Cos(startAngle)*distanceX, yc+math.Sin(startAngle)*distanceY)
 

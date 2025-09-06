@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"sort"
@@ -40,9 +41,13 @@ func urlForFile(fn string) (string, error) {
 	return "https://unidata-nexrad-level2.s3.amazonaws.com/" + date.Format("2006/01/02/") + site + "/" + fn, nil
 }
 
-func loadArchive2(fn string) (*archive2.Archive2, error) {
+func loadArchive2(ctx context.Context, fn string) (*archive2.Archive2, error) {
 	url, err := urlForFile(fn)
-	resp, err := http.Get(url)
+	if err != nil {
+		return nil, err
+	}
+	req, _ := http.NewRequestWithContext(ctx, "GET", url, nil)
+	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return nil, err
 	}
@@ -56,7 +61,7 @@ func loadArchive2(fn string) (*archive2.Archive2, error) {
 	return archive2.Extract(resp.Body)
 }
 
-func (cm *Archive2ChunkCacheManager) GetMeta(filename string) (Archive2Metadata, *archive2.Archive2, error) {
+func (cm *Archive2ChunkCacheManager) GetMeta(ctx context.Context, filename string) (Archive2Metadata, *archive2.Archive2, error) {
 	cm.mtx.RLock()
 	if meta, ok := cm.meta[filename]; ok {
 		cm.mtx.RUnlock()
@@ -65,7 +70,7 @@ func (cm *Archive2ChunkCacheManager) GetMeta(filename string) (Archive2Metadata,
 	cm.mtx.RUnlock()
 
 	logrus.Debugf("%q not in cache", filename)
-	ar2, err := loadArchive2(filename)
+	ar2, err := loadArchive2(ctx, filename)
 	if err != nil {
 		return Archive2Metadata{}, nil, err
 	}
@@ -108,12 +113,12 @@ func (cm *Archive2ChunkCacheManager) GetMeta(filename string) (Archive2Metadata,
 	return meta, ar2, nil
 }
 
-func (cm *Archive2ChunkCacheManager) GetFile(filename string) (*archive2.Archive2, error) {
-	return loadArchive2(filename)
+func (cm *Archive2ChunkCacheManager) GetFile(ctx context.Context, filename string) (*archive2.Archive2, error) {
+	return loadArchive2(ctx, filename)
 }
 
-func (cm *Archive2ChunkCacheManager) GetFileWithElevation(filename string, elv int) (*archive2.Archive2, error) {
-	meta, ar2, err := cm.GetMeta(filename)
+func (cm *Archive2ChunkCacheManager) GetFileWithElevation(ctx context.Context, filename string, elv int) (*archive2.Archive2, error) {
+	meta, ar2, err := cm.GetMeta(ctx, filename)
 	if err != nil {
 		return nil, err
 	}
@@ -127,7 +132,7 @@ func (cm *Archive2ChunkCacheManager) GetFileWithElevation(filename string, elv i
 	}
 
 	// Load the main header and the first LDM message (should be a Message2)
-	req, _ := http.NewRequest("GET", url, nil)
+	req, _ := http.NewRequestWithContext(ctx, "GET", url, nil)
 	req.Header.Add("Range", fmt.Sprintf("bytes=0-%d", meta.LDMOffsets[1]-1))
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
@@ -149,7 +154,7 @@ func (cm *Archive2ChunkCacheManager) GetFileWithElevation(filename string, elv i
 		go func(offset int) {
 			defer wg.Done()
 
-			req, _ := http.NewRequest("GET", url, nil)
+			req, _ := http.NewRequestWithContext(ctx, "GET", url, nil)
 			// everything is streamed so it should be fine that we request to EOF here,
 			// despite only needing probably a few hundred KB
 			req.Header.Add("Range", fmt.Sprintf("bytes=%d-", offset))

@@ -655,16 +655,23 @@ export default function App() {
     const prod = (product === 'vel' ? 'vel' : 'ref') as 'ref' | 'vel'
     const entries = sequenceFiles.map(f => ({ file: f, url: l2RenderUrl(site, f, prod, elv), loaded: false }))
     setSeq2DImages(entries)
+    const imgs: HTMLImageElement[] = []
     entries.forEach((ent, i) => {
       const img = new Image()
+      imgs.push(img)
       img.crossOrigin = 'anonymous'
       img.onload = () => setSeq2DImages(prev => {
         const copy = [...prev]
         if (copy[i] && copy[i].file === ent.file) copy[i] = { ...copy[i], loaded: true }
         return copy
       })
+      img.onerror = () => {}
       img.src = ent.url
     })
+    return () => {
+      // cancel preloads
+      imgs.forEach(img => { try { img.onload = null as any; img.onerror = null as any; img.src = '' } catch {} })
+    }
   }, [sequenceEnabled, mode, dataSource, site, sequenceFiles, elevation, product])
 
   // Preload 3D grids for sequence (parallel)
@@ -675,16 +682,17 @@ export default function App() {
     }
     let cancelled = false
     setThreeLoading(true)
+    const ctrl = new AbortController()
     ;(async () => {
       try {
         const pairs = await Promise.all(sequenceFiles.map(async (fn) => {
           try {
-            const meta = await fetchL2Meta(site!, fn)
+            const meta = await fetchL2Meta(site!, fn, ctrl.signal)
             const elevations = (meta?.ElevationChunks || [])
               .map((arr: number[], idx: number) => (arr && arr.length > 0) ? idx + 1 : 0)
               .filter((e: number) => e > 0)
             const results = await Promise.all(
-              elevations.map((elv: number) => fetchL2Radial(site!, fn, 'ref', elv))
+              elevations.map((elv: number) => fetchL2Radial(site!, fn, 'ref', elv, ctrl.signal))
             )
             if (cancelled) return [fn, null] as const
             const grid = buildVolumeGrid(results)
@@ -701,7 +709,7 @@ export default function App() {
         if (!cancelled) setThreeLoading(false)
       }
     })()
-    return () => { cancelled = true }
+    return () => { cancelled = true; try { ctrl.abort() } catch {} }
   }, [sequenceEnabled, mode, dataSource, site, sequenceFiles])
 
   return (
@@ -718,6 +726,16 @@ export default function App() {
           onLoadingChange={(l) => setTwoDLoading(l)}
           showLoadingOverlay={!(dataSource === 'L2' && sequenceEnabled && sequenceFiles.length > 1)}
           crossfadeMs={20}
+          keepPreviousWhileLoading={(() => {
+            if (dataSource !== 'L2' || !sequenceEnabled || sequenceFiles.length === 0) return true
+            // Determine if target frame image is already preloaded
+            const idx = Math.max(0, Math.min(sequenceFiles.length - 1, timelineIndex))
+            const f = sequenceFiles[idx]
+            const ent = seq2DImages.find(e => e.file === f)
+            const loaded = ent ? ent.loaded : false
+            // If not loaded, clear the previous image immediately to avoid ambiguity
+            return loaded
+          })()}
         />
       ) : (
         <>

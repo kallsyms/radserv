@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"io/ioutil"
@@ -18,7 +19,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/s3"
 )
 
-func loadArchive2Realtime(site string, volume int) (*archive2.Archive2, error) {
+func loadArchive2Realtime(ctx context.Context, site string, volume int) (*archive2.Archive2, error) {
 	sess, _ := session.NewSession(&aws.Config{
 		Credentials: credentials.AnonymousCredentials,
 		Region:      aws.String("us-east-1"),
@@ -30,7 +31,7 @@ func loadArchive2Realtime(site string, volume int) (*archive2.Archive2, error) {
 	var token *string
 	var objects []*s3.Object
 	for {
-		resp, err := svc.ListObjectsV2(&s3.ListObjectsV2Input{
+		resp, err := svc.ListObjectsV2WithContext(ctx, &s3.ListObjectsV2Input{
 			Bucket:            bucket,
 			Prefix:            aws.String(fmt.Sprintf("%s/%d/", site, volume)),
 			ContinuationToken: token,
@@ -49,7 +50,7 @@ func loadArchive2Realtime(site string, volume int) (*archive2.Archive2, error) {
 		return nil, errors.New("No such volume number")
 	}
 
-	headerFile, err := svc.GetObject(&s3.GetObjectInput{
+	headerFile, err := svc.GetObjectWithContext(ctx, &s3.GetObjectInput{
 		Bucket: bucket,
 		Key:    objects[0].Key,
 	})
@@ -70,7 +71,7 @@ func loadArchive2Realtime(site string, volume int) (*archive2.Archive2, error) {
 		go func(chunkObjectInfo *s3.Object) {
 			defer wg.Done()
 
-			chunk, err := svc.GetObject(&s3.GetObjectInput{
+			chunk, err := svc.GetObjectWithContext(ctx, &s3.GetObjectInput{
 				Bucket: bucket,
 				Key:    chunkObjectInfo.Key,
 			})
@@ -101,7 +102,7 @@ func realtimeMetaHandler(c *gin.Context) {
 		return
 	}
 
-	ar2, err := loadArchive2Realtime(site, volume)
+	ar2, err := loadArchive2Realtime(c.Request.Context(), site, volume)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
@@ -131,7 +132,7 @@ func realtimeRenderHandler(c *gin.Context) {
 
 	product := c.Param("product")
 
-	ar2, err := loadArchive2Realtime(site, volume)
+	ar2, err := loadArchive2Realtime(c.Request.Context(), site, volume)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
@@ -144,7 +145,10 @@ func realtimeRenderHandler(c *gin.Context) {
 	}
 	lut := render.DefaultLUT(product)
 
-	pngFile := render.RenderAndReproject(r, lut, 6000, 2600)
+	pngFile, err := render.RenderAndReproject(c.Request.Context(), r, lut, 6000, 2600)
+	if err != nil {
+		return
+	}
 	png, _ := ioutil.ReadAll(pngFile)
 	pngFile.Close()
 
