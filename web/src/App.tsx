@@ -96,20 +96,22 @@ export default function App() {
   const thresholdTimer = React.useRef<number | null>(null)
   const [l2Center, setL2Center] = useState<{ lat: number; lon: number } | null>(null)
   const [threeLoading, setThreeLoading] = useState(false)
-  const [render3d, setRender3d] = useState<'volume'|'iso'>(() => {
+  const [showIso, setShowIso] = useState<boolean>(() => {
     const raw = window.location.hash.startsWith('#') ? window.location.hash.slice(1) : window.location.hash
     const p = new URLSearchParams(raw)
-    return (p.get('r3d') as 'volume'|'iso') || 'volume'
+    const v = p.get('iso')
+    return v === '1' || v === 'true' || false
   })
   const [volumeOpacity, setVolumeOpacity] = useState<number>(0.7)
   // Persisted 3D map view (shared between volume and iso to avoid jumping on toggle)
   const [map3DCenter, setMap3DCenter] = useState<{ lat: number; lon: number } | null>(null)
   const [map3DZoom, setMap3DZoom] = useState<number | null>(null)
-  const [solidIso, setSolidIso] = useState<boolean>(() => {
+  const [isoOpacity, setIsoOpacity] = useState<number>(() => {
     const raw = window.location.hash.startsWith('#') ? window.location.hash.slice(1) : window.location.hash
     const p = new URLSearchParams(raw)
-    const v = p.get('solid')
-    return v === '1' || v === 'true' || false
+    const v = p.get('iop')
+    const f = v ? parseFloat(v) : 0.6
+    return isFinite(f) ? Math.max(0, Math.min(1, f)) : 0.6
   })
 
   const showElevation = dataSource === 'L2' && mode === '2d'
@@ -423,8 +425,8 @@ export default function App() {
     }
     p.set('mode', mode)
     if (mode === '3d') p.set('thr', String(effectiveThreshold))
-    if (mode === '3d') p.set('r3d', render3d)
-    if (mode === '3d' && render3d === 'iso' && solidIso) p.set('solid', '1')
+    if (mode === '3d' && showIso) p.set('iso', '1')
+    if (mode === '3d' && showIso) p.set('iop', String(Math.round(isoOpacity * 100) / 100))
     if (dataSource === 'L2') {
       p.set('l2mode', l2Mode)
       if (l2Mode === 'archive') p.set('l2date', l2Date)
@@ -436,7 +438,7 @@ export default function App() {
     if (window.location.hash !== newHash) {
       history.replaceState(null, '', newHash)
     }
-  }, [dataSource, site, product, file, elevation, basemap, mapCenter, mapZoom, showLabels, showRoads, mode, effectiveThreshold, l2Mode, l2Date])
+  }, [dataSource, site, product, file, elevation, basemap, mapCenter, mapZoom, showLabels, showRoads, mode, effectiveThreshold, showIso, isoOpacity, l2Mode, l2Date, l3Mode, l3Date])
 
   // Auto-jump to selected site when zoomed out enough.
   // If zoomed in beyond 7, don't move. If at/below 7, recenter; if below 7, also zoom to 7.
@@ -498,8 +500,8 @@ export default function App() {
   }, [effectiveThreshold])
   const isoRgba = useMemo(() => {
     const [r,g,b] = isoColor
-    return [r, g, b, solidIso ? 255 : Math.round(0.5 * 255)] as [number, number, number, number]
-  }, [isoColor, solidIso])
+    return [r, g, b, Math.round(isoOpacity * 255)] as [number, number, number, number]
+  }, [isoColor, isoOpacity])
 
   // Debounce threshold changes: fire after 2s or on commit
   useEffect(() => {
@@ -541,16 +543,15 @@ export default function App() {
           >
             {(map) => (
               <>
-                {render3d === 'volume' ? (
-                  <VolumeOverlay
-                    map={map}
-                    site={site!}
-                    file={file!}
-                    center={l2Center}
-                    opacity={volumeOpacity}
-                    onLoading={setThreeLoading}
-                  />
-                ) : (
+                <VolumeOverlay
+                  map={map}
+                  site={site!}
+                  file={file!}
+                  center={l2Center}
+                  opacity={volumeOpacity}
+                  onLoading={setThreeLoading}
+                />
+                {showIso && (
                   <IsoOverlayClient
                     map={map}
                     site={site!}
@@ -626,10 +627,12 @@ export default function App() {
             setProduct('ref')
           }
         }}
-        render3d={render3d}
-        onRender3dChange={setRender3d}
+        showIso={showIso}
+        onShowIsoChange={setShowIso}
         volumeOpacity={volumeOpacity}
         onVolumeOpacityChange={setVolumeOpacity}
+        isoOpacity={isoOpacity}
+        onIsoOpacityChange={setIsoOpacity}
         threshold={threshold}
         onThresholdChange={setThreshold}
         onThresholdCommit={() => {
@@ -639,8 +642,6 @@ export default function App() {
           }
           setEffectiveThreshold(threshold)
         }}
-        solidIso={solidIso}
-        onSolidIsoChange={setSolidIso}
       />
     </div>
   )

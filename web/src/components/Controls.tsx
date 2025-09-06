@@ -46,15 +46,15 @@ type Props = {
   onShowRoadsChange: (v: boolean) => void
   mode: ViewMode
   onModeChange: (m: ViewMode) => void
-  render3d: 'volume' | 'iso'
-  onRender3dChange: (m: 'volume' | 'iso') => void
+  showIso: boolean
+  onShowIsoChange: (v: boolean) => void
   volumeOpacity?: number
   onVolumeOpacityChange?: (v: number) => void
+  isoOpacity?: number
+  onIsoOpacityChange?: (v: number) => void
   threshold: number
   onThresholdChange: (v: number) => void
   onThresholdCommit: () => void
-  solidIso: boolean
-  onSolidIsoChange: (v: boolean) => void
 }
 
 export default function Controls(props: Props) {
@@ -216,23 +216,70 @@ export default function Controls(props: Props) {
           </div>
         )}
 
-        {props.dataSource === 'L2' && props.mode === '3d' && (
+      {props.dataSource === 'L2' && props.mode === '3d' && (
+        <div className="space-y-2">
           <div className="flex gap-2 items-center">
-            <label className="text-xs text-gray-600 dark:text-gray-300 w-24">3D Render</label>
-            <div className="flex-1 grid grid-cols-2 gap-2">
-              <button
-                className={`px-2 py-1 rounded border text-sm ${props.render3d==='volume'?'bg-blue-600 text-white border-blue-600':'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700'}`}
-                onClick={() => props.onRender3dChange('volume')}
-              >Volume</button>
-              <button
-                className={`px-2 py-1 rounded border text-sm ${props.render3d==='iso'?'bg-blue-600 text-white border-blue-600':'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700'}`}
-                onClick={() => props.onRender3dChange('iso')}
-              >Isosurface</button>
-            </div>
+            <label className="text-xs text-gray-600 dark:text-gray-300 w-24">IsoSurface</label>
+            <label className="inline-flex items-center gap-2 text-sm">
+              <input type="checkbox" checked={props.showIso} onChange={e => props.onShowIsoChange(e.target.checked)} />
+              Show inside volume
+            </label>
           </div>
-        )}
+          {props.showIso && (
+            <div className="pl-24 space-y-2">
+              <div className="flex gap-2 items-center">
+                <label className="text-xs text-gray-600 dark:text-gray-300 w-24">Threshold</label>
+                <input
+                  type="range"
+                  min={5}
+                  max={75}
+                  step={5}
+                  value={props.threshold}
+                  onChange={e => props.onThresholdChange(parseInt(e.target.value))}
+                  onMouseUp={props.onThresholdCommit}
+                  onTouchEnd={props.onThresholdCommit}
+                  className="flex-1"
+                />
+                <input
+                  type="number"
+                  min={0}
+                  max={80}
+                  step={1}
+                  value={props.threshold}
+                  onChange={e => props.onThresholdChange(parseInt(e.target.value))}
+                  onBlur={props.onThresholdCommit}
+                  className="w-16 border rounded px-2 py-1 text-sm bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100"
+                />
+              </div>
+              {props.onIsoOpacityChange && (
+                <div className="flex gap-2 items-center">
+                  <label className="text-xs text-gray-600 dark:text-gray-300 w-24">Iso Opacity</label>
+                  <input
+                    type="range"
+                    min={0}
+                    max={100}
+                    step={1}
+                    value={Math.round((props.isoOpacity ?? 0.6) * 100)}
+                    onChange={e => props.onIsoOpacityChange!(parseInt(e.target.value) / 100)}
+                    className="flex-1"
+                  />
+                  <input
+                    type="number"
+                    min={0}
+                    max={1}
+                    step={0.05}
+                    value={(props.isoOpacity ?? 0.6).toFixed(2)}
+                    onChange={e => props.onIsoOpacityChange!(Math.max(0, Math.min(1, parseFloat(e.target.value) || 0)))}
+                    className="w-16 border rounded px-2 py-1 text-sm bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100"
+                  />
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      )}
 
-      {props.dataSource === 'L2' && props.mode === '3d' && props.render3d === 'volume' && props.onVolumeOpacityChange && (
+      {props.dataSource === 'L2' && props.mode === '3d' && props.onVolumeOpacityChange && (
         <div className="flex gap-2 items-center">
           <label className="text-xs text-gray-600 dark:text-gray-300 w-24">Opacity</label>
           <input
@@ -256,42 +303,7 @@ export default function Controls(props: Props) {
         </div>
       )}
 
-        {props.dataSource === 'L2' && props.mode === '3d' && props.render3d === 'iso' && (
-          <div className="flex gap-2 items-center">
-            <label className="text-xs text-gray-600 dark:text-gray-300 w-24">Threshold</label>
-            <input
-            type="range"
-            min={5}
-            max={75}
-            step={5}
-            value={props.threshold}
-            onChange={e => props.onThresholdChange(parseInt(e.target.value))}
-            onMouseUp={props.onThresholdCommit}
-            onTouchEnd={props.onThresholdCommit}
-            className="flex-1"
-          />
-          <input
-            type="number"
-            min={0}
-            max={80}
-            step={1}
-            value={props.threshold}
-            onChange={e => props.onThresholdChange(parseInt(e.target.value))}
-            onBlur={props.onThresholdCommit}
-            className="w-16 border rounded px-2 py-1 text-sm bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100"
-          />
-        </div>
-        )}
-
-        {props.dataSource === 'L2' && props.mode === '3d' && props.render3d === 'iso' && (
-          <div className="flex gap-2 items-center">
-            <label className="text-xs text-gray-600 dark:text-gray-300 w-24">Solid Iso</label>
-            <label className="inline-flex items-center gap-2 text-sm">
-              <input type="checkbox" checked={props.solidIso} onChange={e => props.onSolidIsoChange(e.target.checked)} />
-              Opaque surface
-            </label>
-          </div>
-        )}
+      
 
         <div className="flex gap-2 items-center">
           <label className="text-xs text-gray-600 dark:text-gray-300 w-24">Base Layer</label>

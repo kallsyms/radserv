@@ -1,10 +1,14 @@
 package main
 
 import (
+	"archive/tar"
+	"compress/gzip"
 	"context"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"cloud.google.com/go/storage"
@@ -113,8 +117,51 @@ func l3ListFilesByDateHandler(c *gin.Context) {
 	}
 	defer client.Close()
 
-	prefix := "NIDS/" + t.Format("2006/01/02/") + site + "/" + product + "/"
-	files, _ := listGCS(c.Request.Context(), client.Bucket(L3_ARCHIVE_BUCKET), prefix)
+	// Construct archive tarball path: YYYY/MM/DD/<SITE4>/NWS_NEXRAD_NXL3_<SITE4>_<YYYYMMDD>000000_<YYYYMMDD>235959.tar.gz
+	site4 := strings.ToUpper(site)
+	if len(site4) == 3 {
+		site4 = "K" + site4
+	}
+	tarObj := fmt.Sprintf("%04d/%02d/%02d/%s/NWS_NEXRAD_NXL3_%s_%s000000_%s235959.tar.gz",
+		t.Year(), t.Month(), t.Day(), site4, site4, t.Format("20060102"), t.Format("20060102"))
+
+	rc, err := client.Bucket(L3_ARCHIVE_BUCKET).Object(tarObj).NewReader(c.Request.Context())
+	if err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+	defer rc.Close()
+	gz, err := gzip.NewReader(rc)
+	if err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+	defer gz.Close()
+	tr := tar.NewReader(gz)
+	files := []string{}
+	for {
+		hdr, err := tr.Next()
+		if err != nil {
+			break
+		}
+		if hdr.Typeflag != tar.TypeReg {
+			continue
+		}
+		base := filepath.Base(hdr.Name)
+		// Expect filenames like KOHX_SDUS84_N3HOHX_YYYYMMDDHHMM
+		parts := strings.Split(base, "_")
+		if len(parts) < 3 {
+			continue
+		}
+		prodSite := parts[2] // e.g., N3HOHX
+		if len(prodSite) < 3 {
+			continue
+		}
+		code := prodSite[0:3]
+		if strings.EqualFold(code, product) {
+			files = append(files, base)
+		}
+	}
 	c.JSON(200, files)
 }
 
@@ -123,6 +170,62 @@ func l3FileMetaHandler(c *gin.Context) {
 	product := c.Param("product")
 	fn := c.Param("fn")
 
+	dateQ := c.Query("date")
+	if dateQ != "" && dateQ != "latest" {
+		// Read from archive tarball
+		t, err := time.Parse("20060102", dateQ)
+		if err != nil {
+			c.AbortWithError(http.StatusBadRequest, err)
+			return
+		}
+		client, err := storage.NewClient(c.Request.Context(), option.WithCredentialsFile("service_account.json"))
+		if err != nil {
+			c.AbortWithError(http.StatusInternalServerError, err)
+			return
+		}
+		defer client.Close()
+		site4 := strings.ToUpper(site)
+		if len(site4) == 3 {
+			site4 = "K" + site4
+		}
+		tarObj := fmt.Sprintf("%04d/%02d/%02d/%s/NWS_NEXRAD_NXL3_%s_%s000000_%s235959.tar.gz",
+			t.Year(), t.Month(), t.Day(), site4, site4, t.Format("20060102"), t.Format("20060102"))
+		rc, err := client.Bucket(L3_ARCHIVE_BUCKET).Object(tarObj).NewReader(c.Request.Context())
+		if err != nil {
+			c.AbortWithError(http.StatusInternalServerError, err)
+			return
+		}
+		defer rc.Close()
+		gz, err := gzip.NewReader(rc)
+		if err != nil {
+			c.AbortWithError(http.StatusInternalServerError, err)
+			return
+		}
+		defer gz.Close()
+		tr := tar.NewReader(gz)
+		for {
+			hdr, err := tr.Next()
+			if err != nil {
+				break
+			}
+			if hdr.Typeflag != tar.TypeReg {
+				continue
+			}
+			if filepath.Base(hdr.Name) == fn {
+				l3, err := level3.NewLevel3(tr)
+				if err != nil {
+					c.AbortWithError(http.StatusInternalServerError, err)
+					return
+				}
+				c.JSON(200, l3)
+				return
+			}
+		}
+		c.AbortWithStatus(http.StatusNotFound)
+		return
+	}
+
+	// Realtime bucket
 	client, err := storage.NewClient(c.Request.Context(), option.WithCredentialsFile("service_account.json"))
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
@@ -135,13 +238,12 @@ func l3FileMetaHandler(c *gin.Context) {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
-
+	defer radFileReader.Close()
 	l3, err := level3.NewLevel3(radFileReader)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
-
 	c.JSON(200, l3)
 }
 
@@ -156,22 +258,60 @@ func l3radial(c *gin.Context) (*render.RadialSet, error) {
 
 	// Optional date query to select archive
 	dateQ := c.Query("date")
-	var reader *storage.Reader
 	if dateQ != "" && dateQ != "latest" {
-		if t, err := time.Parse("20060102", dateQ); err == nil {
-			prefix := "NIDS/" + t.Format("2006/01/02/") + site + "/" + product + "/" + fn
-			reader, err = client.Bucket(L3_ARCHIVE_BUCKET).Object(prefix).NewReader(c.Request.Context())
+		t, err := time.Parse("20060102", dateQ)
+		if err != nil {
+			return nil, err
+		}
+		site4 := strings.ToUpper(site)
+		if len(site4) == 3 {
+			site4 = "K" + site4
+		}
+		tarObj := fmt.Sprintf("%04d/%02d/%02d/%s/NWS_NEXRAD_NXL3_%s_%s000000_%s235959.tar.gz",
+			t.Year(), t.Month(), t.Day(), site4, site4, t.Format("20060102"), t.Format("20060102"))
+		rc, err := client.Bucket(L3_ARCHIVE_BUCKET).Object(tarObj).NewReader(c.Request.Context())
+		if err != nil {
+			return nil, err
+		}
+		gz, err := gzip.NewReader(rc)
+		if err != nil {
+			rc.Close()
+			return nil, err
+		}
+		tr := tar.NewReader(gz)
+		// Iterate to target file
+		for {
+			hdr, err := tr.Next()
+			if err != nil {
+				gz.Close()
+				rc.Close()
+				return nil, err
+			}
+			if hdr.Typeflag != tar.TypeReg {
+				continue
+			}
+			if filepath.Base(hdr.Name) == fn {
+				l3, err := level3.NewLevel3(tr)
+				gz.Close()
+				rc.Close()
+				if err != nil {
+					return nil, err
+				}
+				r, err := render.RadialSetFromLevel3(l3)
+				if err != nil {
+					return nil, err
+				}
+				return r, nil
+			}
 		}
 	}
-	if reader == nil {
-		reader, err = client.Bucket(L3_BUCKET).Object("NIDS/" + site + "/" + product + "/" + fn).NewReader(c.Request.Context())
-	}
-	radFileReader := reader
+
+	reader, err := client.Bucket(L3_BUCKET).Object("NIDS/" + site + "/" + product + "/" + fn).NewReader(c.Request.Context())
 	if err != nil {
 		return nil, err
 	}
-
-	l3, err := level3.NewLevel3(radFileReader)
+	defer reader.Close()
+	l3, err := level3.NewLevel3(reader)
 	if err != nil {
 		return nil, err
 	}

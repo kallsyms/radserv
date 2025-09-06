@@ -23,6 +23,7 @@ export default function IsoOverlayClient({ map, site, file, threshold, color, ce
   const genRef = useRef(0)
   const gridRef = useRef<ReturnType<typeof buildVolumeGrid> | null>(null)
   const layerIdRef = useRef<string>('iso-client-layer')
+  const meshRef = useRef<{ positions: Float32Array; indices: Uint32Array } | null>(null)
 
   // attach overlay control
   useEffect(() => {
@@ -54,6 +55,7 @@ export default function IsoOverlayClient({ map, site, file, threshold, color, ce
         const grid = buildVolumeGrid(results)
         gridRef.current = grid
         const mesh = generateIsosurface(grid, threshold)
+        meshRef.current = { positions: mesh.positions, indices: mesh.indices }
         const layer = new SimpleMeshLayer({
           id: layerIdRef.current,
           data: [0],
@@ -85,6 +87,7 @@ export default function IsoOverlayClient({ map, site, file, threshold, color, ce
     if (!overlay || !center || !grid) return
     onLoading(true)
     const mesh = generateIsosurface(grid, threshold)
+    meshRef.current = { positions: mesh.positions, indices: mesh.indices }
     const layer = new SimpleMeshLayer({
       id: layerIdRef.current,
       data: [0],
@@ -103,8 +106,31 @@ export default function IsoOverlayClient({ map, site, file, threshold, color, ce
     } as any)
     overlay.setProps({ layers: [layer] })
     onLoading(false)
-  }, [threshold, color, center])
+  }, [threshold, center])
+
+  // Restyle only when color/opacity changes
+  useEffect(() => {
+    const overlay = overlayRef.current
+    const mesh = meshRef.current
+    if (!overlay || !center || !mesh) return
+    const layer = new SimpleMeshLayer({
+      id: layerIdRef.current,
+      data: [0],
+      mesh: {
+        attributes: { POSITION: { value: mesh.positions, size: 3 } },
+        indices: mesh.indices,
+      },
+      getPosition: () => [0, 0, 0],
+      coordinateSystem: COORDINATE_SYSTEM.METER_OFFSETS,
+      coordinateOrigin: [center.lon, center.lat],
+      getColor: color,
+      opacity: color[3] / 255,
+      pickable: false,
+      wireframe: false,
+      _normalsEnabled: false,
+    } as any)
+    overlay.setProps({ layers: [layer] })
+  }, [color, center])
 
   return null
 }
-
