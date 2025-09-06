@@ -9,8 +9,8 @@ export async function fetchL2Sites(): Promise<string[]> {
   return res.json()
 }
 
-export async function fetchL2Files(site: string): Promise<string[]> {
-  const res = await fetch(`${API_BASE}/l2/${encodeURIComponent(site)}`)
+export async function fetchL2Files(site: string, date: string = 'latest'): Promise<string[]> {
+  const res = await fetch(`${API_BASE}/l2/${encodeURIComponent(site)}/date/${encodeURIComponent(date)}`)
   if (!res.ok) throw new Error('Failed to fetch L2 files')
   return res.json()
 }
@@ -38,14 +38,19 @@ export async function fetchL3Products(site: string): Promise<string[]> {
   return res.json()
 }
 
-export async function fetchL3Files(site: string, product: string): Promise<string[]> {
-  const res = await fetch(`${API_BASE}/l3/${encodeURIComponent(site)}/${encodeURIComponent(product)}`)
+export async function fetchL3Files(site: string, product: string, date?: string): Promise<string[]> {
+  const path = date && date !== 'latest'
+    ? `/l3/${encodeURIComponent(site)}/${encodeURIComponent(product)}/date/${encodeURIComponent(date)}`
+    : `/l3/${encodeURIComponent(site)}/${encodeURIComponent(product)}`
+  const res = await fetch(`${API_BASE}${path}`)
   if (!res.ok) throw new Error('Failed to fetch L3 files')
   return res.json()
 }
 
-export function l3RenderUrl(site: string, product: string, fn: string): string {
-  return `${API_BASE}/l3/${encodeURIComponent(site)}/${encodeURIComponent(product)}/${encodeURIComponent(fn)}/render`
+export function l3RenderUrl(site: string, product: string, fn: string, date?: string): string {
+  const base = `${API_BASE}/l3/${encodeURIComponent(site)}/${encodeURIComponent(product)}/${encodeURIComponent(fn)}/render`
+  if (date && date !== 'latest') return `${base}?date=${encodeURIComponent(date)}`
+  return base
 }
 
 // L2 radial for center lat/lon (use ref/1, metadata identical for center across products)

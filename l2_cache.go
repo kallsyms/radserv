@@ -37,7 +37,7 @@ func urlForFile(fn string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	return "https://noaa-nexrad-level2.s3.amazonaws.com/" + date.Format("2006/01/02/") + site + "/" + fn, nil
+	return "https://unidata-nexrad-level2.s3.amazonaws.com/" + date.Format("2006/01/02/") + site + "/" + fn, nil
 }
 
 func loadArchive2(fn string) (*archive2.Archive2, error) {

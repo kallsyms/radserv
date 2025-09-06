@@ -36,19 +36,49 @@ export function generateIsosurface(grid: VolumeGrid, threshold: number): MeshDat
     // shortest angular difference (-180..180]
     let delta = a1 - a0
     delta = ((delta + 540) % 360) - 180
-    const azimuth = a0 + delta * fy
+    let azimuth = a0 + delta * fy
+    azimuth = ((azimuth % 360) + 360) % 360
     const angle = (90.0 - azimuth) * Math.PI / 180.0
 
-    const gateDist = grid.startRange + (vx * grid.gateInterval)
+    // Clamp vx to valid gate index range to avoid numeric spillover
+    const vxClamped = Math.max(0, Math.min(nx - 1, vx))
+    const gateDist = grid.startRange + (vxClamped * grid.gateInterval)
     const elvRad = elvAngle * Math.PI / 180.0
     const horiz = Math.cos(elvRad) * gateDist // ground distance
-    const X = Math.cos(angle) * horiz
-    const Y = Math.sin(angle) * horiz
+    // Map radar azimuth (0°=north, CW positive) to ENU meters (x=east, y=north).
+    // Current observations indicate a 90° clockwise rotation; correct by rotating +90° CCW here.
+    const X = -Math.sin(angle) * horiz
+    const Y = Math.cos(angle) * horiz
     const Z = Math.sin(elvRad) * gateDist
     return [X, Y, Z]
   }
 
   const positions: number[] = []
+
+  function len2(a: [number, number, number], b: [number, number, number]): number {
+    const dx = a[0] - b[0]
+    const dy = a[1] - b[1]
+    const dz = a[2] - b[2]
+    return dx*dx + dy*dy + dz*dz
+  }
+  function triOk(A: [number, number, number], B: [number, number, number], C: [number, number, number]): boolean {
+    // Reject degenerate or numerically wild triangles
+    const l1 = len2(A,B)
+    const l2 = len2(B,C)
+    const l3 = len2(C,A)
+    const maxL2 = Math.max(l1, l2, l3)
+    if (!isFinite(maxL2) || maxL2 <= 1e-4) return false
+    // Dynamic size limit based on range and azimuth spacing
+    const rA = Math.hypot(A[0], A[1])
+    const rB = Math.hypot(B[0], B[1])
+    const rC = Math.hypot(C[0], C[1])
+    const rAvg = (rA + rB + rC) / 3
+    const azResRad = Math.max(1e-6, (grid.azimuthResolution || 1) * Math.PI / 180)
+    // Expected local cell span in meters (scaled generously)
+    const expected = (rAvg * azResRad + grid.gateInterval) * 8
+    const limit2 = expected * expected
+    return maxL2 <= limit2
+  }
 
   // Tetrahedra decomposition of a cube (indices into 0..7 cube corners)
   const tets: [number, number, number, number][] = [
@@ -116,10 +146,14 @@ export function generateIsosurface(grid: VolumeGrid, threshold: number): MeshDat
             const sideA = va < threshold
             const sideB = vb < threshold
             if (sideA !== sideB) {
-              const t = (threshold - va) / (vb - va)
-              const x3 = lerp(tp[a][0], tp[b][0], t)
-              const y3 = lerp(tp[a][1], tp[b][1], t)
-              const z3 = lerp(tp[a][2], tp[b][2], t)
+              const denom = (vb - va)
+              if (Math.abs(denom) < 1e-8) continue
+              const tRaw = (threshold - va) / denom
+              const t = Math.max(0, Math.min(1, tRaw))
+              // Interpolated point along the edge; clamp to local cube bounds to avoid spill
+              const x3 = Math.max(Math.min(tp[a][0], tp[b][0]), Math.min(Math.max(tp[a][0], tp[b][0]), lerp(tp[a][0], tp[b][0], t)))
+              const y3 = Math.max(Math.min(tp[a][1], tp[b][1]), Math.min(Math.max(tp[a][1], tp[b][1]), lerp(tp[a][1], tp[b][1], t)))
+              const z3 = Math.max(Math.min(tp[a][2], tp[b][2]), Math.min(Math.max(tp[a][2], tp[b][2]), lerp(tp[a][2], tp[b][2], t)))
               pts.push({ p: [x3, y3, z3], e })
             }
           }
@@ -127,14 +161,41 @@ export function generateIsosurface(grid: VolumeGrid, threshold: number): MeshDat
             const A = radialToCartesian(pts[0].p[0], pts[0].p[1], pts[0].p[2])
             const B = radialToCartesian(pts[1].p[0], pts[1].p[1], pts[1].p[2])
             const C = radialToCartesian(pts[2].p[0], pts[2].p[1], pts[2].p[2])
-            positions.push(A[0], A[1], A[2], B[0], B[1], B[2], C[0], C[1], C[2])
+            if (triOk(A,B,C)) {
+              positions.push(A[0], A[1], A[2], B[0], B[1], B[2], C[0], C[1], C[2])
+            }
           } else if (pts.length === 4) {
-            // Split quad into two triangles: (0,1,2) and (0,2,3)
-            const Q = pts.map(q => radialToCartesian(q.p[0], q.p[1], q.p[2]))
-            positions.push(
-              Q[0][0], Q[0][1], Q[0][2], Q[1][0], Q[1][1], Q[1][2], Q[2][0], Q[2][1], Q[2][2],
-              Q[0][0], Q[0][1], Q[0][2], Q[2][0], Q[2][1], Q[2][2], Q[3][0], Q[3][1], Q[3][2],
+            // Order quad vertices by edge adjacency to avoid crossing diagonals
+            const share = (a: [number, number], b: [number, number]) => (
+              a[0] === b[0] || a[0] === b[1] || a[1] === b[0] || a[1] === b[1]
             )
+            const order: number[] = [0]
+            // pick second as any that shares a corner with first
+            let used = new Set<number>(order)
+            for (let i = 1; i < 4; i++) {
+              let found = -1
+              for (let j = 0; j < 4; j++) {
+                if (used.has(j)) continue
+                if (share(pts[order[order.length - 1]].e, pts[j].e)) { found = j; break }
+              }
+              if (found === -1) { // fallback to any remaining (shouldn't happen)
+                for (let j = 0; j < 4; j++) if (!used.has(j)) { found = j; break }
+              }
+              order.push(found)
+              used.add(found)
+            }
+            const P = order.map(i => pts[i])
+            const Q = P.map(q => radialToCartesian(q.p[0], q.p[1], q.p[2]))
+            if (triOk(Q[0],Q[1],Q[2])) {
+              positions.push(
+                Q[0][0], Q[0][1], Q[0][2], Q[1][0], Q[1][1], Q[1][2], Q[2][0], Q[2][1], Q[2][2]
+              )
+            }
+            if (triOk(Q[0],Q[2],Q[3])) {
+              positions.push(
+                Q[0][0], Q[0][1], Q[0][2], Q[2][0], Q[2][1], Q[2][2], Q[3][0], Q[3][1], Q[3][2]
+              )
+            }
           }
         }
       }

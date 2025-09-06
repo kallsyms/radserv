@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"path/filepath"
+	"time"
 
 	"cloud.google.com/go/storage"
 	"github.com/gin-gonic/gin"
@@ -16,6 +17,7 @@ import (
 )
 
 const L3_BUCKET = "gcp-public-data-nexrad-l3-realtime"
+const L3_ARCHIVE_BUCKET = "gcp-public-data-nexrad-l3"
 
 func listGCS(ctx context.Context, bucket *storage.BucketHandle, prefix string) ([]string, []string) {
 	blobs := []string{}
@@ -86,6 +88,36 @@ func l3ListFilesHandler(c *gin.Context) {
 	c.JSON(200, files)
 }
 
+func l3ListFilesByDateHandler(c *gin.Context) {
+	site := c.Param("site")
+	product := c.Param("product")
+	dateParam := c.Param("date")
+
+	// If latest, delegate to realtime listing
+	if dateParam == "latest" || dateParam == "" {
+		l3ListFilesHandler(c)
+		return
+	}
+
+	// Parse YYYYMMDD
+	t, err := time.Parse("20060102", dateParam)
+	if err != nil {
+		c.AbortWithError(http.StatusBadRequest, err)
+		return
+	}
+
+	client, err := storage.NewClient(c.Request.Context(), option.WithCredentialsFile("service_account.json"))
+	if err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+	defer client.Close()
+
+	prefix := "NIDS/" + t.Format("2006/01/02/") + site + "/" + product + "/"
+	files, _ := listGCS(c.Request.Context(), client.Bucket(L3_ARCHIVE_BUCKET), prefix)
+	c.JSON(200, files)
+}
+
 func l3FileMetaHandler(c *gin.Context) {
 	site := c.Param("site")
 	product := c.Param("product")
@@ -114,6 +146,7 @@ func l3FileMetaHandler(c *gin.Context) {
 }
 
 func l3radial(c *gin.Context) (*render.RadialSet, error) {
+
 	site := c.Param("site")
 	product := c.Param("product")
 	fn := c.Param("fn")
@@ -121,7 +154,19 @@ func l3radial(c *gin.Context) (*render.RadialSet, error) {
 	client, err := storage.NewClient(c.Request.Context(), option.WithCredentialsFile("service_account.json"))
 	defer client.Close()
 
-	radFileReader, err := client.Bucket(L3_BUCKET).Object("NIDS/" + site + "/" + product + "/" + fn).NewReader(c.Request.Context())
+	// Optional date query to select archive
+	dateQ := c.Query("date")
+	var reader *storage.Reader
+	if dateQ != "" && dateQ != "latest" {
+		if t, err := time.Parse("20060102", dateQ); err == nil {
+			prefix := "NIDS/" + t.Format("2006/01/02/") + site + "/" + product + "/" + fn
+			reader, err = client.Bucket(L3_ARCHIVE_BUCKET).Object(prefix).NewReader(c.Request.Context())
+		}
+	}
+	if reader == nil {
+		reader, err = client.Bucket(L3_BUCKET).Object("NIDS/" + site + "/" + product + "/" + fn).NewReader(c.Request.Context())
+	}
+	radFileReader := reader
 	if err != nil {
 		return nil, err
 	}

@@ -14,9 +14,9 @@ import {
   fetchL2RadialCenter,
 } from './api/radar'
 import { loadSiteCoords, type SiteCoordMap } from './utils/sites'
-import IsoView3D from './three/IsoView3D' // server OBJ (fallback)
-import IsoView3DClient from './three/IsoView3DClient'
-import VolumeView3D from './three/VolumeView3D'
+import ThreeMap from './three/ThreeMap'
+import VolumeOverlay from './three/VolumeOverlay'
+import IsoOverlayClient from './three/IsoOverlayClient'
 import 'maplibre-gl/dist/maplibre-gl.css'
 
 export default function App() {
@@ -37,7 +37,11 @@ export default function App() {
     const lat = p.get('lat') ? parseFloat(p.get('lat')!) : 39
     const lon = p.get('lon') ? parseFloat(p.get('lon')!) : -98
     const z = p.get('z') ? parseFloat(p.get('z')!) : 4
-    return { ds, site, prod, file, elv, auto, base, labels, roads, lat, lon, z }
+    const l2mode = (p.get('l2mode') === 'archive') ? 'archive' as const : 'realtime'
+    const l2date = p.get('l2date') || new Date().toISOString().slice(0,10)
+    const l3mode = (p.get('l3mode') === 'archive') ? 'archive' as const : 'realtime'
+    const l3date = p.get('l3date') || new Date().toISOString().slice(0,10)
+    return { ds, site, prod, file, elv, auto, base, labels, roads, lat, lon, z, l2mode, l2date, l3mode, l3date }
   }, [])
 
   // Store URL params as a ref to prevent re-parsing and maintain initial values
@@ -56,6 +60,11 @@ export default function App() {
   const [files, setFiles] = useState<string[]>([])
   const [file, setFile] = useState<string | undefined>(init.file)
   const [loadingFiles, setLoadingFiles] = useState(false)
+  // L2 listing mode state
+  const [l2Mode, setL2Mode] = useState<'realtime'|'archive'>(init.l2mode)
+  const [l2Date, setL2Date] = useState<string>(init.l2date)
+  const [l3Mode, setL3Mode] = useState<'realtime'|'archive'>(init.l3mode)
+  const [l3Date, setL3Date] = useState<string>(init.l3date)
 
   const [elevations, setElevations] = useState<number[]>([])
   const [elevation, setElevation] = useState<number | undefined>(init.elv)
@@ -92,6 +101,10 @@ export default function App() {
     const p = new URLSearchParams(raw)
     return (p.get('r3d') as 'volume'|'iso') || 'volume'
   })
+  const [volumeOpacity, setVolumeOpacity] = useState<number>(0.7)
+  // Persisted 3D map view (shared between volume and iso to avoid jumping on toggle)
+  const [map3DCenter, setMap3DCenter] = useState<{ lat: number; lon: number } | null>(null)
+  const [map3DZoom, setMap3DZoom] = useState<number | null>(null)
   const [solidIso, setSolidIso] = useState<boolean>(() => {
     const raw = window.location.hash.startsWith('#') ? window.location.hash.slice(1) : window.location.hash
     const p = new URLSearchParams(raw)
@@ -110,23 +123,36 @@ export default function App() {
     }
     let cancelled = false
     setLoadingSites(true)
+    const toDisplayCode = (code: string): string => {
+      if (!code) return code
+      // For L3, prefer 3-letter core; for L2 keep as-is
+      if (dataSource === 'L3') {
+        const up = code.toUpperCase()
+        if (up.length >= 4 && ['K','P','T'].includes(up[0])) return up.slice(1)
+        return up
+      }
+      return code.toUpperCase()
+    }
     const load = async () => {
       try {
         const s = dataSource === 'L2' ? await fetchL2Sites() : await fetchL3Sites()
         if (cancelled) return
         // Fallback: if API returns empty, derive site list from bundled KML
-        let siteList = (Array.isArray(s) && s.length > 0)
+        let siteListRaw = (Array.isArray(s) && s.length > 0)
           ? s
           : Object.keys(siteCoords).filter(k => /^[A-Z0-9]{3,4}$/.test(k))
+        // Normalize for display based on data source and dedupe
+        let siteList = Array.from(new Set(siteListRaw.map(toDisplayCode)))
         // Ensure URL-specified site is present and first in the list (so it won't be lost)
         const urlSiteRaw = urlParams.current.site
         if (urlSiteRaw) {
-          const hasUrl = siteList.some(x => x.toUpperCase() === urlSiteRaw.toUpperCase() || x.slice(1).toUpperCase() === urlSiteRaw.toUpperCase() || urlSiteRaw.slice(1).toUpperCase() === x.toUpperCase())
+          const urlNorm = toDisplayCode(urlSiteRaw)
+          const hasUrl = siteList.some(x => x.toUpperCase() === urlNorm.toUpperCase())
           if (!hasUrl) {
-            siteList = [urlSiteRaw, ...siteList]
+            siteList = [urlNorm, ...siteList]
           } else {
             // move url site to front to avoid being replaced by first
-            siteList = [siteList.find(x => x.toUpperCase() === urlSiteRaw.toUpperCase())!, ...siteList.filter(x => x.toUpperCase() !== urlSiteRaw.toUpperCase())]
+            siteList = [siteList.find(x => x.toUpperCase() === urlNorm.toUpperCase())!, ...siteList.filter(x => x.toUpperCase() !== urlNorm.toUpperCase())]
           }
         }
         setSites(siteList)
@@ -186,18 +212,22 @@ export default function App() {
         try {
           const kml = await loadSiteCoords()
           if (cancelled) return
-          let siteList = Object.keys(kml).filter(k => /^[A-Z0-9]{4}$/.test(k))
+          let siteList = Object.keys(kml)
+            .filter(k => /^[A-Z0-9]{3,4}$/.test(k))
+            .map(toDisplayCode)
+            .filter((v, i, a) => a.indexOf(v) === i)
           console.log('KML fallback sites:', siteList.slice(0, 5))
           
           // Apply same logic as main path: respect URL site
           const urlSiteRaw = urlParams.current.site
           if (urlSiteRaw) {
-            const hasUrl = siteList.some(x => x.toUpperCase() === urlSiteRaw.toUpperCase() || x.slice(1).toUpperCase() === urlSiteRaw.toUpperCase() || urlSiteRaw.slice(1).toUpperCase() === x.toUpperCase())
+            const urlNorm = toDisplayCode(urlSiteRaw)
+            const hasUrl = siteList.some(x => x.toUpperCase() === urlNorm.toUpperCase())
             if (!hasUrl) {
-              siteList = [urlSiteRaw, ...siteList]
+              siteList = [urlNorm, ...siteList]
             } else {
               // move url site to front to avoid being replaced by first
-              siteList = [siteList.find(x => x.toUpperCase() === urlSiteRaw.toUpperCase())!, ...siteList.filter(x => x.toUpperCase() !== urlSiteRaw.toUpperCase())]
+              siteList = [siteList.find(x => x.toUpperCase() === urlNorm.toUpperCase())!, ...siteList.filter(x => x.toUpperCase() !== urlNorm.toUpperCase())]
             }
           }
           
@@ -296,7 +326,7 @@ export default function App() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [site, dataSource])
 
-  // Load files when site or product changes
+  // Load files when site/product or L2 mode/date changes
   useEffect(() => {
     if (!site) return
     if (dataSource === 'L3' && !product) return
@@ -305,8 +335,8 @@ export default function App() {
     const load = async () => {
       try {
         const fs = dataSource === 'L2'
-          ? await fetchL2Files(site)
-          : await fetchL3Files(site, product)
+          ? await fetchL2Files(site, l2Mode === 'realtime' ? 'latest' : l2Date.replace(/-/g, ''))
+          : await fetchL3Files(site, product, l3Mode === 'realtime' ? 'latest' : l3Date.replace(/-/g, ''))
         if (cancelled) return
         setFiles(fs)
         // Prefer URL-selected file if present
@@ -338,7 +368,7 @@ export default function App() {
     load()
     return () => { cancelled = true }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [site, product, dataSource])
+  }, [site, product, dataSource, l2Mode, l2Date, l3Mode, l3Date])
 
   // Load elevations for L2 when file changes
   useEffect(() => {
@@ -395,11 +425,18 @@ export default function App() {
     if (mode === '3d') p.set('thr', String(effectiveThreshold))
     if (mode === '3d') p.set('r3d', render3d)
     if (mode === '3d' && render3d === 'iso' && solidIso) p.set('solid', '1')
+    if (dataSource === 'L2') {
+      p.set('l2mode', l2Mode)
+      if (l2Mode === 'archive') p.set('l2date', l2Date)
+    } else if (dataSource === 'L3') {
+      p.set('l3mode', l3Mode)
+      if (l3Mode === 'archive') p.set('l3date', l3Date)
+    }
     const newHash = '#' + p.toString()
     if (window.location.hash !== newHash) {
       history.replaceState(null, '', newHash)
     }
-  }, [dataSource, site, product, file, elevation, basemap, mapCenter, mapZoom, showLabels, showRoads, mode, effectiveThreshold])
+  }, [dataSource, site, product, file, elevation, basemap, mapCenter, mapZoom, showLabels, showRoads, mode, effectiveThreshold, l2Mode, l2Date])
 
   // Auto-jump to selected site when zoomed out enough.
   // If zoomed in beyond 7, don't move. If at/below 7, recenter; if below 7, also zoom to 7.
@@ -421,8 +458,8 @@ export default function App() {
       const prod = (product === 'vel' ? 'vel' : 'ref') as 'ref' | 'vel'
       return l2RenderUrl(site, file, prod, elv)
     }
-    return l3RenderUrl(site, product, file)
-  }, [dataSource, site, file, product, elevation])
+    return l3RenderUrl(site, product, file, l3Mode === 'archive' ? l3Date.replace(/-/g, '') : undefined)
+  }, [dataSource, site, file, product, elevation, l3Mode, l3Date])
 
   // Ensure 3D mode uses L2 + ref and fetch center
   useEffect(() => {
@@ -494,27 +531,39 @@ export default function App() {
         />
       ) : (
         <>
-          {render3d === 'volume' ? (
-            <VolumeView3D
-              site={site!}
-              file={file!}
-              center={l2Center}
-              showLabels={showLabels}
-              showRoads={showRoads}
-              onLoading={setThreeLoading}
-            />
-          ) : (
-            <IsoView3DClient
-              site={site!}
-              file={file!}
-              threshold={effectiveThreshold}
-              color={isoRgba}
-              center={l2Center}
-              showLabels={showLabels}
-              showRoads={showRoads}
-              onLoading={setThreeLoading}
-            />
-          )}
+          <ThreeMap
+            center={l2Center}
+            viewCenter={map3DCenter}
+            viewZoom={map3DZoom}
+            showLabels={showLabels}
+            showRoads={showRoads}
+            onViewChange={(c, z) => { setMap3DCenter(c); setMap3DZoom(z) }}
+          >
+            {(map) => (
+              <>
+                {render3d === 'volume' ? (
+                  <VolumeOverlay
+                    map={map}
+                    site={site!}
+                    file={file!}
+                    center={l2Center}
+                    opacity={volumeOpacity}
+                    onLoading={setThreeLoading}
+                  />
+                ) : (
+                  <IsoOverlayClient
+                    map={map}
+                    site={site!}
+                    file={file!}
+                    threshold={effectiveThreshold}
+                    color={isoRgba}
+                    center={l2Center}
+                    onLoading={setThreeLoading}
+                  />
+                )}
+              </>
+            )}
+          </ThreeMap>
           {threeLoading && (
             <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-[1100]">
               <div className="bg-black/60 text-white text-xs rounded-md px-3 py-1 shadow flex items-center gap-2">
@@ -527,7 +576,11 @@ export default function App() {
       )}
       <Controls
         dataSource={dataSource}
-        onDataSourceChange={setDataSource}
+        onDataSourceChange={(v) => {
+          // If switching to L3, force 2D mode to avoid 3D->L2 enforcement
+          if (v === 'L3' && mode === '3d') setMode('2d')
+          setDataSource(v)
+        }}
 
         sites={sites}
         site={site}
@@ -543,6 +596,15 @@ export default function App() {
         file={file}
         onFileChange={setFile}
         loadingFiles={loadingFiles}
+
+        l2Mode={l2Mode}
+        onL2ModeChange={(m) => { setL2Mode(m); setFiles([]); setFile(undefined) }}
+        l2Date={l2Date}
+        onL2DateChange={(d) => { setL2Date(d); setFiles([]); setFile(undefined) }}
+        l3Mode={l3Mode}
+        onL3ModeChange={(m) => { setL3Mode(m); setFiles([]); setFile(undefined) }}
+        l3Date={l3Date}
+        onL3DateChange={(d) => { setL3Date(d); setFiles([]); setFile(undefined) }}
 
         elevations={elevations}
         elevation={elevation}
@@ -566,6 +628,8 @@ export default function App() {
         }}
         render3d={render3d}
         onRender3dChange={setRender3d}
+        volumeOpacity={volumeOpacity}
+        onVolumeOpacityChange={setVolumeOpacity}
         threshold={threshold}
         onThresholdChange={setThreshold}
         onThresholdCommit={() => {

@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"path/filepath"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -23,23 +24,30 @@ func l2ListSitesHandler(c *gin.Context) {
 		Region:      aws.String("us-east-1"),
 	})
 	svc := s3.New(sess)
-	bucket := aws.String("noaa-nexrad-level2")
+	bucket := aws.String("unidata-nexrad-level2")
 
 	// check yesterday to get a list of all radars
 	t := time.Now().UTC().AddDate(0, 0, -1)
-	resp, err := svc.ListObjectsV2(&s3.ListObjectsV2Input{
-		Bucket:    bucket,
-		Prefix:    aws.String(t.Format("2006/01/02/")),
-		Delimiter: aws.String("/"),
-	})
-	if err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
-		return
-	}
-
-	sites := make([]string, 0, len(resp.CommonPrefixes))
-	for _, d := range resp.CommonPrefixes {
-		sites = append(sites, filepath.Base(*d.Prefix))
+	sites := make([]string, 0, 512)
+	var token *string
+	for {
+		resp, err := svc.ListObjectsV2(&s3.ListObjectsV2Input{
+			Bucket:            bucket,
+			Prefix:            aws.String(t.Format("2006/01/02/")),
+			Delimiter:         aws.String("/"),
+			ContinuationToken: token,
+		})
+		if err != nil {
+			c.AbortWithError(http.StatusInternalServerError, err)
+			return
+		}
+		for _, d := range resp.CommonPrefixes {
+			sites = append(sites, filepath.Base(*d.Prefix))
+		}
+		if resp.IsTruncated == nil || !*resp.IsTruncated {
+			break
+		}
+		token = resp.NextContinuationToken
 	}
 
 	c.JSON(200, sites)
@@ -47,48 +55,116 @@ func l2ListSitesHandler(c *gin.Context) {
 
 func l2ListFilesHandler(c *gin.Context) {
 	site := c.Param("site")
+	dateParam := c.Param("date") // may be empty if route is /l2/:site
 
 	sess, _ := session.NewSession(&aws.Config{
 		Credentials: credentials.AnonymousCredentials,
 		Region:      aws.String("us-east-1"),
 	})
 	svc := s3.New(sess)
-	bucket := aws.String("noaa-nexrad-level2")
+	bucket := aws.String("unidata-nexrad-level2")
 
+	// Helper to list all objects for a given day prefix
+	listDay := func(day time.Time) ([]*s3.Object, error) {
+		prefix := day.Format("2006/01/02/") + site
+		var token *string
+		objs := make([]*s3.Object, 0, 1024)
+		for {
+			resp, err := svc.ListObjectsV2(&s3.ListObjectsV2Input{
+				Bucket:            bucket,
+				Prefix:            aws.String(prefix),
+				ContinuationToken: token,
+			})
+			if err != nil {
+				return nil, err
+			}
+			objs = append(objs, resp.Contents...)
+			if resp.IsTruncated == nil || !*resp.IsTruncated {
+				break
+			}
+			token = resp.NextContinuationToken
+		}
+		return objs, nil
+	}
+
+	// If a date is provided
+	if dateParam != "" {
+		if strings.EqualFold(dateParam, "latest") {
+			// Gather latest up to 100 scans, going back across days
+			now := time.Now().UTC()
+			objects := make([]*s3.Object, 0, 200)
+			// Limit how far back to search to avoid excessive listing; usually a day or two suffices
+			for i := 0; i < 7 && len(objects) < 100; i++ {
+				day := now.AddDate(0, 0, -i)
+				objs, err := listDay(day)
+				if err != nil {
+					c.AbortWithError(http.StatusInternalServerError, err)
+					return
+				}
+				objects = append(objects, objs...)
+			}
+			// Sort by LastModified asc
+			sort.Slice(objects, func(i, j int) bool {
+				ti := time.Time{}
+				tj := time.Time{}
+				if objects[i].LastModified != nil {
+					ti = *objects[i].LastModified
+				}
+				if objects[j].LastModified != nil {
+					tj = *objects[j].LastModified
+				}
+				return ti.Before(tj)
+			})
+			if len(objects) > 100 {
+				objects = objects[len(objects)-100:]
+			}
+			files := make([]string, 0, len(objects))
+			for _, o := range objects {
+				if o.Key == nil {
+					continue
+				}
+				files = append(files, filepath.Base(*o.Key))
+			}
+			// Return newest-first for convenience
+			c.JSON(200, files)
+			return
+		}
+		// Parse YYYYMMDD
+		t, err := time.Parse("20060102", dateParam)
+		if err != nil {
+			c.AbortWithError(http.StatusBadRequest, errors.New("Invalid date format, expected YYYYMMDD or 'latest'"))
+			return
+		}
+		objs, err := listDay(t)
+		if err != nil {
+			c.AbortWithError(http.StatusInternalServerError, err)
+			return
+		}
+		files := make([]string, 0, len(objs))
+		for _, d := range objs {
+			if d.Key == nil {
+				continue
+			}
+			files = append(files, filepath.Base(*d.Key))
+		}
+		c.JSON(200, files)
+		return
+	}
+
+	// Default behavior (no date specified): current UTC day
 	now := time.Now().UTC()
-	resp, err := svc.ListObjectsV2(&s3.ListObjectsV2Input{
-		Bucket: bucket,
-		Prefix: aws.String(now.Format("2006/01/02/") + site),
-	})
+	objs, err := listDay(now)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
-
-	files := make([]string, 0, len(resp.Contents))
-	for _, d := range resp.Contents {
+	files := make([]string, 0, len(objs))
+	for _, d := range objs {
+		if d.Key == nil {
+			continue
+		}
 		files = append(files, filepath.Base(*d.Key))
 	}
-
-	// if len(files) < 30 {
-	// 	now = now.AddDate(0, 0, -1)
-	// 	resp, err = svc.ListObjectsV2(&s3.ListObjectsV2Input{
-	// 		Bucket: bucket,
-	// 		Prefix: aws.String(now.Format("2006/01/02/") + site),
-	// 	})
-	// 	if err != nil {
-	// 		c.AbortWithError(http.StatusInternalServerError, err)
-	// 		return
-	// 	}
-	// 	pastFiles := make([]string, 0, len(resp.Contents))
-	// 	for _, d := range resp.Contents {
-	// 		pastFiles = append(pastFiles, filepath.Base(*d.Key))
-	// 	}
-	// 	files = append(pastFiles, files...)
-	// }
-	//
-	// files = files[len(files)-30:]
-
 	c.JSON(200, files)
 }
 

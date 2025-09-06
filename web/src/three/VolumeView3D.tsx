@@ -8,8 +8,11 @@ type Props = {
   site: string
   file: string
   center: { lat: number; lon: number } | null
+  viewCenter?: { lat: number; lon: number } | null
+  viewZoom?: number | null
   showLabels: boolean
   showRoads: boolean
+  onViewChange?: (center: { lat: number; lon: number }, zoom: number) => void
   onLoading: (loading: boolean) => void
 }
 
@@ -43,9 +46,9 @@ function mat4Scale(m: Float32Array, x: number, y: number, z: number): Float32Arr
   return mat4Multiply(m, s)
 }
 
-type VolumeTexture2D = { tex: WebGLTexture; w: number; h: number; d: number; radiusMeters: number; heightMeters: number; baseAzDeg: number }
+type VolumeTexture2D = { tex: WebGLTexture; w: number; h: number; d: number; radiusMeters: number; innerRadiusMeters: number; heightMeters: number; baseAzDeg: number }
 
-function resamplePolarToCartesian(grid: VolumeGrid, maxDims = { x: 128, y: 128, z: 48 }): { data2D: Uint8Array; w: number; h: number; d: number; radiusMeters: number; heightMeters: number; baseAzDeg: number } {
+function resamplePolarToCartesian(grid: VolumeGrid, maxDims = { x: 128, y: 128, z: 48 }): { data2D: Uint8Array; w: number; h: number; d: number; radiusMeters: number; innerRadiusMeters: number; heightMeters: number; baseAzDeg: number } {
   const [ng, nr, ne] = grid.dims
   // Target dims (cap to max and keep square XY)
   const w = Math.min(maxDims.x, ng)
@@ -58,6 +61,7 @@ function resamplePolarToCartesian(grid: VolumeGrid, maxDims = { x: 128, y: 128, 
   const maxEl = grid.elevationAngles[grid.elevationAngles.length - 1] || 0
   const maxRange = start + gi * (ng - 1)
   const radiusMeters = maxRange
+  const innerRadiusMeters = start
   const heightMeters = Math.max(500, Math.sin(maxEl * Math.PI / 180) * maxRange)
 
   // Transfer function window (dBZ range)
@@ -85,16 +89,24 @@ function resamplePolarToCartesian(grid: VolumeGrid, maxDims = { x: 128, y: 128, 
   for (let kz = 0; kz < d; kz++) {
     const zMeters = (kz / Math.max(1, d - 1)) * heightMeters
     for (let ky = 0; ky < h; ky++) {
-      // map ky to angle uniformly [0, 2pi)
-      const azDeg = ((ky / h) * 360)
-      const azRad = (90 - azDeg) * Math.PI / 180
-      const cosA = Math.cos(azRad)
+      // map ky to radar azimuth degrees (0=N, clockwise positive)
+      const azDeg = (ky / h) * 360
+      const azRad = azDeg * Math.PI / 180
+      // Match isosurface orientation (X east, Y north) with +90° CCW correction:
+      // X = -cos(az) * r, Y = sin(az) * r
+      const negCos = -Math.cos(azRad)
       const sinA = Math.sin(azRad)
       for (let kx = 0; kx < w; kx++) {
-        // map kx to radius [0, maxRange]
+        // map kx to radius [start, maxRange]
         const rMeters = start + (kx / Math.max(1, w - 1)) * (maxRange - start)
-        const x = cosA * rMeters
+        const x = negCos * rMeters
         const y = sinA * rMeters
+        // Skip inside first valid gate to avoid artificial column at site
+        if (rMeters < start + 0.75 * gi) { data[kz * (w * h) + ky * w + kx] = 0; continue }
+        // If target height exceeds what any elevation can reach at this range, mark empty
+        const maxHAtR = Math.sin(maxEl * Math.PI / 180) * rMeters
+        const heightMargin = Math.max(150, 0.5 * gi) // meters
+        if (zMeters > maxHAtR + heightMargin) { data[kz * (w * h) + ky * w + kx] = 0; continue }
         // Infer elevation slice by matching height ~ sin(elv) * r
         const targetH = zMeters
         const elAngles = grid.elevationAngles
@@ -110,8 +122,8 @@ function resamplePolarToCartesian(grid: VolumeGrid, maxDims = { x: 128, y: 128, 
         const r = Math.sqrt(x * x + y * y)
         let gIdx = Math.round((r - start) / gi)
         if (gIdx < 0 || gIdx >= ng) { data[kz * (w * h) + ky * w + kx] = 0; continue }
-        let az = (Math.atan2(y, x) * 180 / Math.PI)
-        az = (90 - az)
+        // Inverse mapping consistent with the above XY: az = atan2(Y, -X) in degrees
+        let az = Math.atan2(y, -x) * 180 / Math.PI
         // normalize to [0,360)
         az = ((az % 360) + 360) % 360
         let j = Math.round((az - baseAz) / azRes)
@@ -131,11 +143,11 @@ function resamplePolarToCartesian(grid: VolumeGrid, maxDims = { x: 128, y: 128, 
     const dstOff = z * (w * h)
     data2D.set(data.subarray(srcOff, srcOff + w * h), dstOff)
   }
-  return { data2D, w, h, d, radiusMeters, heightMeters, baseAzDeg: baseAz }
+  return { data2D, w, h, d, radiusMeters, innerRadiusMeters, heightMeters, baseAzDeg: baseAz }
 }
 
 // Build a MapLibre custom layer that renders a 3D texture as instanced slices
-function makeVolumeLayer(id: string, getGrid: () => ReturnType<typeof buildVolumeGrid> | null, originLonLat: [number, number]): CustomLayerInterface {
+export function makeVolumeLayer(id: string, getGrid: () => ReturnType<typeof buildVolumeGrid> | null, originLonLat: [number, number], initialOpacity: number = 0.7): CustomLayerInterface {
   // WebGL1-friendly implementation using a 2D texture atlas and per-slice draws
   let gl: WebGLRenderingContext | null = null
   let program: WebGLProgram | null = null
@@ -155,6 +167,9 @@ function makeVolumeLayer(id: string, getGrid: () => ReturnType<typeof buildVolum
   let uDebugLoc: WebGLUniformLocation | null = null
   let uDbgColorLoc: WebGLUniformLocation | null = null
   let uBaseAzLoc: WebGLUniformLocation | null = null
+  let uInnerRadiusLoc: WebGLUniformLocation | null = null
+  // Dynamic UI-controlled state
+  let overlayOpacity = Math.max(0, Math.min(1, initialOpacity))
 
   const vsSrc = `
   attribute vec2 a_pos; // unit quad in XY, scaled by radius (meters)
@@ -187,6 +202,7 @@ function makeVolumeLayer(id: string, getGrid: () => ReturnType<typeof buildVolum
   uniform vec3 u_dbgColor;
   uniform float u_radius; // meters (same as VS)
   uniform float u_baseAzDeg; // atlas zero azimuth in degrees
+  uniform float u_innerRadius; // meters; startRange of radar
 
   vec3 tf(float t) {
     float r = smoothstep(0.6, 1.0, t);
@@ -202,10 +218,11 @@ function makeVolumeLayer(id: string, getGrid: () => ReturnType<typeof buildVolum
     }
     // Convert local XY meters to polar coords
     float rMeters = length(v_xyMeters);
-    if (rMeters > u_radius) discard;
-    float rN = clamp(rMeters / max(u_radius, 1.0), 0.0, 1.0);
-    // Compute azimuth where 0 deg is north (positive Y), 90 deg is east (positive X)
-    float azDeg = degrees(atan(v_xyMeters.x, v_xyMeters.y));
+    if (rMeters > u_radius || rMeters < u_innerRadius) discard;
+    float rN = clamp((rMeters - u_innerRadius) / max(u_radius - u_innerRadius, 1.0), 0.0, 1.0);
+    // Compute azimuth (0° = North, clockwise positive) consistent with isosurface orientation
+    // Inverse of X = -cos(az)*r, Y = sin(az)*r is az = atan(Y, -X)
+    float azDeg = degrees(atan(v_xyMeters.y, -v_xyMeters.x));
     if (azDeg < 0.0) azDeg += 360.0;
     // Align with atlas azimuth zero
     // atlas rows are packed from 0..360 with 0 at north; no additional offset
@@ -261,7 +278,7 @@ function makeVolumeLayer(id: string, getGrid: () => ReturnType<typeof buildVolum
     gl!.texParameteri(gl!.TEXTURE_2D, gl!.TEXTURE_WRAP_T, gl!.CLAMP_TO_EDGE)
     // LUMINANCE for single channel in WebGL1
     gl!.texImage2D(gl!.TEXTURE_2D, 0, gl!.LUMINANCE, res.w, res.h * res.d, 0, gl!.LUMINANCE, gl!.UNSIGNED_BYTE, res.data2D)
-    volume = { tex, w: res.w, h: res.h, d: res.d, radiusMeters: res.radiusMeters, heightMeters: res.heightMeters, baseAzDeg: res.baseAzDeg }
+    volume = { tex, w: res.w, h: res.h, d: res.d, radiusMeters: res.radiusMeters, innerRadiusMeters: res.innerRadiusMeters, heightMeters: res.heightMeters, baseAzDeg: res.baseAzDeg }
     try { console.log('Volume texture created', volume) } catch {}
   }
 
@@ -292,6 +309,7 @@ function makeVolumeLayer(id: string, getGrid: () => ReturnType<typeof buildVolum
       uDebugLoc = gl.getUniformLocation(program!, 'u_debug')
       uDbgColorLoc = gl.getUniformLocation(program!, 'u_dbgColor')
       uBaseAzLoc = gl.getUniformLocation(program!, 'u_baseAzDeg')
+      uInnerRadiusLoc = gl.getUniformLocation(program!, 'u_innerRadius')
     }
     if (!vbo) {
       vbo = gl.createBuffer()!
@@ -318,6 +336,8 @@ function makeVolumeLayer(id: string, getGrid: () => ReturnType<typeof buildVolum
     id,
     type: 'custom',
     renderingMode: '2d',
+    // Custom helper for external updates
+    setOpacity(v: number) { overlayOpacity = Math.max(0, Math.min(1, v)); },
     onAdd(map: MapLibreMap, _gl: WebGLRenderingContext) {
       gl = _gl
     try { console.log('Volume layer onAdd') } catch {}
@@ -374,9 +394,10 @@ function makeVolumeLayer(id: string, getGrid: () => ReturnType<typeof buildVolum
       gl.bindTexture(gl.TEXTURE_2D, volume.tex)
       gl.uniform1i(uSamplerLoc, 0)
       gl.uniform1f(uRadiusLoc, volume.radiusMeters)
+      gl.uniform1f(uInnerRadiusLoc!, volume.innerRadiusMeters)
       gl.uniform1f(uHeightLoc, volume.heightMeters)
       gl.uniform1f(uDepthLoc, volume.d)
-      gl.uniform1f(uOpacityLoc, 0.35)
+      gl.uniform1f(uOpacityLoc, overlayOpacity)
       gl.uniform1f(uDebugLoc, 0.0)
       gl.uniform1f(uBaseAzLoc!, volume.baseAzDeg)
       gl.uniform3f(uDbgColorLoc, 0.0, 0.0, 0.0)
@@ -390,11 +411,12 @@ function makeVolumeLayer(id: string, getGrid: () => ReturnType<typeof buildVolum
   } as any
 }
 
-export default function VolumeView3D({ site, file, center, showLabels, showRoads, onLoading }: Props) {
+export default function VolumeView3D({ site, file, center, viewCenter = null, viewZoom = null, showLabels, showRoads, onLoading, onViewChange }: Props) {
   const containerRef = useRef<HTMLDivElement | null>(null)
   const mapRef = useRef<MapLibreMap | null>(null)
   const [gridState, setGridState] = useState<ReturnType<typeof buildVolumeGrid> | null>(null)
   const layerIdRef = useRef<string>('volume-layer')
+  const firstLoadRef = useRef(true)
 
   // init maplibre (run once)
   useEffect(() => {
@@ -416,8 +438,11 @@ export default function VolumeView3D({ site, file, center, showLabels, showRoads
     const map = new maplibregl.Map({
       container: containerRef.current,
       style,
-      center: center ? [center.lon, center.lat] : [-98, 39],
-      zoom: 5,
+      center: (viewCenter || center) ? [
+        (viewCenter || center)!.lon,
+        (viewCenter || center)!.lat,
+      ] : [-98, 39],
+      zoom: viewZoom ?? 5,
       pitch: 60,
       maxZoom: 11,
       minZoom: 3,
@@ -427,6 +452,17 @@ export default function VolumeView3D({ site, file, center, showLabels, showRoads
     try { console.log('VolumeView3D: map created') } catch {}
     map.on('load', () => { try { console.log('VolumeView3D: map load event') } catch {} })
     map.on('error', (e: any) => { try { console.error('MapLibre error', e && e.error || e) } catch {} })
+    // propagate view changes to parent
+    map.on('moveend', () => {
+      if (!onViewChange) return
+      const c = map.getCenter()
+      onViewChange({ lat: c.lat, lon: c.lng }, map.getZoom())
+    })
+    map.on('zoomend', () => {
+      if (!onViewChange) return
+      const c = map.getCenter()
+      onViewChange({ lat: c.lat, lon: c.lng }, map.getZoom())
+    })
     return () => {
       if (mapRef.current) mapRef.current.remove()
       mapRef.current = null
@@ -481,8 +517,9 @@ export default function VolumeView3D({ site, file, center, showLabels, showRoads
         const custom = makeVolumeLayer(id, () => gridState || grid, [originLon as number, originLat as number])
         map.addLayer(custom)
         try { console.log('VolumeView3D: custom layer added') } catch {}
-        // Fit view (once)
-        if (center) {
+        // If parent hasn't provided a persisted view, optionally fit to radar center once
+        if (firstLoadRef.current && !viewCenter && center) {
+          firstLoadRef.current = false
           map.easeTo({ center: [center.lon, center.lat], zoom: Math.max(map.getZoom(), 6), duration: 400 })
         }
       } catch (e) {

@@ -14,16 +14,19 @@ export type Iso3DClientProps = {
   threshold: number
   color: [number, number, number, number]
   center: { lat: number; lon: number } | null
+  viewCenter?: { lat: number; lon: number } | null
+  viewZoom?: number | null
   showLabels: boolean
   showRoads: boolean
   onLoading: (loading: boolean) => void
+  onViewChange?: (center: { lat: number; lon: number }, zoom: number) => void
 }
 
 const ESRI_IMG = 'https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'
 const ESRI_LABELS = 'https://services.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}'
 const ESRI_ROADS = 'https://services.arcgisonline.com/ArcGIS/rest/services/Reference/World_Transportation/MapServer/tile/{z}/{y}/{x}'
 
-export default function IsoView3DClient({ site, file, threshold, color, center, showLabels, showRoads, onLoading }: Iso3DClientProps) {
+export default function IsoView3DClient({ site, file, threshold, color, center, viewCenter = null, viewZoom = null, showLabels, showRoads, onLoading, onViewChange }: Iso3DClientProps) {
   const containerRef = useRef<HTMLDivElement | null>(null)
   const mapRef = useRef<MapLibreMap | null>(null)
   const overlayRef = useRef<MapboxOverlay | null>(null)
@@ -36,8 +39,12 @@ export default function IsoView3DClient({ site, file, threshold, color, center, 
   // Keep latest center/color in refs to avoid stale closures inside worker onmessage
   const centerRef = useRef<Iso3DClientProps['center']>(center)
   const colorRef = useRef<Iso3DClientProps['color']>(color)
-  // Track last posted job to avoid redundant worker work
-  const lastJobRef = useRef<{ thr: number; color: string; center: string } | null>(null)
+  // Track last posted job to avoid redundant worker work (only threshold+center matter)
+  const lastJobRef = useRef<{ thr: number; center: string } | null>(null)
+  // Cache last geometry for restyling without recomputation
+  const meshRef = useRef<{ positions: Float32Array; indices: Uint32Array } | null>(null)
+  // Track whether a recompute is in-flight; used to defer color updates
+  const inFlightRef = useRef(false)
 
   useEffect(() => { centerRef.current = center }, [center])
   useEffect(() => { colorRef.current = color }, [color])
@@ -60,8 +67,11 @@ export default function IsoView3DClient({ site, file, threshold, color, center, 
     const map = new maplibregl.Map({
       container: containerRef.current,
       style,
-      center: center ? [center.lon, center.lat] : [-98, 39],
-      zoom: 5,
+      center: (viewCenter || center) ? [
+        (viewCenter || center)!.lon,
+        (viewCenter || center)!.lat,
+      ] : [-98, 39],
+      zoom: viewZoom ?? 5,
       pitch: 60,
       maxZoom: 11,
       minZoom: 3,
@@ -71,6 +81,17 @@ export default function IsoView3DClient({ site, file, threshold, color, center, 
     overlayRef.current = new MapboxOverlay({ interleaved: true, layers: [] })
     map.addControl(overlayRef.current)
     setInitialized(true)
+    // propagate view changes to parent
+    map.on('moveend', () => {
+      if (!onViewChange) return
+      const c = map.getCenter()
+      onViewChange({ lat: c.lat, lon: c.lng }, map.getZoom())
+    })
+    map.on('zoomend', () => {
+      if (!onViewChange) return
+      const c = map.getCenter()
+      onViewChange({ lat: c.lat, lon: c.lng }, map.getZoom())
+    })
     // spin up worker for iso generation
     try {
       workerRef.current = new Worker(new URL('./isoWorker.ts', import.meta.url), { type: 'module' })
@@ -83,11 +104,14 @@ export default function IsoView3DClient({ site, file, threshold, color, center, 
         const curCenter = centerRef.current
         const curColor = colorRef.current
         if (!map || !overlay || !curCenter) return
+        const pos = new Float32Array(positions)
+        const idx = new Uint32Array(indices)
+        meshRef.current = { positions: pos, indices: idx }
         const mesh = {
-          attributes: { POSITION: { value: new Float32Array(positions), size: 3 } },
-          indices: new Uint32Array(indices),
+          attributes: { POSITION: { value: pos, size: 3 } },
+          indices: idx,
         }
-        const lid = `${layerIdRef.current}-${id}`
+        const lid = layerIdRef.current
         const layer = new SimpleMeshLayer({
           id: lid,
           data: [0],
@@ -102,14 +126,18 @@ export default function IsoView3DClient({ site, file, threshold, color, center, 
           _normalsEnabled: false,
         } as any)
         overlay.setProps({ layers: [layer] })
+        try { console.log('Iso3DClient: worker result applied, set loading=false') } catch {}
+        inFlightRef.current = false
         onLoading(false)
       }
       workerRef.current.onerror = (err: any) => {
         try { console.error('iso worker error', err?.message || err) } catch {}
+        inFlightRef.current = false
         onLoading(false)
       }
       ;(workerRef.current as any).onmessageerror = (err: any) => {
         try { console.error('iso worker message error', err?.message || err) } catch {}
+        inFlightRef.current = false
         onLoading(false)
       }
     } catch {}
@@ -122,6 +150,7 @@ export default function IsoView3DClient({ site, file, threshold, color, center, 
       mapRef.current = null
       if (workerRef.current) { workerRef.current.terminate(); workerRef.current = null }
       // Ensure spinner clears if component unmounts while loading
+      inFlightRef.current = false
       onLoading(false)
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -154,6 +183,7 @@ export default function IsoView3DClient({ site, file, threshold, color, center, 
         const grid = buildVolumeGrid(results)
         gridRef.current = grid
         const mesh = generateIsosurface(grid, threshold)
+        meshRef.current = { positions: mesh.positions, indices: mesh.indices }
         if (mesh.positions.length === 0) {
           console.warn('Iso: empty mesh (no crossings at threshold)')
         }
@@ -179,28 +209,32 @@ export default function IsoView3DClient({ site, file, threshold, color, center, 
         overlayRef.current!.setProps({ layers: [layer] })
         try { console.log('Iso3DClient: grid built + mesh, set loading=false') } catch {}
         onLoading(false)
-        map.easeTo({ center: [center.lon, center.lat], zoom: Math.max(map.getZoom(), 6), duration: 400 })
+        // If parent hasn't provided a persisted view, optionally fit to radar center once
+        if (!viewCenter && center) {
+          map.easeTo({ center: [center.lon, center.lat], zoom: Math.max(map.getZoom(), 6), duration: 400 })
+        }
       } catch (e) {
         if (genRef.current === myGen) { try { console.log('Iso3DClient: grid build error, set loading=false') } catch {}; onLoading(false) }
       }
     })()
   }, [site, file, center])
 
-  // Recompute iso on threshold/color change without refetching (use worker to avoid jank)
+  // Recompute iso on threshold/center change without refetching (use worker to avoid jank)
   useEffect(() => {
     const map = mapRef.current
     const overlay = overlayRef.current
     const grid = gridRef.current
     if (!map || !overlay || !center || !grid) return
-    // Avoid redundant posts if nothing materially changed
-    const jobKey = { thr: threshold, color: color.join(','), center: `${center.lat.toFixed(6)},${center.lon.toFixed(6)}` }
+    // Avoid redundant posts if nothing materially changed (ignore color-only changes)
+    const jobKey = { thr: threshold, center: `${center.lat.toFixed(6)},${center.lon.toFixed(6)}` }
     const last = lastJobRef.current
-    if (last && last.thr === jobKey.thr && last.color === jobKey.color && last.center === jobKey.center) {
+    if (last && last.thr === jobKey.thr && last.center === jobKey.center) {
       return
     }
     lastJobRef.current = jobKey
     const id = ++taskIdRef.current
     try { console.log('Iso3DClient: posting worker job', { id, threshold }) } catch {}
+    inFlightRef.current = true
     onLoading(true)
     const copied = grid.data.buffer.slice(0)
     const pg = {
@@ -217,7 +251,8 @@ export default function IsoView3DClient({ site, file, threshold, color, center, 
       workerRef.current.postMessage({ id, type: 'iso', grid: pg, threshold })
     } else {
       const mesh = generateIsosurface(grid, threshold)
-      const lid = `${layerIdRef.current}-${Date.now()}`
+      meshRef.current = { positions: mesh.positions, indices: mesh.indices }
+      const lid = layerIdRef.current
       const layer = new SimpleMeshLayer({
         id: lid,
         data: [0],
@@ -236,9 +271,39 @@ export default function IsoView3DClient({ site, file, threshold, color, center, 
       } as any)
       overlay.setProps({ layers: [layer] })
       try { console.log('Iso3DClient: worker result applied, set loading=false') } catch {}
+      inFlightRef.current = false
       onLoading(false)
     }
-  }, [threshold, color, center])
+  }, [threshold, center])
+
+  // If only color/opacity changes, update layer without recomputing geometry
+  useEffect(() => {
+    const map = mapRef.current
+    const overlay = overlayRef.current
+    const curCenter = centerRef.current
+    const curMesh = meshRef.current
+    if (!map || !overlay || !curCenter || !curMesh) return
+    // If a recompute is in-flight, do not update the existing mesh color.
+    // We want the old mesh to keep its old color until the new mesh is ready.
+    if (inFlightRef.current) return
+    const layer = new SimpleMeshLayer({
+      id: layerIdRef.current,
+      data: [0],
+      mesh: {
+        attributes: { POSITION: { value: curMesh.positions, size: 3 } },
+        indices: curMesh.indices,
+      },
+      getPosition: () => [0, 0, 0],
+      coordinateSystem: COORDINATE_SYSTEM.METER_OFFSETS,
+      coordinateOrigin: [curCenter.lon, curCenter.lat],
+      getColor: color,
+      opacity: color[3] / 255,
+      pickable: false,
+      wireframe: false,
+      _normalsEnabled: false,
+    } as any)
+    overlay.setProps({ layers: [layer] })
+  }, [color])
 
   return <div ref={containerRef} className="absolute inset-0" />
 }
