@@ -16,6 +16,10 @@ type Props = {
   onViewChange: (center: [number, number], zoom: number) => void
   showLabels?: boolean
   showRoads?: boolean
+  onLoadingChange?: (loading: boolean) => void
+  showLoadingOverlay?: boolean
+  crossfadeMs?: number
+  loaderDebounceMs?: number
 }
 
 function ViewSync({ center, zoom, onViewChange }: { center: [number, number], zoom: number, onViewChange: (c:[number,number], z:number)=>void }) {
@@ -70,12 +74,50 @@ function Panes() {
   return null
 }
 
-export default function MapView({ imageUrl, opacity = 0.9, basemap = 'satellite', center, zoom, onViewChange, showLabels = true, showRoads = false }: Props) {
-  const [imageLoading, setImageLoading] = React.useState(false)
+export default function MapView({ imageUrl, opacity = 0.9, basemap = 'satellite', center, zoom, onViewChange, showLabels = true, showRoads = false, onLoadingChange, showLoadingOverlay = true, crossfadeMs = 20, loaderDebounceMs = 150 }: Props) {
+  // Double-buffer overlays to avoid blanking: keep base visible until top is loaded, then crossfade
+  const [baseUrl, setBaseUrl] = React.useState<string | undefined>(imageUrl)
+  const [topUrl, setTopUrl] = React.useState<string | undefined>(undefined)
+  const [topOpacity, setTopOpacity] = React.useState(0)
+  const fadeRef = React.useRef<number | null>(null)
+  const showTimerRef = React.useRef<number | null>(null)
+  const [loadingActive, setLoadingActive] = React.useState(false)
+  const [loadingVisible, setLoadingVisible] = React.useState(false)
+
+  // Handle new image requests
   React.useEffect(() => {
-    if (imageUrl) setImageLoading(true)
-    else setImageLoading(false)
+    if (!imageUrl) {
+      setBaseUrl(undefined)
+      setTopUrl(undefined)
+      setTopOpacity(0)
+      setLoadingActive(false)
+      if (showTimerRef.current) { window.clearTimeout(showTimerRef.current); showTimerRef.current = null }
+      setLoadingVisible(false)
+      onLoadingChange && onLoadingChange(false)
+      return
+    }
+    // First image ever
+    if (!baseUrl) {
+      setBaseUrl(imageUrl)
+      setTopUrl(undefined)
+      setTopOpacity(0)
+      return
+    }
+    // If the requested image is already the base, nothing to do
+    if (imageUrl === baseUrl) return
+    // If a different top is in progress, replace it
+    setTopUrl(imageUrl)
+    setTopOpacity(0)
+    setLoadingActive(true)
+    if (showTimerRef.current) { window.clearTimeout(showTimerRef.current); showTimerRef.current = null }
+    showTimerRef.current = window.setTimeout(() => {
+      setLoadingVisible(true)
+      onLoadingChange && onLoadingChange(true)
+      showTimerRef.current = null
+    }, loaderDebounceMs)
   }, [imageUrl])
+
+  React.useEffect(() => () => { if (fadeRef.current) cancelAnimationFrame(fadeRef.current) }, [])
   return (
     <MapContainer
       center={center}
@@ -132,22 +174,68 @@ export default function MapView({ imageUrl, opacity = 0.9, basemap = 'satellite'
           pane='roads'
         />
       )}
-      {imageUrl && (
+      {/* Base overlay stays visible during loading */}
+      {baseUrl && (
         <ImageOverlay
-          key={imageUrl}
-          url={imageUrl}
+          key={`base:${baseUrl}`}
+          url={baseUrl}
           bounds={CONUS_BOUNDS}
           opacity={opacity}
           crossOrigin={true as any}
           className="radar-img"
           pane='radar'
+        />
+      )}
+      {/* Top overlay fades in once loaded, then becomes new base */}
+      {topUrl && (
+        <ImageOverlay
+          key={`top:${topUrl}`}
+          url={topUrl}
+          bounds={CONUS_BOUNDS}
+          opacity={Math.max(0, Math.min(1, topOpacity)) * opacity}
+          crossOrigin={true as any}
+          className="radar-img"
+          pane='radar'
           eventHandlers={{
-            load: () => setImageLoading(false),
-            error: () => setImageLoading(false),
+            load: () => {
+              // Fade in
+              const start = performance.now()
+              const step = (t: number) => {
+                const dt = Math.min(1, (t - start) / Math.max(1, crossfadeMs))
+                setTopOpacity(dt)
+                if (dt < 1) {
+                  fadeRef.current = requestAnimationFrame(step)
+                } else {
+                  // Promote to base and clear top
+                  setBaseUrl(topUrl)
+                  setTopUrl(undefined)
+                  setTopOpacity(0)
+                  setLoadingActive(false)
+                  if (showTimerRef.current) { window.clearTimeout(showTimerRef.current); showTimerRef.current = null }
+                  if (loadingVisible) {
+                    setLoadingVisible(false)
+                    onLoadingChange && onLoadingChange(false)
+                  }
+                }
+              }
+              fadeRef.current = requestAnimationFrame(step)
+            },
+            error: () => {
+              // On error, just swap immediately
+              setBaseUrl(topUrl)
+              setTopUrl(undefined)
+              setTopOpacity(0)
+              setLoadingActive(false)
+              if (showTimerRef.current) { window.clearTimeout(showTimerRef.current); showTimerRef.current = null }
+              if (loadingVisible) {
+                setLoadingVisible(false)
+                onLoadingChange && onLoadingChange(false)
+              }
+            },
           }}
         />
       )}
-      {imageLoading && (
+      {loadingVisible && showLoadingOverlay && (
         <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-[1100]">
           <div className="bg-black/60 text-white text-xs rounded-md px-3 py-1 shadow flex items-center gap-2">
             <div className="h-3 w-3 border-2 border-white/50 border-t-white rounded-full animate-spin"></div>

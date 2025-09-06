@@ -88,8 +88,15 @@ func l3ListFilesHandler(c *gin.Context) {
 	}
 	defer client.Close()
 	files, _ := listGCS(c.Request.Context(), client.Bucket(L3_BUCKET), "NIDS/"+site+"/"+product+"/")
-
-	c.JSON(200, files)
+	// Filter out _MDM suffixed files
+	out := make([]string, 0, len(files))
+	for _, f := range files {
+		if isMDMFile(f) {
+			continue
+		}
+		out = append(out, f)
+	}
+	c.JSON(200, out)
 }
 
 func l3ListFilesByDateHandler(c *gin.Context) {
@@ -148,6 +155,9 @@ func l3ListFilesByDateHandler(c *gin.Context) {
 			continue
 		}
 		base := filepath.Base(hdr.Name)
+		if isMDMFile(base) {
+			continue
+		}
 		// Expect filenames like KOHX_SDUS84_N3HOHX_YYYYMMDDHHMM
 		parts := strings.Split(base, "_")
 		if len(parts) < 3 {
@@ -352,5 +362,8 @@ func l3FileRenderHandler(c *gin.Context) {
 	png, _ := ioutil.ReadAll(pngFile)
 	pngFile.Close()
 
+	// Strong client caching for immutable rendered assets
+	c.Header("Cache-Control", "public, max-age=31536000, immutable")
+	c.Header("Expires", time.Now().UTC().AddDate(1, 0, 0).Format(http.TimeFormat))
 	c.Data(http.StatusOK, "image/png", png)
 }

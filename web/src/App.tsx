@@ -18,6 +18,7 @@ import ThreeMap from './three/ThreeMap'
 import VolumeOverlay from './three/VolumeOverlay'
 import IsoOverlayClient from './three/IsoOverlayClient'
 import 'maplibre-gl/dist/maplibre-gl.css'
+import { buildVolumeGrid, type VolumeGrid } from './three/grid'
 
 export default function App() {
   // Parse initial state from URL hash
@@ -41,7 +42,12 @@ export default function App() {
     const l2date = p.get('l2date') || new Date().toISOString().slice(0,10)
     const l3mode = (p.get('l3mode') === 'archive') ? 'archive' as const : 'realtime'
     const l3date = p.get('l3date') || new Date().toISOString().slice(0,10)
-    return { ds, site, prod, file, elv, auto, base, labels, roads, lat, lon, z, l2mode, l2date, l3mode, l3date }
+    const seq = (p.get('seq') === '1' || p.get('seq') === 'true')
+    const seqlen = (() => { const v = parseInt(p.get('seqlen') || '') ; return isFinite(v) && v > 0 ? Math.min(100, Math.max(1, v)) : 5 })()
+    const rock = (p.get('rock') === '1' || p.get('rock') === 'true')
+    const fps = (() => { const v = parseFloat(p.get('fps') || '') ; return isFinite(v) ? Math.min(10, Math.max(0.25, v)) : 2 })()
+    const seqidx = (() => { const v = parseInt(p.get('seqidx') || '') ; return isFinite(v) && v >= 0 ? v : undefined })()
+    return { ds, site, prod, file, elv, auto, base, labels, roads, lat, lon, z, l2mode, l2date, l3mode, l3date, seq, seqlen, rock, fps, seqidx }
   }, [])
 
   // Store URL params as a ref to prevent re-parsing and maintain initial values
@@ -83,6 +89,7 @@ export default function App() {
     const p = new URLSearchParams(raw)
     return (p.get('mode') as ViewMode) || '2d'
   })
+  // moved up earlier
   const [threshold, setThreshold] = useState<number>(() => {
     const raw = window.location.hash.startsWith('#') ? window.location.hash.slice(1) : window.location.hash
     const p = new URLSearchParams(raw)
@@ -115,6 +122,73 @@ export default function App() {
   })
 
   const showElevation = dataSource === 'L2' && mode === '2d'
+
+  // Sequence playback state (L2 only)
+  const [sequenceEnabled, setSequenceEnabled] = useState<boolean>(init.seq)
+  const [sequenceLength, setSequenceLength] = useState<number>(init.seqlen ?? 5)
+  const [timelineIndex, setTimelineIndex] = useState<number>(init.seqidx ?? 0)
+  const [sequenceFiles, setSequenceFiles] = useState<string[]>([])
+  const [seq2DImages, setSeq2DImages] = useState<{ file: string; url: string; loaded: boolean }[]>([])
+  const [seq3DGrids, setSeq3DGrids] = useState<Record<string, VolumeGrid>>({})
+  const [twoDLoading, setTwoDLoading] = useState<boolean>(false)
+  const [isPlaying, setIsPlaying] = useState<boolean>(false)
+  const [fps, setFps] = useState<number>(init.fps ?? 2)
+  const [rock, setRock] = useState<boolean>(init.rock)
+  const playDirRef = React.useRef<1 | -1>(1)
+
+  // Playback timer
+  useEffect(() => {
+    if (!sequenceEnabled || sequenceFiles.length <= 1 || !isPlaying) return
+    const interval = Math.max(10, Math.round(1000 / Math.max(0.25, Math.min(10, fps))))
+    const id = window.setInterval(() => {
+      setTimelineIndex(i => {
+        const n = sequenceFiles.length
+        if (n <= 1) return i
+        let dir: 1 | -1 = playDirRef.current
+        let next = i + dir
+        if (rock) {
+          if (next >= n) { dir = -1; playDirRef.current = dir; next = i + dir }
+          if (next < 0) { dir = 1; playDirRef.current = dir; next = i + dir }
+        } else {
+          if (next >= n) next = 0
+          if (next < 0) next = n - 1
+        }
+        return next
+      })
+    }, interval)
+    return () => window.clearInterval(id)
+  }, [isPlaying, fps, sequenceEnabled, sequenceFiles, rock])
+
+  // Stop playback if sequence disabled or not enough frames
+  useEffect(() => {
+    if (!sequenceEnabled || sequenceFiles.length <= 1) setIsPlaying(false)
+  }, [sequenceEnabled, sequenceFiles])
+
+  // Reset direction when starting playback or toggling rock
+  useEffect(() => { if (isPlaying) playDirRef.current = 1 }, [isPlaying, rock])
+
+  // Keyboard controls: ArrowLeft/ArrowRight for prev/next frame (wrap)
+  useEffect(() => {
+    function onKeyDown(e: KeyboardEvent) {
+      if (dataSource !== 'L2' || !sequenceEnabled || sequenceFiles.length <= 1) return
+      // Ignore when typing in inputs/textareas/controls
+      const target = e.target as HTMLElement | null
+      if (target) {
+        const tag = target.tagName.toLowerCase()
+        const editable = (target as any).isContentEditable || tag === 'input' || tag === 'textarea' || tag === 'select'
+        if (editable) return
+      }
+      if (e.key === 'ArrowLeft') {
+        e.preventDefault(); e.stopPropagation(); (e as any).stopImmediatePropagation?.()
+        setTimelineIndex(i => (i - 1 + sequenceFiles.length) % sequenceFiles.length)
+      } else if (e.key === 'ArrowRight') {
+        e.preventDefault(); e.stopPropagation(); (e as any).stopImmediatePropagation?.()
+        setTimelineIndex(i => (i + 1) % sequenceFiles.length)
+      }
+    }
+    window.addEventListener('keydown', onKeyDown, { capture: true })
+    return () => window.removeEventListener('keydown', onKeyDown, { capture: true } as any)
+  }, [dataSource, sequenceEnabled, sequenceFiles])
 
   // Load sites when data source changes
   useEffect(() => {
@@ -430,6 +504,13 @@ export default function App() {
     if (dataSource === 'L2') {
       p.set('l2mode', l2Mode)
       if (l2Mode === 'archive') p.set('l2date', l2Date)
+      if (sequenceEnabled) {
+        p.set('seq', '1')
+        p.set('seqlen', String(sequenceLength))
+        if (rock) p.set('rock', '1')
+        p.set('fps', String(Math.round(fps * 100) / 100))
+        p.set('seqidx', String(timelineIndex))
+      }
     } else if (dataSource === 'L3') {
       p.set('l3mode', l3Mode)
       if (l3Mode === 'archive') p.set('l3date', l3Date)
@@ -440,28 +521,37 @@ export default function App() {
     }
   }, [dataSource, site, product, file, elevation, basemap, mapCenter, mapZoom, showLabels, showRoads, mode, effectiveThreshold, showIso, isoOpacity, l2Mode, l2Date, l3Mode, l3Date])
 
-  // Auto-jump to selected site when zoomed out enough.
-  // If zoomed in beyond 7, don't move. If at/below 7, recenter; if below 7, also zoom to 7.
+  // Jump to selected site immediately on change (2D + prime 3D view), independent of image load.
   useEffect(() => {
     if (!site) return
     const coord = siteCoords[site]
     if (!coord) return
-    if (mapZoom > 7) return
+    // Always recenter 2D map; only bump zoom up if too low
     setMapCenter([coord.lat, coord.lon])
-    if (mapZoom < 7) setMapZoom(7)
-  }, [site, siteCoords, mapZoom])
+    setMapZoom(z => (z < 7 ? 7 : z))
+    // Prime 3D view as well so it doesn't wait for data
+    setMap3DCenter({ lat: coord.lat, lon: coord.lon })
+    setMap3DZoom(z => (z == null || z < 6 ? 6 : z))
+  }, [site, siteCoords])
 
   // Auto refresh removed
 
+  // image URL for 2D view (respects sequence when enabled)
   const imageUrl = useMemo(() => {
     if (!site || !file) return undefined
     if (dataSource === 'L2') {
+      if (sequenceEnabled && mode === '2d' && sequenceFiles.length > 0) {
+        const f = sequenceFiles[Math.max(0, Math.min(sequenceFiles.length - 1, timelineIndex))]
+        const elv = elevation || 1
+        const prod = (product === 'vel' ? 'vel' : 'ref') as 'ref' | 'vel'
+        return l2RenderUrl(site, f, prod, elv)
+      }
       const elv = elevation || 1
       const prod = (product === 'vel' ? 'vel' : 'ref') as 'ref' | 'vel'
       return l2RenderUrl(site, file, prod, elv)
     }
     return l3RenderUrl(site, product, file, l3Mode === 'archive' ? l3Date.replace(/-/g, '') : undefined)
-  }, [dataSource, site, file, product, elevation, l3Mode, l3Date])
+  }, [dataSource, site, file, product, elevation, l3Mode, l3Date, sequenceEnabled, sequenceFiles, timelineIndex, mode])
 
   // Ensure 3D mode uses L2 + ref and fetch center
   useEffect(() => {
@@ -475,6 +565,19 @@ export default function App() {
     if (!site || !file) return
     fetchL2RadialCenter(site, file).then(setL2Center).catch(() => setL2Center(null))
   }, [mode, site, file])
+
+  // Update 3D center when using sequence and timeline changes
+  const currentSeqFile3D = useMemo(() => {
+    if (mode !== '3d' || !sequenceEnabled || sequenceFiles.length === 0) return null
+    return sequenceFiles[Math.max(0, Math.min(sequenceFiles.length - 1, timelineIndex))]
+  }, [mode, sequenceEnabled, sequenceFiles, timelineIndex])
+  useEffect(() => {
+    if (mode !== '3d') return
+    if (!site) return
+    const f = currentSeqFile3D
+    if (!f) return
+    fetchL2RadialCenter(site, f).then(setL2Center).catch(() => setL2Center(null))
+  }, [mode, site, currentSeqFile3D])
 
   function dbzColorNOAA(dbz: number): [number, number, number] {
     if (dbz < 5.0) return [0x00,0x00,0x00]
@@ -503,6 +606,8 @@ export default function App() {
     return [r, g, b, Math.round(isoOpacity * 255)] as [number, number, number, number]
   }, [isoColor, isoOpacity])
 
+  // (sequence state declared above)
+
   // Debounce threshold changes: fire after 2s or on commit
   useEffect(() => {
     if (mode !== '3d') return
@@ -519,6 +624,86 @@ export default function App() {
     }
   }, [threshold, mode])
 
+  // Compute sequence files when selection/settings change
+  useEffect(() => {
+    if (!sequenceEnabled || dataSource !== 'L2' || !file || files.length === 0) {
+      setSequenceFiles([])
+      setTimelineIndex(0)
+      return
+    }
+    const sorted = [...files].sort()
+    const idx = sorted.indexOf(file)
+    if (idx === -1) { setSequenceFiles([]); setTimelineIndex(0); return }
+    const start = Math.max(0, idx - sequenceLength)
+    const slice = sorted.slice(start, idx + 1)
+    setSequenceFiles(slice)
+    const desired = urlParams.current.seqidx
+    if (typeof desired === 'number') {
+      setTimelineIndex(Math.max(0, Math.min(slice.length - 1, desired)))
+    } else {
+      setTimelineIndex(slice.length - 1)
+    }
+  }, [sequenceEnabled, sequenceLength, files, file, dataSource])
+
+  // Preload 2D images for sequence (parallel)
+  useEffect(() => {
+    if (!sequenceEnabled || mode !== '2d' || dataSource !== 'L2' || !site || sequenceFiles.length === 0) {
+      setSeq2DImages([])
+      return
+    }
+    const elv = elevation || 1
+    const prod = (product === 'vel' ? 'vel' : 'ref') as 'ref' | 'vel'
+    const entries = sequenceFiles.map(f => ({ file: f, url: l2RenderUrl(site, f, prod, elv), loaded: false }))
+    setSeq2DImages(entries)
+    entries.forEach((ent, i) => {
+      const img = new Image()
+      img.crossOrigin = 'anonymous'
+      img.onload = () => setSeq2DImages(prev => {
+        const copy = [...prev]
+        if (copy[i] && copy[i].file === ent.file) copy[i] = { ...copy[i], loaded: true }
+        return copy
+      })
+      img.src = ent.url
+    })
+  }, [sequenceEnabled, mode, dataSource, site, sequenceFiles, elevation, product])
+
+  // Preload 3D grids for sequence (parallel)
+  useEffect(() => {
+    if (!sequenceEnabled || mode !== '3d' || dataSource !== 'L2' || !site || sequenceFiles.length === 0) {
+      setSeq3DGrids({})
+      return
+    }
+    let cancelled = false
+    setThreeLoading(true)
+    ;(async () => {
+      try {
+        const pairs = await Promise.all(sequenceFiles.map(async (fn) => {
+          try {
+            const meta = await fetchL2Meta(site!, fn)
+            const elevations = (meta?.ElevationChunks || [])
+              .map((arr: number[], idx: number) => (arr && arr.length > 0) ? idx + 1 : 0)
+              .filter((e: number) => e > 0)
+            const results = await Promise.all(
+              elevations.map((elv: number) => fetchL2Radial(site!, fn, 'ref', elv))
+            )
+            if (cancelled) return [fn, null] as const
+            const grid = buildVolumeGrid(results)
+            return [fn, grid] as const
+          } catch {
+            return [fn, null] as const
+          }
+        }))
+        if (cancelled) return
+        const obj: Record<string, VolumeGrid> = {}
+        for (const [fn, grid] of pairs) if (grid) obj[fn] = grid
+        setSeq3DGrids(obj)
+      } finally {
+        if (!cancelled) setThreeLoading(false)
+      }
+    })()
+    return () => { cancelled = true }
+  }, [sequenceEnabled, mode, dataSource, site, sequenceFiles])
+
   return (
     <div className="h-full w-full">
       {mode === '2d' ? (
@@ -530,6 +715,9 @@ export default function App() {
           onViewChange={(c, z) => { setMapCenter(c); setMapZoom(z) }}
           showLabels={showLabels}
           showRoads={showRoads}
+          onLoadingChange={(l) => setTwoDLoading(l)}
+          showLoadingOverlay={!(dataSource === 'L2' && sequenceEnabled && sequenceFiles.length > 1)}
+          crossfadeMs={20}
         />
       ) : (
         <>
@@ -546,26 +734,28 @@ export default function App() {
                 <VolumeOverlay
                   map={map}
                   site={site!}
-                  file={file!}
+                  file={(sequenceEnabled && sequenceFiles.length > 0) ? sequenceFiles[Math.max(0, Math.min(sequenceFiles.length - 1, timelineIndex))] : file!}
                   center={l2Center}
                   opacity={volumeOpacity}
                   onLoading={setThreeLoading}
+                  precomputedGrid={(sequenceEnabled && sequenceFiles.length > 0) ? seq3DGrids[sequenceFiles[Math.max(0, Math.min(sequenceFiles.length - 1, timelineIndex))]] : undefined}
                 />
                 {showIso && (
                   <IsoOverlayClient
                     map={map}
                     site={site!}
-                    file={file!}
+                    file={(sequenceEnabled && sequenceFiles.length > 0) ? sequenceFiles[Math.max(0, Math.min(sequenceFiles.length - 1, timelineIndex))] : file!}
                     threshold={effectiveThreshold}
                     color={isoRgba}
                     center={l2Center}
                     onLoading={setThreeLoading}
+                    precomputedGrid={(sequenceEnabled && sequenceFiles.length > 0) ? seq3DGrids[sequenceFiles[Math.max(0, Math.min(sequenceFiles.length - 1, timelineIndex))]] : undefined}
                   />
                 )}
               </>
             )}
           </ThreeMap>
-          {threeLoading && (
+          {threeLoading && !(dataSource === 'L2' && sequenceEnabled && sequenceFiles.length > 1) && (
             <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-[1100]">
               <div className="bg-black/60 text-white text-xs rounded-md px-3 py-1 shadow flex items-center gap-2">
                 <div className="h-3 w-3 border-2 border-white/50 border-t-white rounded-full animate-spin"></div>
@@ -642,7 +832,65 @@ export default function App() {
           }
           setEffectiveThreshold(threshold)
         }}
+        sequenceEnabled={sequenceEnabled}
+        onSequenceEnabledChange={(v) => setSequenceEnabled(v)}
+        sequenceLength={sequenceLength}
+        onSequenceLengthChange={(n) => setSequenceLength(Math.max(1, Math.min(100, n)))}
       />
+
+      {/* Unified loading indicator above frame slider when sequence enabled */}
+      {dataSource === 'L2' && sequenceEnabled && sequenceFiles.length > 1 && (
+        // Show while any frame in the sequence is still loading (counts) or current overlay loading
+        ((mode === '2d' && (seq2DImages.filter(e => e.loaded).length < sequenceFiles.length)) ||
+         (mode === '3d' && (Object.keys(seq3DGrids).length < sequenceFiles.length)) ||
+         (mode === '2d' && twoDLoading) || (mode === '3d' && threeLoading))
+      ) && (
+        <div className="absolute bottom-16 left-1/2 -translate-x-1/2 z-[1100]">
+          <div className="bg-black/60 text-white text-xs rounded-md px-3 py-1 shadow flex items-center gap-2">
+            <div className="h-3 w-3 border-2 border-white/50 border-t-white rounded-full animate-spin"></div>
+            <span>
+              {(() => {
+                const total = sequenceFiles.length
+                const loaded = (mode === '2d')
+                  ? seq2DImages.filter(e => e.loaded).length
+                  : Object.keys(seq3DGrids).length
+                return `Rendering radar… ${loaded}/${total}`
+              })()}
+            </span>
+          </div>
+        </div>
+      )}
+
+      {dataSource === 'L2' && sequenceEnabled && sequenceFiles.length > 1 && (
+        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-[1100]">
+          <div className="bg-black/60 text-white text-xs rounded-md px-3 py-2 shadow flex items-center gap-3">
+            <button className="px-2 py-1 bg-white/10 rounded" onClick={() => setTimelineIndex(i => (i - 1 + Math.max(1, sequenceFiles.length)) % Math.max(1, sequenceFiles.length))}>Prev</button>
+            <button className="px-2 py-1 bg-white/10 rounded" onClick={() => setIsPlaying(p => !p)}>{isPlaying ? 'Pause' : 'Play'}</button>
+            <button className="px-2 py-1 bg-white/10 rounded" onClick={() => setTimelineIndex(i => (i + 1) % Math.max(1, sequenceFiles.length))}>Next</button>
+            <button className="px-2 py-1 bg-white/10 rounded" onClick={() => setFps(f => Math.max(0.25, Math.round((f - 0.25) * 4) / 4))}>Slow</button>
+            <button className="px-2 py-1 bg-white/10 rounded" onClick={() => setFps(f => Math.min(10, Math.round((f + 0.25) * 4) / 4))}>Fast</button>
+            <span className="opacity-80">{fps.toFixed(2)}x</span>
+            <label className="inline-flex items-center gap-2 opacity-80">
+              <input type="checkbox" checked={rock} onChange={e => setRock(e.target.checked)} /> Rock
+            </label>
+            <span className="opacity-80">Frame</span>
+            <input
+              type="range"
+              min={0}
+              max={Math.max(0, sequenceFiles.length - 1)}
+              step={1}
+              value={timelineIndex}
+              onChange={(e) => setTimelineIndex(parseInt(e.target.value))}
+              className="w-64"
+            />
+            <span className="opacity-80 w-12 text-right">{timelineIndex + 1}/{sequenceFiles.length}</span>
+            <span className="opacity-80">File</span>
+            <span className="font-mono text-[11px] bg-white/10 px-2 py-0.5 rounded max-w-[420px] overflow-hidden text-ellipsis whitespace-nowrap" title={sequenceFiles[Math.max(0, Math.min(sequenceFiles.length - 1, timelineIndex))]}>
+              {sequenceFiles[Math.max(0, Math.min(sequenceFiles.length - 1, timelineIndex))]}
+            </span>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import type { Map as MapLibreMap } from 'maplibre-gl'
 import { fetchL2Meta, fetchL2Radial } from '../api/radar'
 import type { RadialSet } from '../types'
-import { buildVolumeGrid } from './grid'
+import { buildVolumeGrid, type VolumeGrid } from './grid'
 import { makeVolumeLayer } from './VolumeView3D'
 
 type Props = {
@@ -12,9 +12,10 @@ type Props = {
   center: { lat: number; lon: number } | null
   opacity?: number
   onLoading: (l: boolean) => void
+  precomputedGrid?: VolumeGrid | null
 }
 
-export default function VolumeOverlay({ map, site, file, center, opacity = 0.7, onLoading }: Props) {
+export default function VolumeOverlay({ map, site, file, center, opacity = 0.7, onLoading, precomputedGrid }: Props) {
   const [gridState, setGridState] = useState<ReturnType<typeof buildVolumeGrid> | null>(null)
   const layerIdRef = useRef<string>('volume-layer')
   const layerRef = useRef<any | null>(null)
@@ -25,15 +26,19 @@ export default function VolumeOverlay({ map, site, file, center, opacity = 0.7, 
     onLoading(true)
     ;(async () => {
       try {
-        const meta = await fetchL2Meta(site, file)
-        const elevations = (meta?.ElevationChunks || [])
-          .map((arr: number[], idx: number) => (arr && arr.length > 0) ? idx + 1 : 0)
-          .filter((e: number) => e > 0)
-        const results: RadialSet[] = await Promise.all(
-          elevations.map((elv: number) => fetchL2Radial(site, file, 'ref', elv))
-        )
-        if (cancelled) return
-        const grid = buildVolumeGrid(results)
+        let grid: VolumeGrid | null = precomputedGrid ?? null
+        if (!grid) {
+          const meta = await fetchL2Meta(site, file)
+          const elevations = (meta?.ElevationChunks || [])
+            .map((arr: number[], idx: number) => (arr && arr.length > 0) ? idx + 1 : 0)
+            .filter((e: number) => e > 0)
+          const results: RadialSet[] = await Promise.all(
+            elevations.map((elv: number) => fetchL2Radial(site, file, 'ref', elv))
+          )
+          if (cancelled) return
+          grid = buildVolumeGrid(results)
+        }
+        if (cancelled || !grid) return
         setGridState(grid)
         const id = layerIdRef.current
         if (map.getLayer(id)) map.removeLayer(id)
@@ -41,11 +46,12 @@ export default function VolumeOverlay({ map, site, file, center, opacity = 0.7, 
         let originLon = center?.lon
         let originLat = center?.lat
         if (originLon === undefined || originLat === undefined) {
-          const cFromData = (results && results.length > 0) ? { lon: results[0].Lon, lat: results[0].Lat } : null
+          // Use map center if not provided; precomputed grid lacks lon/lat context
+          const cFromData = null as any
           originLon = originLon ?? cFromData?.lon ?? map.getCenter().lng
           originLat = originLat ?? cFromData?.lat ?? map.getCenter().lat
         }
-        const custom: any = makeVolumeLayer(id, () => gridState || grid, [originLon as number, originLat as number], opacity)
+        const custom: any = makeVolumeLayer(id, () => gridState || grid!, [originLon as number, originLat as number], opacity)
         layerRef.current = custom
         map.addLayer(custom)
       } catch (e) {
@@ -62,7 +68,7 @@ export default function VolumeOverlay({ map, site, file, center, opacity = 0.7, 
       layerRef.current = null
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [map, site, file])
+  }, [map, site, file, precomputedGrid])
 
   // Opacity updates: adjust uniform via layer method without rebuilding
   useEffect(() => {

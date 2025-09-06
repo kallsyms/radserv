@@ -5,7 +5,7 @@ import { SimpleMeshLayer } from '@deck.gl/mesh-layers'
 import { COORDINATE_SYSTEM } from '@deck.gl/core'
 import { fetchL2Meta, fetchL2Radial } from '../api/radar'
 import type { RadialSet } from '../types'
-import { buildVolumeGrid } from './grid'
+import { buildVolumeGrid, type VolumeGrid } from './grid'
 import { generateIsosurface } from './marchingCubes'
 
 type Props = {
@@ -16,9 +16,10 @@ type Props = {
   color: [number, number, number, number]
   center: { lat: number; lon: number } | null
   onLoading: (l: boolean) => void
+  precomputedGrid?: VolumeGrid | null
 }
 
-export default function IsoOverlayClient({ map, site, file, threshold, color, center, onLoading }: Props) {
+export default function IsoOverlayClient({ map, site, file, threshold, color, center, onLoading, precomputedGrid }: Props) {
   const overlayRef = useRef<MapboxOverlay | null>(null)
   const genRef = useRef(0)
   const gridRef = useRef<ReturnType<typeof buildVolumeGrid> | null>(null)
@@ -44,17 +45,22 @@ export default function IsoOverlayClient({ map, site, file, threshold, color, ce
     const myGen = ++genRef.current
     ;(async () => {
       try {
-        const meta = await fetchL2Meta(site, file)
-        const elevations = (meta?.ElevationChunks || [])
-          .map((arr: number[], idx: number) => (arr && arr.length > 0) ? idx + 1 : 0)
-          .filter((e: number) => e > 0)
-        const results: RadialSet[] = await Promise.all(
-          elevations.map((elv: number) => fetchL2Radial(site, file, 'ref', elv))
-        )
-        if (genRef.current !== myGen) return
-        const grid = buildVolumeGrid(results)
+        let grid: VolumeGrid | null = precomputedGrid ?? null
+        if (!grid) {
+          const meta = await fetchL2Meta(site, file)
+          const elevations = (meta?.ElevationChunks || [])
+            .map((arr: number[], idx: number) => (arr && arr.length > 0) ? idx + 1 : 0)
+            .filter((e: number) => e > 0)
+          const results: RadialSet[] = await Promise.all(
+            elevations.map((elv: number) => fetchL2Radial(site, file, 'ref', elv))
+          )
+          if (genRef.current !== myGen) return
+          grid = buildVolumeGrid(results)
+        }
+        if (genRef.current !== myGen || !grid) return
+        const gridLocal = grid
         gridRef.current = grid
-        const mesh = generateIsosurface(grid, threshold)
+        const mesh = generateIsosurface(gridLocal, threshold)
         meshRef.current = { positions: mesh.positions, indices: mesh.indices }
         const layer = new SimpleMeshLayer({
           id: layerIdRef.current,

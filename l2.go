@@ -123,7 +123,11 @@ func l2ListFilesHandler(c *gin.Context) {
 				if o.Key == nil {
 					continue
 				}
-				files = append(files, filepath.Base(*o.Key))
+				base := filepath.Base(*o.Key)
+				if isMDMFile(base) {
+					continue
+				}
+				files = append(files, base)
 			}
 			// Return newest-first for convenience
 			c.JSON(200, files)
@@ -145,7 +149,11 @@ func l2ListFilesHandler(c *gin.Context) {
 			if d.Key == nil {
 				continue
 			}
-			files = append(files, filepath.Base(*d.Key))
+			base := filepath.Base(*d.Key)
+			if isMDMFile(base) {
+				continue
+			}
+			files = append(files, base)
 		}
 		c.JSON(200, files)
 		return
@@ -163,7 +171,11 @@ func l2ListFilesHandler(c *gin.Context) {
 		if d.Key == nil {
 			continue
 		}
-		files = append(files, filepath.Base(*d.Key))
+		base := filepath.Base(*d.Key)
+		if isMDMFile(base) {
+			continue
+		}
+		files = append(files, base)
 	}
 	c.JSON(200, files)
 }
@@ -268,5 +280,9 @@ func l2FileRenderHandler(c *gin.Context) {
 	png, _ := ioutil.ReadAll(pngFile)
 	pngFile.Close()
 
+	// Strong client caching: rendered outputs are immutable per file/product/elevation
+	c.Header("Cache-Control", "public, max-age=31536000, immutable")
+	// Optional Expires header for intermediaries that honor it
+	c.Header("Expires", time.Now().UTC().AddDate(1, 0, 0).Format(http.TimeFormat))
 	c.Data(http.StatusOK, "image/png", png)
 }

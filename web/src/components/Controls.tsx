@@ -55,6 +55,12 @@ type Props = {
   threshold: number
   onThresholdChange: (v: number) => void
   onThresholdCommit: () => void
+
+  // Sequence playback
+  sequenceEnabled?: boolean
+  onSequenceEnabledChange?: (v: boolean) => void
+  sequenceLength?: number
+  onSequenceLengthChange?: (v: number) => void
 }
 
 export default function Controls(props: Props) {
@@ -180,6 +186,43 @@ export default function Controls(props: Props) {
         </select>
         {props.loadingFiles && <span className="text-xs text-gray-500 dark:text-gray-400">Loading…</span>}
       </div>
+
+      {/* Image Sequence toggle and settings */}
+      {props.dataSource === 'L2' && (
+        <div className="pl-24 space-y-2">
+          <label className="inline-flex items-center gap-2 text-xs text-gray-700 dark:text-gray-300">
+            <input
+              type="checkbox"
+              checked={!!props.sequenceEnabled}
+              onChange={e => props.onSequenceEnabledChange && props.onSequenceEnabledChange(e.target.checked)}
+            />
+            Image Sequence
+          </label>
+          {props.sequenceEnabled && (
+            <div className="flex gap-2 items-center">
+              <label className="text-xs text-gray-600 dark:text-gray-300 w-24">Frames (prev)</label>
+              <input
+                type="range"
+                min={1}
+                max={50}
+                step={1}
+                value={props.sequenceLength ?? 5}
+                onChange={e => props.onSequenceLengthChange && props.onSequenceLengthChange(parseInt(e.target.value))}
+                className="flex-1"
+              />
+              <input
+                type="number"
+                min={1}
+                max={100}
+                step={1}
+                value={props.sequenceLength ?? 5}
+                onChange={e => props.onSequenceLengthChange && props.onSequenceLengthChange(Math.max(1, Math.min(100, parseInt(e.target.value) || 1)))}
+                className="w-20 border rounded px-2 py-1 text-sm bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100"
+              />
+            </div>
+          )}
+        </div>
+      )}
 
       {props.showElevation && (
         <div className="flex gap-2 items-center">
