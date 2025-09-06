@@ -55,19 +55,21 @@ export default function Controls(props: Props) {
         </select>
       </div>
 
-      <div className="flex gap-2 items-center">
-        <label className="text-xs text-gray-600 dark:text-gray-300 w-24">Mode</label>
-        <div className="flex-1 grid grid-cols-2 gap-2">
-          <button
-            className={`px-2 py-1 rounded border text-sm ${props.mode==='2d'?'bg-blue-600 text-white border-blue-600':'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700'}`}
-            onClick={() => props.onModeChange('2d')}
-          >2D</button>
-          <button
-            className={`px-2 py-1 rounded border text-sm ${props.mode==='3d'?'bg-blue-600 text-white border-blue-600':'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700'}`}
-            onClick={() => props.onModeChange('3d')}
-          >3D</button>
+      {props.dataSource === 'L2' && (
+        <div className="flex gap-2 items-center">
+          <label className="text-xs text-gray-600 dark:text-gray-300 w-24">Mode</label>
+          <div className="flex-1 grid grid-cols-2 gap-2">
+            <button
+              className={`px-2 py-1 rounded border text-sm ${props.mode==='2d'?'bg-blue-600 text-white border-blue-600':'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700'}`}
+              onClick={() => props.onModeChange('2d')}
+            >2D</button>
+            <button
+              className={`px-2 py-1 rounded border text-sm ${props.mode==='3d'?'bg-blue-600 text-white border-blue-600':'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700'}`}
+              onClick={() => props.onModeChange('3d')}
+            >3D</button>
+          </div>
         </div>
-      </div>
+      )}
 
       <div className="flex gap-2 items-center">
         <label className="text-xs text-gray-600 dark:text-gray-300 w-24">Site</label>

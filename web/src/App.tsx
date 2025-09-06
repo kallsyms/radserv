@@ -248,16 +248,15 @@ export default function App() {
     }
   }, [dataSource, site, product, file, elevation, basemap, mapCenter, mapZoom, showLabels, showRoads, mode, effectiveThreshold])
 
-  // Auto-jump to selected site when zoomed out enough.
-  // If zoomed in beyond 7, don't move. If at/below 7, recenter; if below 7, also zoom to 7.
+  // Fly to newly selected site immediately (don't re-run on zoom changes)
   useEffect(() => {
     if (!site) return
     const coord = siteCoords[site]
     if (!coord) return
-    if (mapZoom > 7) return
     setMapCenter([coord.lat, coord.lon])
-    if (mapZoom < 7) setMapZoom(7)
-  }, [site, siteCoords, mapZoom])
+    // Ensure a reasonable zoom on jump, but don't react to later zoom changes
+    setMapZoom(z => (z < 7 ? 7 : z))
+  }, [site, siteCoords])
 
   // Auto refresh removed
 
@@ -278,11 +277,26 @@ export default function App() {
     if (product !== 'ref') setProduct('ref')
   }, [mode])
 
+  // Safeguard: if switching to L3 while in 3D, force back to 2D
+  useEffect(() => {
+    if (dataSource === 'L3' && mode === '3d') {
+      setMode('2d')
+    }
+  }, [dataSource, mode])
+
   useEffect(() => {
     if (mode !== '3d') return
     if (!site || !file) return
     fetchL2RadialCenter(site, file).then(setL2Center).catch(() => setL2Center(null))
   }, [mode, site, file])
+
+  // In 3D, set an immediate center from KML site coords while waiting for radial center
+  useEffect(() => {
+    if (mode !== '3d') return
+    if (!site) return
+    const coord = siteCoords[site]
+    if (coord) setL2Center({ lat: coord.lat, lon: coord.lon })
+  }, [mode, site, siteCoords])
 
   function dbzColorNOAA(dbz: number): [number, number, number] {
     if (dbz < 5.0) return [0x00,0x00,0x00]

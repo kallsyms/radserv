@@ -27,7 +27,8 @@ function ViewSync({ center, zoom, onViewChange }: { center: [number, number], zo
     const sameCenter = Math.abs(cur.lat - center[0]) < 1e-6 && Math.abs(cur.lng - center[1]) < 1e-6
     const sameZoom = Math.abs(cz - zoom) < 1e-6
     if (!sameCenter || !sameZoom) {
-      map.setView({ lat: center[0], lng: center[1] }, zoom, { animate: false })
+      // Smoothly fly to the requested center/zoom
+      map.flyTo({ lat: center[0], lng: center[1] }, zoom, { animate: true, duration: 0.8 })
     }
   }, [center, zoom, map])
 

@@ -114,5 +114,12 @@ export default function IsoView3D({ site, file, threshold, color, center, showLa
     // nothing to cleanup beyond deck overlay replacement
   }, [site, file, threshold, center])
 
+  // Fly to center as soon as it changes
+  useEffect(() => {
+    const map = mapRef.current
+    if (!map || !center) return
+    map.easeTo({ center: [center.lon, center.lat], zoom: Math.max(map.getZoom(), 6), duration: 600 })
+  }, [center])
+
   return <div ref={containerRef} className="absolute inset-0" />
 }
