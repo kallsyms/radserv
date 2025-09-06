@@ -1,4 +1,4 @@
-FROM golang:1.17-alpine
+FROM golang:1.25-alpine
 
 RUN apk add gcc musl-dev gdal-dev
 

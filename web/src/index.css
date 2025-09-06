@@ -1,0 +1,22 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Leaflet default styles */
+@import url('leaflet/dist/leaflet.css');
+
+/* App layout helpers */
+html, body, #root { height: 100%; }
+
+/* Reduce visible seams between raster tiles during zoom */
+.leaflet-container { background: #000; }
+/* Only darken base tiles to hide seams; keep overlays transparent */
+.leaflet-base-pane .leaflet-tile { background-color: #000; border: 0; outline: 0; }
+.leaflet-pane, .leaflet-layer { will-change: transform; }
+
+/* Keep radar image pixels crisp when scaling */
+.radar-img {
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+}

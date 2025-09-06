@@ -5,121 +5,188 @@ import (
 	"image"
 	"image/color"
 	"image/draw"
+	pngenc "image/png"
 	"io"
 	"math"
 	"os"
+	"strconv"
 
+	"github.com/airbusgeo/godal"
 	"github.com/llgcode/draw2d"
-	"github.com/lukeroth/gdal"
-
 	"github.com/llgcode/draw2d/draw2dimg"
+	"github.com/sirupsen/logrus"
 )
 
 func RenderAndReproject(rs *RadialSet, lut func(float64) color.Color, width, height int) io.ReadCloser {
-	intermediateSize := 1000 // width and height of initial rendered image before projection
-	renderDS := getRenderDS(rs, intermediateSize, lut)
-	defer renderDS.DS.Close()
+	godal.RegisterAll()
 
-	// TODO: we don't need warpedImg anymore since we use GDAL translate to convert to PNG
-	// is there some other format/backend that would be faster for GDAL just to hold between warp and translate?
-	warpedImg := image.NewRGBA(image.Rect(0, 0, width, height))
-	warpedDS := makeImageDS(warpedImg)
-	defer warpedDS.DS.Close()
+	// 1) Render the radial set to an RGBA image in Azimuthal Equidistant
+	intermediateSize := 1000 // initial render size before reprojection
+	renderImg := render(rs, intermediateSize, lut)
 
-	spatialRef := gdal.CreateSpatialReference("")
-	spatialRef.FromEPSG(3857)
-	srString, _ := spatialRef.ToWKT()
-	warpedDS.DS.SetProjection(srString)
+	// 2) Create a MEM dataset with 4 bands (RGBA) and write pixels band-by-band
+	srcDS, err := godal.Create(godal.DriverName("MEM"), "", 4, godal.Byte, renderImg.Rect.Dx(), renderImg.Rect.Dy())
+	if err != nil {
+		// fallback: try vsimem GTiff if MEM driver unavailable
+		srcDS, err = godal.Create(godal.GTiff, "/vsimem/src.tif", 4, godal.Byte, renderImg.Rect.Dx(), renderImg.Rect.Dy())
+		if err != nil {
+			// last resort: return Go-encoded PNG of the unwarped render
+			f, _ := os.CreateTemp("", "*.png")
+			_ = pngenc.Encode(f, renderImg)
+			return f
+		}
+	}
+	defer srcDS.Close()
 
-	// gdaltransform -s_srs epsg:4326 -t_srs epsg:3857
-	// -125 50
-	// -13914936.3491592 6446275.84101716 0
+	// Set source dataset projection (Azimuthal Equidistant centered on radar) and geotransform
+	srWKT := azimuthalEquidistantWKT(rs.Lat, rs.Lon)
+	sr, _ := godal.NewSpatialRefFromWKT(srWKT)
+	defer sr.Close()
+	_ = srcDS.SetSpatialRef(sr)
+
+	distM := float64(rs.Radius)
+	pixStepM := distM * 2.0 / float64(renderImg.Rect.Dx())
+	_ = srcDS.SetGeoTransform([6]float64{-distM, pixStepM, 0, distM, 0, -pixStepM})
+
+	// Deinterleave RGBA into per-band planes and write bands
+	w := renderImg.Rect.Dx()
+	h := renderImg.Rect.Dy()
+	rplane := make([]byte, w*h)
+	gplane := make([]byte, w*h)
+	bplane := make([]byte, w*h)
+	aplane := make([]byte, w*h)
+	idx := 0
+	for y := 0; y < h; y++ {
+		row := renderImg.Pix[y*renderImg.Stride : y*renderImg.Stride+w*4]
+		for x := 0; x < w; x++ {
+			rplane[idx] = row[x*4+0]
+			gplane[idx] = row[x*4+1]
+			bplane[idx] = row[x*4+2]
+			aplane[idx] = row[x*4+3]
+			idx++
+		}
+	}
+	bands := srcDS.Bands()
+	// Set band color interpretations so -srcalpha is recognized
+	_ = bands[0].SetColorInterp(godal.CIRed)
+	_ = bands[1].SetColorInterp(godal.CIGreen)
+	_ = bands[2].SetColorInterp(godal.CIBlue)
+	_ = bands[3].SetColorInterp(godal.CIAlpha)
+	if err := bands[0].Write(0, 0, rplane, w, h); err != nil {
+		logrus.Errorf("band0 write: %v", err)
+	}
+	if err := bands[1].Write(0, 0, gplane, w, h); err != nil {
+		logrus.Errorf("band1 write: %v", err)
+	}
+	if err := bands[2].Write(0, 0, bplane, w, h); err != nil {
+		logrus.Errorf("band2 write: %v", err)
+	}
+	if err := bands[3].Write(0, 0, aplane, w, h); err != nil {
+		logrus.Errorf("band3 write: %v", err)
+	}
+
+	// 3) Warp to EPSG:3857 with the CONUS extent and desired output size
+	// Bounds from previous implementation (Web Mercator meters)
 	upperLeftX := -13914936.3491592
 	upperLeftY := 6446275.84101716
-	// -65 25
-	// -7235766.90156278 2875744.62435224 0
 	lowerRightX := -7235766.90156278
 	lowerRightY := 2875744.62435224
-	warpedDS.DS.SetGeoTransform([6]float64{
-		upperLeftX,
-		(lowerRightX - upperLeftX) / float64(warpedDS.Image.Rect.Dx()),
-		0,
-		upperLeftY,
-		0,
-		(lowerRightY - upperLeftY) / float64(warpedDS.Image.Rect.Dy()),
-	})
 
-	gdal.Warp("", &warpedDS.DS, []gdal.Dataset{renderDS.DS}, []string{
+	warpSwitches := []string{
+		"-of", "MEM", // in-memory output dataset
+		"-t_srs", "EPSG:3857",
+		"-te_srs", "EPSG:3857",
 		"-srcalpha",
 		"-dstalpha",
-	})
+		"-ts", strconv.Itoa(width), strconv.Itoa(height),
+		"-te",
+		fmt.Sprintf("%f", upperLeftX),
+		fmt.Sprintf("%f", lowerRightY),
+		fmt.Sprintf("%f", lowerRightX),
+		fmt.Sprintf("%f", upperLeftY),
+	}
+	// Create an in-memory warped dataset (no filename) in EPSG:3857
+	warpedDS, err := godal.Warp("", []*godal.Dataset{srcDS}, warpSwitches)
+	if err != nil {
+		logrus.Errorf("godal.Warp failed: %v", err)
+		f, _ := os.CreateTemp("", "*.png")
+		_ = pngenc.Encode(f, renderImg)
+		return f
+	}
+	defer warpedDS.Close()
 
-	// Use gdal.Translate instead of go's png.Encode. Seems to be ~1.6x faster (600ms instead of 1000ms)
-	png, _ := os.CreateTemp("", "*.png")
-	gdal.Translate(png.Name(), warpedDS.DS, []string{})
-
-	return png
+	// 4) Translate to PNG into a temp file name, then open and return the reader
+	tmpf, _ := os.CreateTemp("", "*.png")
+	tmpname := tmpf.Name()
+	tmpf.Close()
+	outDS, err := warpedDS.Translate(tmpname, []string{"-of", "PNG"})
+	if err != nil {
+		logrus.Errorf("godal.Translate failed: %v", err)
+		// Fallback: read back bands and encode with Go's PNG
+		w := width
+		h := height
+		planes := make([][]byte, 4)
+		planes[0] = make([]byte, w*h)
+		planes[1] = make([]byte, w*h)
+		planes[2] = make([]byte, w*h)
+		planes[3] = make([]byte, w*h)
+		bnds := warpedDS.Bands()
+		if len(bnds) >= 4 {
+			_ = bnds[0].Read(0, 0, planes[0], w, h)
+			_ = bnds[1].Read(0, 0, planes[1], w, h)
+			_ = bnds[2].Read(0, 0, planes[2], w, h)
+			_ = bnds[3].Read(0, 0, planes[3], w, h)
+			img := image.NewRGBA(image.Rect(0, 0, w, h))
+			for y := 0; y < h; y++ {
+				for x := 0; x < w; x++ {
+					i := y*w + x
+					off := y*img.Stride + x*4
+					img.Pix[off+0] = planes[0][i]
+					img.Pix[off+1] = planes[1][i]
+					img.Pix[off+2] = planes[2][i]
+					img.Pix[off+3] = planes[3][i]
+				}
+			}
+			f, _ := os.CreateTemp("", "*.png")
+			_ = pngenc.Encode(f, img)
+			return f
+		}
+		// If we can't read bands, still return a valid (empty) PNG
+		f, _ := os.CreateTemp("", "*.png")
+		_ = pngenc.Encode(f, image.NewRGBA(image.Rect(0, 0, w, h)))
+		return f
+	}
+	outDS.Close()
+	f, _ := os.Open(tmpname)
+	return f
 }
 
 // little helper to keep both a GDAL dataset and the DS's backing Image together
 // both for convenience but also to make sure the DS's backing memory doesn't get GCd
-type imageDS struct {
-	DS    gdal.Dataset
-	Image *image.RGBA
-}
-
-func getRenderDS(rs *RadialSet, imageSize int, lut func(float64) color.Color) imageDS {
-	renderImg := render(rs, imageSize, lut)
-	renderDS := makeImageDS(renderImg)
-
-	// from pyart's projection: https://github.com/ARM-DOE/pyart/blob/master/pyart/io/output_to_geotiff.py#L119
-	renderDS.DS.SetProjection(fmt.Sprintf(
+// Build WKT for an Azimuthal Equidistant projection centered on given lat/lon
+func azimuthalEquidistantWKT(lat, lon float64) string {
+	return fmt.Sprintf(
 		`PROJCS[
-			"unnamed",
-			GEOGCS[
-				"WGS 84",
-				DATUM[
-					"unknown",
-					SPHEROID["WGS84",6378137,298.257223563]
-				],
-				PRIMEM["Greenwich",0],
-				UNIT["degree",0.0174532925199433]
-			],
-			PROJECTION["Azimuthal_Equidistant"],
-			PARAMETER["latitude_of_center",%f],
-			PARAMETER["longitude_of_center",%f],
-			PARAMETER["false_easting",0],
-			PARAMETER["false_northing",0],
-			UNIT["metre",1,AUTHORITY["EPSG","9001"]]
-		]`,
-		rs.Lat,
-		rs.Lon,
-	))
-
-	distM := float64(rs.Radius)
-	pixStepM := distM * 2.0 / float64(renderImg.Rect.Dx())
-	renderDS.DS.SetGeoTransform([6]float64{-distM, pixStepM, 0, distM, 0, -pixStepM})
-
-	// sanity check renderDS was loaded properly
-	// gdal.Translate("/tmp/o.png", renderDS.DS, []string{})
-
-	return renderDS
-}
-
-func makeImageDS(warpedImg *image.RGBA) imageDS {
-	warpedDSName := fmt.Sprintf(
-		"MEM:::DATAPOINTER=%p,PIXELS=%d,LINES=%d,BANDS=4,DATATYPE=Byte,PIXELOFFSET=4,BANDOFFSET=1",
-		&warpedImg.Pix[0],
-		warpedImg.Rect.Dx(),
-		warpedImg.Rect.Dy(),
+            "unnamed",
+            GEOGCS[
+                "WGS 84",
+                DATUM[
+                    "unknown",
+                    SPHEROID["WGS84",6378137,298.257223563]
+                ],
+                PRIMEM["Greenwich",0],
+                UNIT["degree",0.0174532925199433]
+            ],
+            PROJECTION["Azimuthal_Equidistant"],
+            PARAMETER["latitude_of_center",%f],
+            PARAMETER["longitude_of_center",%f],
+            PARAMETER["false_easting",0],
+            PARAMETER["false_northing",0],
+            UNIT["metre",1,AUTHORITY["EPSG","9001"]]
+        ]`,
+		lat,
+		lon,
 	)
-
-	warpedDS, _ := gdal.Open(warpedDSName, gdal.Update)
-
-	return imageDS{
-		warpedDS,
-		warpedImg,
-	}
 }
 
 func render(rs *RadialSet, imageSize int, lut func(float64) color.Color) *image.RGBA {

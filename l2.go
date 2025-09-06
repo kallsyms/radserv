@@ -70,24 +70,24 @@ func l2ListFilesHandler(c *gin.Context) {
 		files = append(files, filepath.Base(*d.Key))
 	}
 
-	if len(files) < 30 {
-		now = now.AddDate(0, 0, -1)
-		resp, err = svc.ListObjectsV2(&s3.ListObjectsV2Input{
-			Bucket: bucket,
-			Prefix: aws.String(now.Format("2006/01/02/") + site),
-		})
-		if err != nil {
-			c.AbortWithError(http.StatusInternalServerError, err)
-			return
-		}
-		pastFiles := make([]string, 0, len(resp.Contents))
-		for _, d := range resp.Contents {
-			pastFiles = append(pastFiles, filepath.Base(*d.Key))
-		}
-		files = append(pastFiles, files...)
-	}
-
-	files = files[len(files)-30:]
+	// if len(files) < 30 {
+	// 	now = now.AddDate(0, 0, -1)
+	// 	resp, err = svc.ListObjectsV2(&s3.ListObjectsV2Input{
+	// 		Bucket: bucket,
+	// 		Prefix: aws.String(now.Format("2006/01/02/") + site),
+	// 	})
+	// 	if err != nil {
+	// 		c.AbortWithError(http.StatusInternalServerError, err)
+	// 		return
+	// 	}
+	// 	pastFiles := make([]string, 0, len(resp.Contents))
+	// 	for _, d := range resp.Contents {
+	// 		pastFiles = append(pastFiles, filepath.Base(*d.Key))
+	// 	}
+	// 	files = append(pastFiles, files...)
+	// }
+	//
+	// files = files[len(files)-30:]
 
 	c.JSON(200, files)
 }
@@ -184,6 +184,9 @@ func l2FileRenderHandler(c *gin.Context) {
 		return
 	}
 	lut := render.DefaultLUT(product)
+	if _, ok := c.GetQuery("nolut"); ok {
+		lut = render.DefaultLUT("")
+	}
 
 	pngFile := render.RenderAndReproject(r, lut, 6000, 2600)
 	png, _ := ioutil.ReadAll(pngFile)

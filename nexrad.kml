@@ -1,0 +1,4052 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://earth.google.com/kml/2.2">
+<Document>
+<name>NEXRAD</name>
+<Placemark id="1">
+<name>EGLIN AFB</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KEVX</td></tr>
+<tr><td>STATE FL</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 30.565033</td></tr>
+<tr><td>LONGITUDE -85.921667</td></tr>
+<tr><td>ELEVATION 221.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KEVX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-85.921667,30.565033</coordinates>
+</Point>
+</Placemark>
+<Placemark id="2">
+<name>AUSTIN SAN ANTONIO</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KEWX</td></tr>
+<tr><td>STATE TX</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 29.704055999999998</td></tr>
+<tr><td>LONGITUDE -98.028611</td></tr>
+<tr><td>ELEVATION 767.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KEWX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-98.028611,29.704055999999998</coordinates>
+</Point>
+</Placemark>
+<Placemark id="3">
+<name>MELBOURNE</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KMLB</td></tr>
+<tr><td>STATE FL</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 28.113194</td></tr>
+<tr><td>LONGITUDE -80.654083</td></tr>
+<tr><td>ELEVATION 149.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KMLB">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-80.654083,28.113194</coordinates>
+</Point>
+</Placemark>
+<Placemark id="4">
+<name>RENO</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KRGX</td></tr>
+<tr><td>STATE NV</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 39.754056</td></tr>
+<tr><td>LONGITUDE -119.462028</td></tr>
+<tr><td>ELEVATION 8396.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KRGX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-119.462028,39.754056</coordinates>
+</Point>
+</Placemark>
+<Placemark id="5">
+<name>MOODY AFB</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KVAX</td></tr>
+<tr><td>STATE GA</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 30.890278</td></tr>
+<tr><td>LONGITUDE -83.001806</td></tr>
+<tr><td>ELEVATION 330.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KVAX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-83.001806,30.890278</coordinates>
+</Point>
+</Placemark>
+<Placemark id="6">
+<name>CHICAGO MIDWAY</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:TMDW</td></tr>
+<tr><td>STATE IL</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 41.651111</td></tr>
+<tr><td>LONGITUDE -87.73</td></tr>
+<tr><td>ELEVATION 764.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:TMDW">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-87.73,41.651111</coordinates>
+</Point>
+</Placemark>
+<Placemark id="7">
+<name>NEW ORLEANS</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:TMSY</td></tr>
+<tr><td>STATE LA</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 30.021943999999998</td></tr>
+<tr><td>LONGITUDE -90.40305599999999</td></tr>
+<tr><td>ELEVATION 98.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:TMSY">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-90.40305599999999,30.021943999999998</coordinates>
+</Point>
+</Placemark>
+<Placemark id="8">
+<name>DOVER AFB</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KDOX</td></tr>
+<tr><td>STATE DE</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 38.825767</td></tr>
+<tr><td>LONGITUDE -75.440117</td></tr>
+<tr><td>ELEVATION 164.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KDOX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-75.440117,38.825767</coordinates>
+</Point>
+</Placemark>
+<Placemark id="9">
+<name>ALBANY</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KENX</td></tr>
+<tr><td>STATE NY</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 42.586555999999995</td></tr>
+<tr><td>LONGITUDE -74.064083</td></tr>
+<tr><td>ELEVATION 1935.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KENX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-74.064083,42.586555999999995</coordinates>
+</Point>
+</Placemark>
+<Placemark id="10">
+<name>CEDAR CITY</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KICX</td></tr>
+<tr><td>STATE UT</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 37.591049999999996</td></tr>
+<tr><td>LONGITUDE -112.862183</td></tr>
+<tr><td>ELEVATION 10757.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KICX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-112.862183,37.591049999999996</coordinates>
+</Point>
+</Placemark>
+<Placemark id="11">
+<name>PHOENIX</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KIWA</td></tr>
+<tr><td>STATE AZ</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 33.289232999999996</td></tr>
+<tr><td>LONGITUDE -111.669917</td></tr>
+<tr><td>ELEVATION 1426.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KIWA">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-111.669917,33.289232999999996</coordinates>
+</Point>
+</Placemark>
+<Placemark id="12">
+<name>ST LOUIS</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KLSX</td></tr>
+<tr><td>STATE MO</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 38.698611</td></tr>
+<tr><td>LONGITUDE -90.682778</td></tr>
+<tr><td>ELEVATION 722.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KLSX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-90.682778,38.698611</coordinates>
+</Point>
+</Placemark>
+<Placemark id="13">
+<name>OMAHA</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KOAX</td></tr>
+<tr><td>STATE NE</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 41.320369</td></tr>
+<tr><td>LONGITUDE -96.36681899999999</td></tr>
+<tr><td>ELEVATION 1262.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KOAX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-96.36681899999999,41.320369</coordinates>
+</Point>
+</Placemark>
+<Placemark id="14">
+<name>KEY W</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KBYX</td></tr>
+<tr><td>STATE FL</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 24.5975</td></tr>
+<tr><td>LONGITUDE -81.703167</td></tr>
+<tr><td>ELEVATION 89.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KBYX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-81.703167,24.5975</coordinates>
+</Point>
+</Placemark>
+<Placemark id="15">
+<name>DALLAS</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KFWS</td></tr>
+<tr><td>STATE TX</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 32.573</td></tr>
+<tr><td>LONGITUDE -97.30315</td></tr>
+<tr><td>ELEVATION 777.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KFWS">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-97.30315,32.573</coordinates>
+</Point>
+</Placemark>
+<Placemark id="16">
+<name>LAKE CHARLES</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KLCH</td></tr>
+<tr><td>STATE LA</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 30.125306</td></tr>
+<tr><td>LONGITUDE -93.21588899999999</td></tr>
+<tr><td>ELEVATION 137.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KLCH">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-93.21588899999999,30.125306</coordinates>
+</Point>
+</Placemark>
+<Placemark id="17">
+<name>MEDFORD</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KMAX</td></tr>
+<tr><td>STATE OR</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 42.081168999999996</td></tr>
+<tr><td>LONGITUDE -122.71736899999999</td></tr>
+<tr><td>ELEVATION 7561.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KMAX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-122.71736899999999,42.081168999999996</coordinates>
+</Point>
+</Placemark>
+<Placemark id="18">
+<name>PADUCAH</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KPAH</td></tr>
+<tr><td>STATE KY</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 37.068332999999996</td></tr>
+<tr><td>LONGITUDE -88.77194399999999</td></tr>
+<tr><td>ELEVATION 506.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KPAH">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-88.77194399999999,37.068332999999996</coordinates>
+</Point>
+</Placemark>
+<Placemark id="19">
+<name>RIVERTON</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KRIW</td></tr>
+<tr><td>STATE WY</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 43.066089</td></tr>
+<tr><td>LONGITUDE -108.4773</td></tr>
+<tr><td>ELEVATION 5633.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KRIW">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-108.4773,43.066089</coordinates>
+</Point>
+</Placemark>
+<Placemark id="20">
+<name>SHREVEPORT</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KSHV</td></tr>
+<tr><td>STATE LA</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 32.450832999999996</td></tr>
+<tr><td>LONGITUDE -93.84125</td></tr>
+<tr><td>ELEVATION 387.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KSHV">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-93.84125,32.450832999999996</coordinates>
+</Point>
+</Placemark>
+<Placemark id="21">
+<name>HOUSTON INTL</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:TIAH</td></tr>
+<tr><td>STATE TX</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 30.065</td></tr>
+<tr><td>LONGITUDE -95.56694399999999</td></tr>
+<tr><td>ELEVATION 253.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:TIAH">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-95.56694399999999,30.065</coordinates>
+</Point>
+</Placemark>
+<Placemark id="22">
+<name>ORLANDO INTL</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:TMCO</td></tr>
+<tr><td>STATE FL</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 28.343888999999997</td></tr>
+<tr><td>LONGITUDE -81.326111</td></tr>
+<tr><td>ELEVATION 171.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:TMCO">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-81.326111,28.343888999999997</coordinates>
+</Point>
+</Placemark>
+<Placemark id="23">
+<name>DENVER FRONT RANGE AP</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KFTG</td></tr>
+<tr><td>STATE CO</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 39.786639</td></tr>
+<tr><td>LONGITUDE -104.545806</td></tr>
+<tr><td>ELEVATION 5611.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KFTG">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-104.545806,39.786639</coordinates>
+</Point>
+</Placemark>
+<Placemark id="24">
+<name>GREER</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KGSP</td></tr>
+<tr><td>STATE SC</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 34.883306</td></tr>
+<tr><td>LONGITUDE -82.219833</td></tr>
+<tr><td>ELEVATION 1069.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KGSP">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-82.219833,34.883306</coordinates>
+</Point>
+</Placemark>
+<Placemark id="25">
+<name>PORTLAND</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KGYX</td></tr>
+<tr><td>STATE ME</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 43.891306</td></tr>
+<tr><td>LONGITUDE -70.256361</td></tr>
+<tr><td>ELEVATION 474.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KGYX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-70.256361,43.891306</coordinates>
+</Point>
+</Placemark>
+<Placemark id="26">
+<name>LINCOLN</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KILX</td></tr>
+<tr><td>STATE IL</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 40.1505</td></tr>
+<tr><td>LONGITUDE -89.336792</td></tr>
+<tr><td>ELEVATION 731.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KILX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-89.336792,40.1505</coordinates>
+</Point>
+</Placemark>
+<Placemark id="27">
+<name>FT WAYNE</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KIWX</td></tr>
+<tr><td>STATE IN</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 41.358610999999996</td></tr>
+<tr><td>LONGITUDE -85.7</td></tr>
+<tr><td>ELEVATION 1056.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KIWX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-85.7,41.358610999999996</coordinates>
+</Point>
+</Placemark>
+<Placemark id="28">
+<name>STERLING</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KLWX</td></tr>
+<tr><td>STATE VA</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 38.976110999999996</td></tr>
+<tr><td>LONGITUDE -77.4875</td></tr>
+<tr><td>ELEVATION 404.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KLWX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-77.4875,38.976110999999996</coordinates>
+</Point>
+</Placemark>
+<Placemark id="29">
+<name>MOREHEAD CITY</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KMHX</td></tr>
+<tr><td>STATE NC</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 34.775908</td></tr>
+<tr><td>LONGITUDE -76.876189</td></tr>
+<tr><td>ELEVATION 145.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KMHX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-76.876189,34.775908</coordinates>
+</Point>
+</Placemark>
+<Placemark id="30">
+<name>MAXWELL AFB</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KMXX</td></tr>
+<tr><td>STATE AL</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 32.53665</td></tr>
+<tr><td>LONGITUDE -85.78975</td></tr>
+<tr><td>ELEVATION 560.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KMXX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-85.78975,32.53665</coordinates>
+</Point>
+</Placemark>
+<Placemark id="31">
+<name>SPRINGFIELD</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KSGF</td></tr>
+<tr><td>STATE MO</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 37.235239</td></tr>
+<tr><td>LONGITUDE -93.400419</td></tr>
+<tr><td>ELEVATION 1375.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KSGF">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-93.400419,37.235239</coordinates>
+</Point>
+</Placemark>
+<Placemark id="32">
+<name>SAN JUAN</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:TSJU</td></tr>
+<tr><td>STATE PR</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 18.473889</td></tr>
+<tr><td>LONGITUDE -66.178889</td></tr>
+<tr><td>ELEVATION 157.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:TSJU">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-66.178889,18.473889</coordinates>
+</Point>
+</Placemark>
+<Placemark id="33">
+<name>W PALM BEACH</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:TPBI</td></tr>
+<tr><td>STATE FL</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 26.688056</td></tr>
+<tr><td>LONGITUDE -80.273056</td></tr>
+<tr><td>ELEVATION 135.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:TPBI">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-80.273056,26.688056</coordinates>
+</Point>
+</Placemark>
+<Placemark id="34">
+<name>DES MOINES</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KDMX</td></tr>
+<tr><td>STATE IA</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 41.7312</td></tr>
+<tr><td>LONGITUDE -93.72286899999999</td></tr>
+<tr><td>ELEVATION 1095.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KDMX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-93.72286899999999,41.7312</coordinates>
+</Point>
+</Placemark>
+<Placemark id="35">
+<name>DAVENPORT</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KDVN</td></tr>
+<tr><td>STATE IA</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 41.611667</td></tr>
+<tr><td>LONGITUDE -90.580833</td></tr>
+<tr><td>ELEVATION 851.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KDVN">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-90.580833,41.611667</coordinates>
+</Point>
+</Placemark>
+<Placemark id="36">
+<name>KANSAS CITY</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KEAX</td></tr>
+<tr><td>STATE MO</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 38.810249999999996</td></tr>
+<tr><td>LONGITUDE -94.264472</td></tr>
+<tr><td>ELEVATION 1092.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KEAX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-94.264472,38.810249999999996</coordinates>
+</Point>
+</Placemark>
+<Placemark id="37">
+<name>PORTLAND</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KRTX</td></tr>
+<tr><td>STATE OR</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 45.715039</td></tr>
+<tr><td>LONGITUDE -122.965</td></tr>
+<tr><td>ELEVATION 1728.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KRTX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-122.965,45.715039</coordinates>
+</Point>
+</Placemark>
+<Placemark id="38">
+<name>TALLAHASSEE</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KTLH</td></tr>
+<tr><td>STATE FL</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 30.397582999999997</td></tr>
+<tr><td>LONGITUDE -84.32894399999999</td></tr>
+<tr><td>ELEVATION 177.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KTLH">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-84.32894399999999,30.397582999999997</coordinates>
+</Point>
+</Placemark>
+<Placemark id="39">
+<name>GREAT FALLS</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KTFX</td></tr>
+<tr><td>STATE MT</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 47.459582999999995</td></tr>
+<tr><td>LONGITUDE -111.385333</td></tr>
+<tr><td>ELEVATION 3805.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KTFX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-111.385333,47.459582999999995</coordinates>
+</Point>
+</Placemark>
+<Placemark id="40">
+<name>SAN JOAQUIN VALLEY</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KHNX</td></tr>
+<tr><td>STATE CA</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 36.314181</td></tr>
+<tr><td>LONGITUDE -119.632139</td></tr>
+<tr><td>ELEVATION 340.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KHNX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-119.632139,36.314181</coordinates>
+</Point>
+</Placemark>
+<Placemark id="41">
+<name>CHARLESTON</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KRLX</td></tr>
+<tr><td>STATE WV</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 38.311111</td></tr>
+<tr><td>LONGITUDE -81.72277799999999</td></tr>
+<tr><td>ELEVATION 1213.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KRLX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-81.72277799999999,38.311111</coordinates>
+</Point>
+</Placemark>
+<Placemark id="42">
+<name>PITTSBURGH</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:TPIT</td></tr>
+<tr><td>STATE PA</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 40.501111</td></tr>
+<tr><td>LONGITUDE -80.486111</td></tr>
+<tr><td>ELEVATION 1385.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:TPIT">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-80.486111,40.501111</coordinates>
+</Point>
+</Placemark>
+<Placemark id="43">
+<name>LA CROSSE</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KARX</td></tr>
+<tr><td>STATE WI</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 43.822778</td></tr>
+<tr><td>LONGITUDE -91.19111099999999</td></tr>
+<tr><td>ELEVATION 1357.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KARX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-91.19111099999999,43.822778</coordinates>
+</Point>
+</Placemark>
+<Placemark id="44">
+<name>TULSA</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KINX</td></tr>
+<tr><td>STATE OK</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 36.175131</td></tr>
+<tr><td>LONGITUDE -95.564161</td></tr>
+<tr><td>ELEVATION 749.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KINX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-95.564161,36.175131</coordinates>
+</Point>
+</Placemark>
+<Placemark id="45">
+<name>FT POLK</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KPOE</td></tr>
+<tr><td>STATE LA</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 31.155278</td></tr>
+<tr><td>LONGITUDE -92.97611099999999</td></tr>
+<tr><td>ELEVATION 473.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KPOE">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-92.97611099999999,31.155278</coordinates>
+</Point>
+</Placemark>
+<Placemark id="46">
+<name>VANDENBERG AFB</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KVBX</td></tr>
+<tr><td>STATE CA</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 34.83855</td></tr>
+<tr><td>LONGITUDE -120.397917</td></tr>
+<tr><td>ELEVATION 1354.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KVBX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-120.397917,34.83855</coordinates>
+</Point>
+</Placemark>
+<Placemark id="47">
+<name>DAYTON</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:TDAY</td></tr>
+<tr><td>STATE OH</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 40.021944</td></tr>
+<tr><td>LONGITUDE -84.12305599999999</td></tr>
+<tr><td>ELEVATION 1020.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:TDAY">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-84.12305599999999,40.021944</coordinates>
+</Point>
+</Placemark>
+<Placemark id="48">
+<name>AMARILLO</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KAMA</td></tr>
+<tr><td>STATE TX</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 35.233333</td></tr>
+<tr><td>LONGITUDE -101.709278</td></tr>
+<tr><td>ELEVATION 3703.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KAMA">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-101.709278,35.233333</coordinates>
+</Point>
+</Placemark>
+<Placemark id="49">
+<name>EUREKA</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KBHX</td></tr>
+<tr><td>STATE CA</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 40.498582999999996</td></tr>
+<tr><td>LONGITUDE -124.292167</td></tr>
+<tr><td>ELEVATION 2516.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KBHX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-124.292167,40.498582999999996</coordinates>
+</Point>
+</Placemark>
+<Placemark id="50">
+<name>CANNON AFB</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KFDX</td></tr>
+<tr><td>STATE NM</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 34.634167</td></tr>
+<tr><td>LONGITUDE -103.618889</td></tr>
+<tr><td>ELEVATION 4698.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KFDX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-103.618889,34.634167</coordinates>
+</Point>
+</Placemark>
+<Placemark id="51">
+<name>LANGLEY HILL NW WASHIN</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KLGX</td></tr>
+<tr><td>STATE WA</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 47.116944</td></tr>
+<tr><td>LONGITUDE -124.106667</td></tr>
+<tr><td>ELEVATION 366.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KLGX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-124.106667,47.116944</coordinates>
+</Point>
+</Placemark>
+<Placemark id="52">
+<name>CLEVELAND</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:TLVE</td></tr>
+<tr><td>STATE OH</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 41.29</td></tr>
+<tr><td>LONGITUDE -82.008056</td></tr>
+<tr><td>ELEVATION 932.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:TLVE">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-82.008056,41.29</coordinates>
+</Point>
+</Placemark>
+<Placemark id="53">
+<name>FT LAUDERDALE</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:TFLL</td></tr>
+<tr><td>STATE FL</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 26.143055999999998</td></tr>
+<tr><td>LONGITUDE -80.34388899999999</td></tr>
+<tr><td>ELEVATION 121.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:TFLL">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-80.34388899999999,26.143055999999998</coordinates>
+</Point>
+</Placemark>
+<Placemark id="54">
+<name>KANSAS CITY</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:TMCI</td></tr>
+<tr><td>STATE MO</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 39.498056</td></tr>
+<tr><td>LONGITUDE -94.74194399999999</td></tr>
+<tr><td>ELEVATION 1089.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:TMCI">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-94.74194399999999,39.498056</coordinates>
+</Point>
+</Placemark>
+<Placemark id="55">
+<name>NEWARK</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:TEWR</td></tr>
+<tr><td>STATE NJ</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 40.593056</td></tr>
+<tr><td>LONGITUDE -74.27</td></tr>
+<tr><td>ELEVATION 135.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:TEWR">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-74.27,40.593056</coordinates>
+</Point>
+</Placemark>
+<Placemark id="56">
+<name>ST LOUIS</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:TSTL</td></tr>
+<tr><td>STATE MO</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 38.805</td></tr>
+<tr><td>LONGITUDE -90.488889</td></tr>
+<tr><td>ELEVATION 646.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:TSTL">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-90.488889,38.805</coordinates>
+</Point>
+</Placemark>
+<Placemark id="57">
+<name>HAMMOND MUNI AP</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KHDC</td></tr>
+<tr><td>STATE LA</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 30.5193</td></tr>
+<tr><td>LONGITUDE -90.40740000000001</td></tr>
+<tr><td>ELEVATION 43.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KHDC">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-90.40740000000001,30.5193</coordinates>
+</Point>
+</Placemark>
+<Placemark id="58">
+<name>BILLINGS</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KBLX</td></tr>
+<tr><td>STATE MT</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 45.853778</td></tr>
+<tr><td>LONGITUDE -108.606806</td></tr>
+<tr><td>ELEVATION 3703.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KBLX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-108.606806,45.853778</coordinates>
+</Point>
+</Placemark>
+<Placemark id="59">
+<name>COLUMBUS AFB</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KGWX</td></tr>
+<tr><td>STATE MS</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 33.896917</td></tr>
+<tr><td>LONGITUDE -88.329194</td></tr>
+<tr><td>ELEVATION 590.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KGWX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-88.329194,33.896917</coordinates>
+</Point>
+</Placemark>
+<Placemark id="60">
+<name>SAN DIEGO</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KNKX</td></tr>
+<tr><td>STATE CA</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 32.919017</td></tr>
+<tr><td>LONGITUDE -117.04180000000001</td></tr>
+<tr><td>ELEVATION 1052.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KNKX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-117.04180000000001,32.919017</coordinates>
+</Point>
+</Placemark>
+<Placemark id="61">
+<name>RAPID CITY</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KUDX</td></tr>
+<tr><td>STATE SD</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 44.124722</td></tr>
+<tr><td>LONGITUDE -102.83</td></tr>
+<tr><td>ELEVATION 3195.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KUDX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-102.83,44.124722</coordinates>
+</Point>
+</Placemark>
+<Placemark id="62">
+<name>KAMUELA</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:PHKM</td></tr>
+<tr><td>STATE HI</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 20.125277999999998</td></tr>
+<tr><td>LONGITUDE -155.777778</td></tr>
+<tr><td>ELEVATION 3966.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:PHKM">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-155.777778,20.125277999999998</coordinates>
+</Point>
+</Placemark>
+<Placemark id="63">
+<name>CHICAGO OHARE</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:TORD</td></tr>
+<tr><td>STATE IL</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 41.796943999999996</td></tr>
+<tr><td>LONGITUDE -87.85805599999999</td></tr>
+<tr><td>ELEVATION 745.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:TORD">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-87.85805599999999,41.796943999999996</coordinates>
+</Point>
+</Placemark>
+<Placemark id="64">
+<name>HOUSTON HOBBY</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:THOU</td></tr>
+<tr><td>STATE TX</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 29.516111</td></tr>
+<tr><td>LONGITUDE -95.24194399999999</td></tr>
+<tr><td>ELEVATION 118.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:THOU">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-95.24194399999999,29.516111</coordinates>
+</Point>
+</Placemark>
+<Placemark id="65">
+<name>GRAND RAPIDS</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KGRR</td></tr>
+<tr><td>STATE MI</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 42.893889</td></tr>
+<tr><td>LONGITUDE -85.544889</td></tr>
+<tr><td>ELEVATION 875.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KGRR">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-85.544889,42.893889</coordinates>
+</Point>
+</Placemark>
+<Placemark id="66">
+<name>SALT LAKE CITY</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KMTX</td></tr>
+<tr><td>STATE UT</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 41.262778</td></tr>
+<tr><td>LONGITUDE -112.447778</td></tr>
+<tr><td>ELEVATION 6594.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KMTX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-112.447778,41.262778</coordinates>
+</Point>
+</Placemark>
+<Placemark id="67">
+<name>YUMA</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KYUX</td></tr>
+<tr><td>STATE AZ</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 32.495281</td></tr>
+<tr><td>LONGITUDE -114.656711</td></tr>
+<tr><td>ELEVATION 239.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KYUX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-114.656711,32.495281</coordinates>
+</Point>
+</Placemark>
+<Placemark id="68">
+<name>MILWAUKEE</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:TMKE</td></tr>
+<tr><td>STATE WI</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 42.818889</td></tr>
+<tr><td>LONGITUDE -88.046111</td></tr>
+<tr><td>ELEVATION 932.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:TMKE">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-88.046111,42.818889</coordinates>
+</Point>
+</Placemark>
+<Placemark id="69">
+<name>BROWNSVILLE</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KBRO</td></tr>
+<tr><td>STATE TX</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 25.916</td></tr>
+<tr><td>LONGITUDE -97.418967</td></tr>
+<tr><td>ELEVATION 88.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KBRO">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-97.418967,25.916</coordinates>
+</Point>
+</Placemark>
+<Placemark id="70">
+<name>CLEVELAND</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KCLE</td></tr>
+<tr><td>STATE OH</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 41.413216999999996</td></tr>
+<tr><td>LONGITUDE -81.859867</td></tr>
+<tr><td>ELEVATION 860.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KCLE">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-81.859867,41.413216999999996</coordinates>
+</Point>
+</Placemark>
+<Placemark id="71">
+<name>GLASGOW</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KGGW</td></tr>
+<tr><td>STATE MT</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 48.206361</td></tr>
+<tr><td>LONGITUDE -106.624694</td></tr>
+<tr><td>ELEVATION 2384.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KGGW">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-106.624694,48.206361</coordinates>
+</Point>
+</Placemark>
+<Placemark id="72">
+<name>HOUSTON</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KHGX</td></tr>
+<tr><td>STATE TX</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 29.4719</td></tr>
+<tr><td>LONGITUDE -95.078733</td></tr>
+<tr><td>ELEVATION 115.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KHGX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-95.078733,29.4719</coordinates>
+</Point>
+</Placemark>
+<Placemark id="73">
+<name>BETHEL FAA</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:PABC</td></tr>
+<tr><td>STATE AK</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 60.791943999999994</td></tr>
+<tr><td>LONGITUDE -161.876389</td></tr>
+<tr><td>ELEVATION 193.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:PABC">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-161.876389,60.791943999999994</coordinates>
+</Point>
+</Placemark>
+<Placemark id="74">
+<name>SITKA</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:PACG</td></tr>
+<tr><td>STATE AK</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 56.852778</td></tr>
+<tr><td>LONGITUDE -135.529167</td></tr>
+<tr><td>ELEVATION 272.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:PACG">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-135.529167,56.852778</coordinates>
+</Point>
+</Placemark>
+<Placemark id="75">
+<name>HOLLOMAN AFB</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KHDX</td></tr>
+<tr><td>STATE NM</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 33.077</td></tr>
+<tr><td>LONGITUDE -106.120033</td></tr>
+<tr><td>ELEVATION 4270.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KHDX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-106.120033,33.077</coordinates>
+</Point>
+</Placemark>
+<Placemark id="76">
+<name>KING SALMON</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:PAKC</td></tr>
+<tr><td>STATE AK</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 58.679444</td></tr>
+<tr><td>LONGITUDE -156.629444</td></tr>
+<tr><td>ELEVATION 144.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:PAKC">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-156.629444,58.679444</coordinates>
+</Point>
+</Placemark>
+<Placemark id="77">
+<name>CAMP HUMPHREYS</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:RKSG</td></tr>
+<tr><td>STATE None</td></tr>
+<tr><td>COUNTRY KOREA, SOUTH</td></tr>
+<tr><td>LATITUDE 37.207569</td></tr>
+<tr><td>LONGITUDE 127.285561</td></tr>
+<tr><td>ELEVATION 1521.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:RKSG">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>127.285561,37.207569</coordinates>
+</Point>
+</Placemark>
+<Placemark id="78">
+<name>COVINGTON</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:TCVG</td></tr>
+<tr><td>STATE KY</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 38.898056</td></tr>
+<tr><td>LONGITUDE -84.58</td></tr>
+<tr><td>ELEVATION 1053.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:TCVG">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-84.58,38.898056</coordinates>
+</Point>
+</Placemark>
+<Placemark id="79">
+<name>RALEIGH</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:TRDU</td></tr>
+<tr><td>STATE NC</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 36.001944</td></tr>
+<tr><td>LONGITUDE -78.696944</td></tr>
+<tr><td>ELEVATION 515.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:TRDU">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-78.696944,36.001944</coordinates>
+</Point>
+</Placemark>
+<Placemark id="80">
+<name>EVANSVILLE</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KVWX</td></tr>
+<tr><td>STATE IN</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 38.26025</td></tr>
+<tr><td>LONGITUDE -87.72452799999999</td></tr>
+<tr><td>ELEVATION 625.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KVWX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-87.72452799999999,38.26025</coordinates>
+</Point>
+</Placemark>
+<Placemark id="81">
+<name>MARQUETTE</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KMQT</td></tr>
+<tr><td>STATE MI</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 46.531110999999996</td></tr>
+<tr><td>LONGITUDE -87.548333</td></tr>
+<tr><td>ELEVATION 1525.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KMQT">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-87.548333,46.531110999999996</coordinates>
+</Point>
+</Placemark>
+<Placemark id="82">
+<name>KNOXVILLE</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KMRX</td></tr>
+<tr><td>STATE TN</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 36.168611</td></tr>
+<tr><td>LONGITUDE -83.401944</td></tr>
+<tr><td>ELEVATION 1434.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KMRX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-83.401944,36.168611</coordinates>
+</Point>
+</Placemark>
+<Placemark id="83">
+<name>PENDLETON</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KPDT</td></tr>
+<tr><td>STATE OR</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 45.69065</td></tr>
+<tr><td>LONGITUDE -118.852931</td></tr>
+<tr><td>ELEVATION 1580.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KPDT">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-118.852931,45.69065</coordinates>
+</Point>
+</Placemark>
+<Placemark id="84">
+<name>MOLOKAI</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:PHMO</td></tr>
+<tr><td>STATE HI</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 21.132778</td></tr>
+<tr><td>LONGITUDE -157.180278</td></tr>
+<tr><td>ELEVATION 1444.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:PHMO">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-157.180278,21.132778</coordinates>
+</Point>
+</Placemark>
+<Placemark id="85">
+<name>MINNEAPOLIS</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:TMSP</td></tr>
+<tr><td>STATE MN</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 44.871111</td></tr>
+<tr><td>LONGITUDE -92.933056</td></tr>
+<tr><td>ELEVATION 1122.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:TMSP">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-92.933056,44.871111</coordinates>
+</Point>
+</Placemark>
+<Placemark id="86">
+<name>BOSTON</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KBOX</td></tr>
+<tr><td>STATE MA</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 41.955777999999995</td></tr>
+<tr><td>LONGITUDE -71.136861</td></tr>
+<tr><td>ELEVATION 232.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KBOX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-71.136861,41.955777999999995</coordinates>
+</Point>
+</Placemark>
+<Placemark id="87">
+<name>ATLANTA</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KFFC</td></tr>
+<tr><td>STATE GA</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 33.36355</td></tr>
+<tr><td>LONGITUDE -84.56595</td></tr>
+<tr><td>ELEVATION 972.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KFFC">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-84.56595,33.36355</coordinates>
+</Point>
+</Placemark>
+<Placemark id="88">
+<name>N PLATTE</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KLNX</td></tr>
+<tr><td>STATE NE</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 41.957944</td></tr>
+<tr><td>LONGITUDE -100.576222</td></tr>
+<tr><td>ELEVATION 3113.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KLNX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-100.576222,41.957944</coordinates>
+</Point>
+</Placemark>
+<Placemark id="89">
+<name>GRAND FORKS</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KMVX</td></tr>
+<tr><td>STATE ND</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 47.527778</td></tr>
+<tr><td>LONGITUDE -97.32555599999999</td></tr>
+<tr><td>ELEVATION 1083.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KMVX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-97.32555599999999,47.527778</coordinates>
+</Point>
+</Placemark>
+<Placemark id="90">
+<name>ANDERSEN AFB AGANA</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:PGUA</td></tr>
+<tr><td>STATE GU</td></tr>
+<tr><td>COUNTRY GUAM</td></tr>
+<tr><td>LATITUDE 13.455833</td></tr>
+<tr><td>LONGITUDE 144.81111099999998</td></tr>
+<tr><td>ELEVATION 386.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:PGUA">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>144.81111099999998,13.455833</coordinates>
+</Point>
+</Placemark>
+<Placemark id="91">
+<name>SAN JUAN</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:TJUA</td></tr>
+<tr><td>STATE PR</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 18.115667</td></tr>
+<tr><td>LONGITUDE -66.078167</td></tr>
+<tr><td>ELEVATION 2958.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:TJUA">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-66.078167,18.115667</coordinates>
+</Point>
+</Placemark>
+<Placemark id="92">
+<name>JOSE APONTE DE LA TORR</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:TJRV</td></tr>
+<tr><td>STATE PR</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 18.256</td></tr>
+<tr><td>LONGITUDE -65.637</td></tr>
+<tr><td>ELEVATION 50.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:TJRV">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-65.637,18.256</coordinates>
+</Point>
+</Placemark>
+<Placemark id="93">
+<name>ATLANTA</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:TATL</td></tr>
+<tr><td>STATE GA</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 33.646944</td></tr>
+<tr><td>LONGITUDE -84.261944</td></tr>
+<tr><td>ELEVATION 1076.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:TATL">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-84.261944,33.646944</coordinates>
+</Point>
+</Placemark>
+<Placemark id="94">
+<name>MIAMI</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:TMIA</td></tr>
+<tr><td>STATE FL</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 25.758056</td></tr>
+<tr><td>LONGITUDE -80.49111099999999</td></tr>
+<tr><td>ELEVATION 125.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:TMIA">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-80.49111099999999,25.758056</coordinates>
+</Point>
+</Placemark>
+<Placemark id="95">
+<name>DULUTH</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KDLH</td></tr>
+<tr><td>STATE MN</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 46.836943999999995</td></tr>
+<tr><td>LONGITUDE -92.209722</td></tr>
+<tr><td>ELEVATION 1542.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KDLH">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-92.209722,46.836943999999995</coordinates>
+</Point>
+</Placemark>
+<Placemark id="96">
+<name>CINCINNATI</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KILN</td></tr>
+<tr><td>STATE OH</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 39.420483</td></tr>
+<tr><td>LONGITUDE -83.82145</td></tr>
+<tr><td>ELEVATION 1170.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KILN">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-83.82145,39.420483</coordinates>
+</Point>
+</Placemark>
+<Placemark id="97">
+<name>OKLAHOMA CITY</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KTLX</td></tr>
+<tr><td>STATE OK</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 35.333361</td></tr>
+<tr><td>LONGITUDE -97.277761</td></tr>
+<tr><td>ELEVATION 1278.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KTLX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-97.277761,35.333361</coordinates>
+</Point>
+</Placemark>
+<Placemark id="98">
+<name>LAJES AB</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:LPLA</td></tr>
+<tr><td>STATE None</td></tr>
+<tr><td>COUNTRY AZORES</td></tr>
+<tr><td>LATITUDE 38.73028</td></tr>
+<tr><td>LONGITUDE -27.321669999999997</td></tr>
+<tr><td>ELEVATION 3334.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:LPLA">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-27.321669999999997,38.73028</coordinates>
+</Point>
+</Placemark>
+<Placemark id="99">
+<name>MIDDLETON IS</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:PAIH</td></tr>
+<tr><td>STATE AK</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 59.460767</td></tr>
+<tr><td>LONGITUDE -146.303447</td></tr>
+<tr><td>ELEVATION 132.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:PAIH">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-146.303447,59.460767</coordinates>
+</Point>
+</Placemark>
+<Placemark id="100">
+<name>SACRAMENTO</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KDAX</td></tr>
+<tr><td>STATE CA</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 38.501111</td></tr>
+<tr><td>LONGITUDE -121.67783299999999</td></tr>
+<tr><td>ELEVATION 144.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KDAX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-121.67783299999999,38.501111</coordinates>
+</Point>
+</Placemark>
+<Placemark id="101">
+<name>LAUGHLIN AFB</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KDFX</td></tr>
+<tr><td>STATE TX</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 29.273138999999997</td></tr>
+<tr><td>LONGITUDE -100.280333</td></tr>
+<tr><td>ELEVATION 1196.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KDFX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-100.280333,29.273138999999997</coordinates>
+</Point>
+</Placemark>
+<Placemark id="102">
+<name>PHILA</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KDIX</td></tr>
+<tr><td>STATE NJ</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 39.947089</td></tr>
+<tr><td>LONGITUDE -74.410731</td></tr>
+<tr><td>ELEVATION 230.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KDIX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-74.410731,39.947089</coordinates>
+</Point>
+</Placemark>
+<Placemark id="103">
+<name>MIDLAND ODESSA</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KMAF</td></tr>
+<tr><td>STATE TX</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 31.943461</td></tr>
+<tr><td>LONGITUDE -102.18925</td></tr>
+<tr><td>ELEVATION 2962.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KMAF">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-102.18925,31.943461</coordinates>
+</Point>
+</Placemark>
+<Placemark id="104">
+<name>MOBILE</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KMOB</td></tr>
+<tr><td>STATE AL</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 30.679444</td></tr>
+<tr><td>LONGITUDE -88.24</td></tr>
+<tr><td>ELEVATION 289.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KMOB">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-88.24,30.679444</coordinates>
+</Point>
+</Placemark>
+<Placemark id="105">
+<name>KUNSAN</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:RKJK</td></tr>
+<tr><td>STATE None</td></tr>
+<tr><td>COUNTRY KOREA, SOUTH</td></tr>
+<tr><td>LATITUDE 35.924167</td></tr>
+<tr><td>LONGITUDE 126.622222</td></tr>
+<tr><td>ELEVATION 192.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:RKJK">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>126.622222,35.924167</coordinates>
+</Point>
+</Placemark>
+<Placemark id="106">
+<name>ALBUQUERQUE</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KABX</td></tr>
+<tr><td>STATE NM</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 35.149722</td></tr>
+<tr><td>LONGITUDE -106.823889</td></tr>
+<tr><td>ELEVATION 5951.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KABX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-106.823889,35.149722</coordinates>
+</Point>
+</Placemark>
+<Placemark id="107">
+<name>DYESS AFB</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KDYX</td></tr>
+<tr><td>STATE TX</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 32.5385</td></tr>
+<tr><td>LONGITUDE -99.254333</td></tr>
+<tr><td>ELEVATION 1582.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KDYX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-99.254333,32.5385</coordinates>
+</Point>
+</Placemark>
+<Placemark id="108">
+<name>TUCSON</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KEMX</td></tr>
+<tr><td>STATE AZ</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 31.893649999999997</td></tr>
+<tr><td>LONGITUDE -110.63025</td></tr>
+<tr><td>ELEVATION 5319.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KEMX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-110.63025,31.893649999999997</coordinates>
+</Point>
+</Placemark>
+<Placemark id="109">
+<name>GOODLAND</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KGLD</td></tr>
+<tr><td>STATE KS</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 39.366944</td></tr>
+<tr><td>LONGITUDE -101.700278</td></tr>
+<tr><td>ELEVATION 3716.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KGLD">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-101.700278,39.366944</coordinates>
+</Point>
+</Placemark>
+<Placemark id="110">
+<name>LOUISVILLE</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KLVX</td></tr>
+<tr><td>STATE KY</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 37.975277999999996</td></tr>
+<tr><td>LONGITUDE -85.943889</td></tr>
+<tr><td>ELEVATION 833.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KLVX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-85.943889,37.975277999999996</coordinates>
+</Point>
+</Placemark>
+<Placemark id="111">
+<name>FT DRUM</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KTYX</td></tr>
+<tr><td>STATE NY</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 43.755694</td></tr>
+<tr><td>LONGITUDE -75.679861</td></tr>
+<tr><td>ELEVATION 1960.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KTYX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-75.679861,43.755694</coordinates>
+</Point>
+</Placemark>
+<Placemark id="112">
+<name>WASHINGTON DULLES</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:TIAD</td></tr>
+<tr><td>STATE VA</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 39.083889</td></tr>
+<tr><td>LONGITUDE -77.52888899999999</td></tr>
+<tr><td>ELEVATION 472.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:TIAD">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-77.52888899999999,39.083889</coordinates>
+</Point>
+</Placemark>
+<Placemark id="113">
+<name>BALTIMORE WASHINGTON</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:TBWI</td></tr>
+<tr><td>STATE MD</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 39.09</td></tr>
+<tr><td>LONGITUDE -76.63</td></tr>
+<tr><td>ELEVATION 299.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:TBWI">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-76.63,39.09</coordinates>
+</Point>
+</Placemark>
+<Placemark id="114">
+<name>NASHVILLE</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:TBNA</td></tr>
+<tr><td>STATE TN</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 35.980000000000004</td></tr>
+<tr><td>LONGITUDE -86.66194399999999</td></tr>
+<tr><td>ELEVATION 817.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:TBNA">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-86.66194399999999,35.980000000000004</coordinates>
+</Point>
+</Placemark>
+<Placemark id="115">
+<name>EL PASO</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KEPZ</td></tr>
+<tr><td>STATE NM</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 31.873056</td></tr>
+<tr><td>LONGITUDE -106.69800000000001</td></tr>
+<tr><td>ELEVATION 4218.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KEPZ">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-106.69800000000001,31.873056</coordinates>
+</Point>
+</Placemark>
+<Placemark id="116">
+<name>FLAGSTAFF</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KFSX</td></tr>
+<tr><td>STATE AZ</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 34.574332999999996</td></tr>
+<tr><td>LONGITUDE -111.198444</td></tr>
+<tr><td>ELEVATION 7514.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KFSX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-111.198444,34.574332999999996</coordinates>
+</Point>
+</Placemark>
+<Placemark id="117">
+<name>SAN FRANCISCO</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KMUX</td></tr>
+<tr><td>STATE CA</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 37.155221999999995</td></tr>
+<tr><td>LONGITUDE -121.898444</td></tr>
+<tr><td>ELEVATION 3550.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KMUX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-121.898444,37.155221999999995</coordinates>
+</Point>
+</Placemark>
+<Placemark id="118">
+<name>NOME</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:PAEC</td></tr>
+<tr><td>STATE AK</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 64.511389</td></tr>
+<tr><td>LONGITUDE -165.29500000000002</td></tr>
+<tr><td>ELEVATION 90.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:PAEC">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-165.29500000000002,64.511389</coordinates>
+</Point>
+</Placemark>
+<Placemark id="119">
+<name>ABERDEEN</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KABR</td></tr>
+<tr><td>STATE SD</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 45.455833</td></tr>
+<tr><td>LONGITUDE -98.413333</td></tr>
+<tr><td>ELEVATION 1383.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KABR">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-98.413333,45.455833</coordinates>
+</Point>
+</Placemark>
+<Placemark id="120">
+<name>BEALE AFB</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KBBX</td></tr>
+<tr><td>STATE CA</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 39.495639</td></tr>
+<tr><td>LONGITUDE -121.63161099999999</td></tr>
+<tr><td>ELEVATION 221.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KBBX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-121.63161099999999,39.495639</coordinates>
+</Point>
+</Placemark>
+<Placemark id="121">
+<name>LUBBOCK</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KLBB</td></tr>
+<tr><td>STATE TX</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 33.654139</td></tr>
+<tr><td>LONGITUDE -101.814167</td></tr>
+<tr><td>ELEVATION 3378.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KLBB">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-101.814167,33.654139</coordinates>
+</Point>
+</Placemark>
+<Placemark id="122">
+<name>DODGE CITY</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KDDC</td></tr>
+<tr><td>STATE KS</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 37.760833</td></tr>
+<tr><td>LONGITUDE -99.96888899999999</td></tr>
+<tr><td>ELEVATION 2671.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KDDC">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-99.96888899999999,37.760833</coordinates>
+</Point>
+</Placemark>
+<Placemark id="123">
+<name>TAMPA</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KTBW</td></tr>
+<tr><td>STATE FL</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 27.7055</td></tr>
+<tr><td>LONGITUDE -82.401778</td></tr>
+<tr><td>ELEVATION 122.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KTBW">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-82.401778,27.7055</coordinates>
+</Point>
+</Placemark>
+<Placemark id="124">
+<name>KADENA</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:RODN</td></tr>
+<tr><td>STATE None</td></tr>
+<tr><td>COUNTRY JAPAN</td></tr>
+<tr><td>LATITUDE 26.3078</td></tr>
+<tr><td>LONGITUDE 127.903469</td></tr>
+<tr><td>ELEVATION 412.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:RODN">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>127.903469,26.3078</coordinates>
+</Point>
+</Placemark>
+<Placemark id="125">
+<name>BOSTON</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:TBOS</td></tr>
+<tr><td>STATE MA</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 42.158055999999995</td></tr>
+<tr><td>LONGITUDE -70.933056</td></tr>
+<tr><td>ELEVATION 262.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:TBOS">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-70.933056,42.158055999999995</coordinates>
+</Point>
+</Placemark>
+<Placemark id="126">
+<name>NORMAN WFO</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:TOKC</td></tr>
+<tr><td>STATE OK</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 35.276111</td></tr>
+<tr><td>LONGITUDE -97.51</td></tr>
+<tr><td>ELEVATION 1309.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:TOKC">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-97.51,35.276111</coordinates>
+</Point>
+</Placemark>
+<Placemark id="127">
+<name>NYC</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KOKX</td></tr>
+<tr><td>STATE NY</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 40.865528</td></tr>
+<tr><td>LONGITUDE -72.863917</td></tr>
+<tr><td>ELEVATION 199.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KOKX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-72.863917,40.865528</coordinates>
+</Point>
+</Placemark>
+<Placemark id="128">
+<name>FAIRBANKS</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:PAPD</td></tr>
+<tr><td>STATE AK</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 65.035114</td></tr>
+<tr><td>LONGITUDE -147.501431</td></tr>
+<tr><td>ELEVATION 2707.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:PAPD">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-147.501431,65.035114</coordinates>
+</Point>
+</Placemark>
+<Placemark id="129">
+<name>NASHVILLE</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KOHX</td></tr>
+<tr><td>STATE TN</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 36.247222</td></tr>
+<tr><td>LONGITUDE -86.5625</td></tr>
+<tr><td>ELEVATION 676.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KOHX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-86.5625,36.247222</coordinates>
+</Point>
+</Placemark>
+<Placemark id="130">
+<name>LAS VEGAS</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:TLAS</td></tr>
+<tr><td>STATE NV</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 36.143889</td></tr>
+<tr><td>LONGITUDE -115.00694</td></tr>
+<tr><td>ELEVATION 2057.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:TLAS">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-115.00694,36.143889</coordinates>
+</Point>
+</Placemark>
+<Placemark id="131">
+<name>ROBINS AFB</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KJGX</td></tr>
+<tr><td>STATE GA</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 32.675683</td></tr>
+<tr><td>LONGITUDE -83.350833</td></tr>
+<tr><td>ELEVATION 618.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KJGX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-83.350833,32.675683</coordinates>
+</Point>
+</Placemark>
+<Placemark id="132">
+<name>INDIANAPOLIS</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:TIDS</td></tr>
+<tr><td>STATE IN</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 39.636944</td></tr>
+<tr><td>LONGITUDE -86.436111</td></tr>
+<tr><td>ELEVATION 846.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:TIDS">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-86.436111,39.636944</coordinates>
+</Point>
+</Placemark>
+<Placemark id="133">
+<name>STATE COLLEGE</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KCCX</td></tr>
+<tr><td>STATE PA</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 40.923167</td></tr>
+<tr><td>LONGITUDE -78.003722</td></tr>
+<tr><td>ELEVATION 2486.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KCCX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-78.003722,40.923167</coordinates>
+</Point>
+</Placemark>
+<Placemark id="134">
+<name>LOS ANGELES</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KVTX</td></tr>
+<tr><td>STATE CA</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 34.412017</td></tr>
+<tr><td>LONGITUDE -119.17875000000001</td></tr>
+<tr><td>ELEVATION 2807.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KVTX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-119.17875000000001,34.412017</coordinates>
+</Point>
+</Placemark>
+<Placemark id="135">
+<name>GRAND JUNCTION</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KGJX</td></tr>
+<tr><td>STATE CO</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 39.062169</td></tr>
+<tr><td>LONGITUDE -108.213761</td></tr>
+<tr><td>ELEVATION 10101.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KGJX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-108.213761,39.062169</coordinates>
+</Point>
+</Placemark>
+<Placemark id="136">
+<name>SANTA ANA MOUNTAINS</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KSOX</td></tr>
+<tr><td>STATE CA</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 33.817733</td></tr>
+<tr><td>LONGITUDE -117.63600000000001</td></tr>
+<tr><td>ELEVATION 3106.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KSOX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-117.63600000000001,33.817733</coordinates>
+</Point>
+</Placemark>
+<Placemark id="137">
+<name>LOUISVILLE</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:TSDF</td></tr>
+<tr><td>STATE KY</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 38.046110999999996</td></tr>
+<tr><td>LONGITUDE -85.61</td></tr>
+<tr><td>ELEVATION 732.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:TSDF">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-85.61,38.046110999999996</coordinates>
+</Point>
+</Placemark>
+<Placemark id="138">
+<name>FT HOOD</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KGRK</td></tr>
+<tr><td>STATE TX</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 30.721833</td></tr>
+<tr><td>LONGITUDE -97.382944</td></tr>
+<tr><td>ELEVATION 603.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KGRK">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-97.382944,30.721833</coordinates>
+</Point>
+</Placemark>
+<Placemark id="139">
+<name>ANDREWS AFB</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:TADW</td></tr>
+<tr><td>STATE MD</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 38.695</td></tr>
+<tr><td>LONGITUDE -76.845</td></tr>
+<tr><td>ELEVATION 344.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:TADW">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-76.845,38.695</coordinates>
+</Point>
+</Placemark>
+<Placemark id="140">
+<name>SPOKANE</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KOTX</td></tr>
+<tr><td>STATE WA</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 47.680417</td></tr>
+<tr><td>LONGITUDE -117.626778</td></tr>
+<tr><td>ELEVATION 2449.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KOTX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-117.626778,47.680417</coordinates>
+</Point>
+</Placemark>
+<Placemark id="141">
+<name>CORPUS CHRISTI</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KCRP</td></tr>
+<tr><td>STATE TX</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 27.784017</td></tr>
+<tr><td>LONGITUDE -97.51124999999999</td></tr>
+<tr><td>ELEVATION 142.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KCRP">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-97.51124999999999,27.784017</coordinates>
+</Point>
+</Placemark>
+<Placemark id="142">
+<name>FT SMITH</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KSRX</td></tr>
+<tr><td>STATE AR</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 35.290417</td></tr>
+<tr><td>LONGITUDE -94.36188899999999</td></tr>
+<tr><td>ELEVATION 737.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KSRX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-94.36188899999999,35.290417</coordinates>
+</Point>
+</Placemark>
+<Placemark id="143">
+<name>SEATTLE</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KATX</td></tr>
+<tr><td>STATE WA</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 48.194610999999995</td></tr>
+<tr><td>LONGITUDE -122.495694</td></tr>
+<tr><td>ELEVATION 642.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KATX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-122.495694,48.194610999999995</coordinates>
+</Point>
+</Placemark>
+<Placemark id="144">
+<name>NEW ORLEANS</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KLIX</td></tr>
+<tr><td>STATE LA</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 30.336667</td></tr>
+<tr><td>LONGITUDE -89.825417</td></tr>
+<tr><td>ELEVATION 179.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KLIX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-89.825417,30.336667</coordinates>
+</Point>
+</Placemark>
+<Placemark id="145">
+<name>MINOT AFB</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KMBX</td></tr>
+<tr><td>STATE ND</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 48.393055999999994</td></tr>
+<tr><td>LONGITUDE -100.864444</td></tr>
+<tr><td>ELEVATION 1590.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KMBX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-100.864444,48.393055999999994</coordinates>
+</Point>
+</Placemark>
+<Placemark id="146">
+<name>POCATELLO</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KSFX</td></tr>
+<tr><td>STATE ID</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 43.1056</td></tr>
+<tr><td>LONGITUDE -112.686133</td></tr>
+<tr><td>ELEVATION 4539.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KSFX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-112.686133,43.1056</coordinates>
+</Point>
+</Placemark>
+<Placemark id="147">
+<name>DALLAS LOVE FLD</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:TDAL</td></tr>
+<tr><td>STATE TX</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 32.926111</td></tr>
+<tr><td>LONGITUDE -96.96805599999999</td></tr>
+<tr><td>ELEVATION 623.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:TDAL">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-96.96805599999999,32.926111</coordinates>
+</Point>
+</Placemark>
+<Placemark id="148">
+<name>NYC JFK</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:TJFK</td></tr>
+<tr><td>STATE NY</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 40.588888999999995</td></tr>
+<tr><td>LONGITUDE -73.88111099999999</td></tr>
+<tr><td>ELEVATION 112.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:TJFK">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-73.88111099999999,40.588888999999995</coordinates>
+</Point>
+</Placemark>
+<Placemark id="149">
+<name>TAMPA</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:TTPA</td></tr>
+<tr><td>STATE FL</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 27.86</td></tr>
+<tr><td>LONGITUDE -82.518056</td></tr>
+<tr><td>ELEVATION 92.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:TTPA">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-82.518056,27.86</coordinates>
+</Point>
+</Placemark>
+<Placemark id="150">
+<name>MIAMI</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KAMX</td></tr>
+<tr><td>STATE FL</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 25.611082999999997</td></tr>
+<tr><td>LONGITUDE -80.412667</td></tr>
+<tr><td>ELEVATION 111.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KAMX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-80.412667,25.611082999999997</coordinates>
+</Point>
+</Placemark>
+<Placemark id="151">
+<name>HUNTSVILLE</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KHTX</td></tr>
+<tr><td>STATE AL</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 34.930555999999996</td></tr>
+<tr><td>LONGITUDE -86.08361099999999</td></tr>
+<tr><td>ELEVATION 1859.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KHTX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-86.08361099999999,34.930555999999996</coordinates>
+</Point>
+</Placemark>
+<Placemark id="152">
+<name>MISSOULA</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KMSX</td></tr>
+<tr><td>STATE MT</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 47.041000000000004</td></tr>
+<tr><td>LONGITUDE -113.986222</td></tr>
+<tr><td>ELEVATION 7978.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KMSX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-113.986222,47.041000000000004</coordinates>
+</Point>
+</Placemark>
+<Placemark id="153">
+<name>MIAMI</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KAMX</td></tr>
+<tr><td>STATE FL</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 25.611082999999997</td></tr>
+<tr><td>LONGITUDE -80.412667</td></tr>
+<tr><td>ELEVATION 111.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KAMX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-80.412667,25.611082999999997</coordinates>
+</Point>
+</Placemark>
+<Placemark id="154">
+<name>JACKSON BRANDON</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KDGX</td></tr>
+<tr><td>STATE MS</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 32.279944</td></tr>
+<tr><td>LONGITUDE -89.984444</td></tr>
+<tr><td>ELEVATION 609.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KDGX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-89.984444,32.279944</coordinates>
+</Point>
+</Placemark>
+<Placemark id="155">
+<name>FLAGSTAFF</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KFSX</td></tr>
+<tr><td>STATE AZ</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 34.574332999999996</td></tr>
+<tr><td>LONGITUDE -111.198444</td></tr>
+<tr><td>ELEVATION 7514.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KFSX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-111.198444,34.574332999999996</coordinates>
+</Point>
+</Placemark>
+<Placemark id="156">
+<name>INDIANAPOLIS</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KIND</td></tr>
+<tr><td>STATE IN</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 39.7075</td></tr>
+<tr><td>LONGITUDE -86.280278</td></tr>
+<tr><td>ELEVATION 887.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KIND">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-86.280278,39.7075</coordinates>
+</Point>
+</Placemark>
+<Placemark id="157">
+<name>PITTSBURGH</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KPBZ</td></tr>
+<tr><td>STATE PA</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 40.531717</td></tr>
+<tr><td>LONGITUDE -80.217967</td></tr>
+<tr><td>ELEVATION 1266.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KPBZ">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-80.217967,40.531717</coordinates>
+</Point>
+</Placemark>
+<Placemark id="158">
+<name>CHARLOTTE</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:TCLT</td></tr>
+<tr><td>STATE NC</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 35.336943999999995</td></tr>
+<tr><td>LONGITUDE -80.885</td></tr>
+<tr><td>ELEVATION 869.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:TCLT">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-80.885,35.336943999999995</coordinates>
+</Point>
+</Placemark>
+<Placemark id="159">
+<name>GAYLORD</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KAPX</td></tr>
+<tr><td>STATE MI</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 44.906349999999996</td></tr>
+<tr><td>LONGITUDE -84.719533</td></tr>
+<tr><td>ELEVATION 1561.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KAPX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-84.719533,44.906349999999996</coordinates>
+</Point>
+</Placemark>
+<Placemark id="160">
+<name>BUFFALO</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KBUF</td></tr>
+<tr><td>STATE NY</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 42.948789</td></tr>
+<tr><td>LONGITUDE -78.736781</td></tr>
+<tr><td>ELEVATION 790.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KBUF">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-78.736781,42.948789</coordinates>
+</Point>
+</Placemark>
+<Placemark id="161">
+<name>GREEN BAY</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KGRB</td></tr>
+<tr><td>STATE WI</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 44.498633</td></tr>
+<tr><td>LONGITUDE -88.111111</td></tr>
+<tr><td>ELEVATION 823.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KGRB">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-88.111111,44.498633</coordinates>
+</Point>
+</Placemark>
+<Placemark id="162">
+<name>JACKSONVILLE</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KJAX</td></tr>
+<tr><td>STATE FL</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 30.484633</td></tr>
+<tr><td>LONGITUDE -81.70190000000001</td></tr>
+<tr><td>ELEVATION 160.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KJAX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-81.70190000000001,30.484633</coordinates>
+</Point>
+</Placemark>
+<Placemark id="163">
+<name>SAN JUAN</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:TJUA</td></tr>
+<tr><td>STATE PR</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 18.115667</td></tr>
+<tr><td>LONGITUDE -66.078167</td></tr>
+<tr><td>ELEVATION 2958.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:TJUA">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-66.078167,18.115667</coordinates>
+</Point>
+</Placemark>
+<Placemark id="164">
+<name>BIRMINGHAM</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KBMX</td></tr>
+<tr><td>STATE AL</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 33.172416999999996</td></tr>
+<tr><td>LONGITUDE -86.770167</td></tr>
+<tr><td>ELEVATION 759.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KBMX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-86.770167,33.172416999999996</coordinates>
+</Point>
+</Placemark>
+<Placemark id="165">
+<name>ALTUS AFB</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KFDR</td></tr>
+<tr><td>STATE OK</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 34.362193999999995</td></tr>
+<tr><td>LONGITUDE -98.97666699999999</td></tr>
+<tr><td>ELEVATION 1315.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KFDR">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-98.97666699999999,34.362193999999995</coordinates>
+</Point>
+</Placemark>
+<Placemark id="166">
+<name>WICHITA</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KICT</td></tr>
+<tr><td>STATE KS</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 37.654444</td></tr>
+<tr><td>LONGITUDE -97.443056</td></tr>
+<tr><td>ELEVATION 1400.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KICT">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-97.443056,37.654444</coordinates>
+</Point>
+</Placemark>
+<Placemark id="167">
+<name>SIOUX FALLS</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KFSD</td></tr>
+<tr><td>STATE SD</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 43.587778</td></tr>
+<tr><td>LONGITUDE -96.729444</td></tr>
+<tr><td>ELEVATION 1495.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KFSD">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-96.729444,43.587778</coordinates>
+</Point>
+</Placemark>
+<Placemark id="168">
+<name>S SHORE</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:PHWA</td></tr>
+<tr><td>STATE HI</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 19.095000000000002</td></tr>
+<tr><td>LONGITUDE -155.568889</td></tr>
+<tr><td>ELEVATION 1461.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:PHWA">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-155.568889,19.095000000000002</coordinates>
+</Point>
+</Placemark>
+<Placemark id="169">
+<name>MEMPHIS</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:TMEM</td></tr>
+<tr><td>STATE MS</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 34.896111</td></tr>
+<tr><td>LONGITUDE -89.993056</td></tr>
+<tr><td>ELEVATION 482.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:TMEM">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-89.993056,34.896111</coordinates>
+</Point>
+</Placemark>
+<Placemark id="170">
+<name>PHILA</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:TPHL</td></tr>
+<tr><td>STATE NJ</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 39.948889</td></tr>
+<tr><td>LONGITUDE -75.068889</td></tr>
+<tr><td>ELEVATION 154.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:TPHL">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-75.068889,39.948889</coordinates>
+</Point>
+</Placemark>
+<Placemark id="171">
+<name>TULSA</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:TTUL</td></tr>
+<tr><td>STATE OK</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 36.071110999999995</td></tr>
+<tr><td>LONGITUDE -95.826944</td></tr>
+<tr><td>ELEVATION 823.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:TTUL">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-95.826944,36.071110999999995</coordinates>
+</Point>
+</Placemark>
+<Placemark id="172">
+<name>SAN ANGELO</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KSJT</td></tr>
+<tr><td>STATE TX</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 31.371278</td></tr>
+<tr><td>LONGITUDE -100.4925</td></tr>
+<tr><td>ELEVATION 2004.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KSJT">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-100.4925,31.371278</coordinates>
+</Point>
+</Placemark>
+<Placemark id="173">
+<name>TOPEKA</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KTWX</td></tr>
+<tr><td>STATE KS</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 38.99695</td></tr>
+<tr><td>LONGITUDE -96.23254999999999</td></tr>
+<tr><td>ELEVATION 1415.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KTWX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-96.23254999999999,38.99695</coordinates>
+</Point>
+</Placemark>
+<Placemark id="174">
+<name>HASTINGS</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KUEX</td></tr>
+<tr><td>STATE NE</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 40.320833</td></tr>
+<tr><td>LONGITUDE -98.44194399999999</td></tr>
+<tr><td>ELEVATION 2057.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KUEX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-98.44194399999999,40.320833</coordinates>
+</Point>
+</Placemark>
+<Placemark id="175">
+<name>DENVER</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:TDEN</td></tr>
+<tr><td>STATE CO</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 39.728055999999995</td></tr>
+<tr><td>LONGITUDE -104.52611</td></tr>
+<tr><td>ELEVATION 5702.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:TDEN">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-104.52611,39.728055999999995</coordinates>
+</Point>
+</Placemark>
+<Placemark id="176">
+<name>COLUMBIA</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KCAE</td></tr>
+<tr><td>STATE SC</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 33.948722</td></tr>
+<tr><td>LONGITUDE -81.11827799999999</td></tr>
+<tr><td>ELEVATION 345.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KCAE">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-81.11827799999999,33.948722</coordinates>
+</Point>
+</Placemark>
+<Placemark id="177">
+<name>ELKO</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KLRX</td></tr>
+<tr><td>STATE NV</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 40.73955</td></tr>
+<tr><td>LONGITUDE -116.8027</td></tr>
+<tr><td>ELEVATION 6895.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KLRX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-116.8027,40.73955</coordinates>
+</Point>
+</Placemark>
+<Placemark id="178">
+<name>MILWAUKEE</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KMKX</td></tr>
+<tr><td>STATE WI</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 42.9679</td></tr>
+<tr><td>LONGITUDE -88.55066699999999</td></tr>
+<tr><td>ELEVATION 1023.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KMKX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-88.55066699999999,42.9679</coordinates>
+</Point>
+</Placemark>
+<Placemark id="179">
+<name>MINNEAPOLIS</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KMPX</td></tr>
+<tr><td>STATE MN</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 44.848889</td></tr>
+<tr><td>LONGITUDE -93.565528</td></tr>
+<tr><td>ELEVATION 1101.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KMPX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-93.565528,44.848889</coordinates>
+</Point>
+</Placemark>
+<Placemark id="180">
+<name>MEMPHIS</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KNQA</td></tr>
+<tr><td>STATE TN</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 35.344722</td></tr>
+<tr><td>LONGITUDE -89.873333</td></tr>
+<tr><td>ELEVATION 435.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KNQA">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-89.873333,35.344722</coordinates>
+</Point>
+</Placemark>
+<Placemark id="181">
+<name>NORFOLK RICH</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KAKQ</td></tr>
+<tr><td>STATE VA</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 36.984049999999996</td></tr>
+<tr><td>LONGITUDE -77.007361</td></tr>
+<tr><td>ELEVATION 255.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KAKQ">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-77.007361,36.984049999999996</coordinates>
+</Point>
+</Placemark>
+<Placemark id="182">
+<name>BURLINGTON</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KCXX</td></tr>
+<tr><td>STATE VT</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 44.511</td></tr>
+<tr><td>LONGITUDE -73.166431</td></tr>
+<tr><td>ELEVATION 431.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KCXX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-73.166431,44.511</coordinates>
+</Point>
+</Placemark>
+<Placemark id="183">
+<name>MIDDLETON IS</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:PAIH</td></tr>
+<tr><td>STATE AK</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 59.460767</td></tr>
+<tr><td>LONGITUDE -146.303447</td></tr>
+<tr><td>ELEVATION 132.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:PAIH">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-146.303447,59.460767</coordinates>
+</Point>
+</Placemark>
+<Placemark id="184">
+<name>S KAUAI</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:PHKI</td></tr>
+<tr><td>STATE HI</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 21.893888999999998</td></tr>
+<tr><td>LONGITUDE -159.5525</td></tr>
+<tr><td>ELEVATION 340.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:PHKI">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-159.5525,21.893888999999998</coordinates>
+</Point>
+</Placemark>
+<Placemark id="185">
+<name>BISMARCK</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KBIS</td></tr>
+<tr><td>STATE ND</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 46.770832999999996</td></tr>
+<tr><td>LONGITUDE -100.760556</td></tr>
+<tr><td>ELEVATION 1755.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KBIS">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-100.760556,46.770832999999996</coordinates>
+</Point>
+</Placemark>
+<Placemark id="186">
+<name>CHEYENNE</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KCYS</td></tr>
+<tr><td>STATE WY</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 41.151919</td></tr>
+<tr><td>LONGITUDE -104.806031</td></tr>
+<tr><td>ELEVATION 6193.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KCYS">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-104.806031,41.151919</coordinates>
+</Point>
+</Placemark>
+<Placemark id="187">
+<name>DETROIT</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KDTX</td></tr>
+<tr><td>STATE MI</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 42.7</td></tr>
+<tr><td>LONGITUDE -83.471667</td></tr>
+<tr><td>ELEVATION 1216.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KDTX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-83.471667,42.7</coordinates>
+</Point>
+</Placemark>
+<Placemark id="188">
+<name>WILMINGTON</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KLTX</td></tr>
+<tr><td>STATE NC</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 33.989149999999995</td></tr>
+<tr><td>LONGITUDE -78.429108</td></tr>
+<tr><td>ELEVATION 145.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KLTX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-78.429108,33.989149999999995</coordinates>
+</Point>
+</Placemark>
+<Placemark id="189">
+<name>VANCE AFB</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KVNX</td></tr>
+<tr><td>STATE OK</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 36.740617</td></tr>
+<tr><td>LONGITUDE -98.12771699999999</td></tr>
+<tr><td>ELEVATION 1258.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KVNX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-98.12771699999999,36.740617</coordinates>
+</Point>
+</Placemark>
+<Placemark id="190">
+<name>ANCHORAGE</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:PAHG</td></tr>
+<tr><td>STATE AK</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 60.725913999999996</td></tr>
+<tr><td>LONGITUDE -151.351467</td></tr>
+<tr><td>ELEVATION 356.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:PAHG">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-151.351467,60.725913999999996</coordinates>
+</Point>
+</Placemark>
+<Placemark id="191">
+<name>COLUMBUS</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:TCMH</td></tr>
+<tr><td>STATE OH</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 40.006111</td></tr>
+<tr><td>LONGITUDE -82.715</td></tr>
+<tr><td>ELEVATION 1148.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:TCMH">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-82.715,40.006111</coordinates>
+</Point>
+</Placemark>
+<Placemark id="192">
+<name>DALLAS FT WORTH</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:TDFW</td></tr>
+<tr><td>STATE TX</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 33.065000000000005</td></tr>
+<tr><td>LONGITUDE -96.91805599999999</td></tr>
+<tr><td>ELEVATION 584.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:TDFW">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-96.91805599999999,33.065000000000005</coordinates>
+</Point>
+</Placemark>
+<Placemark id="193">
+<name>NORMAN NSSL</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KOUN</td></tr>
+<tr><td>STATE OK</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 35.236058</td></tr>
+<tr><td>LONGITUDE -97.46235</td></tr>
+<tr><td>ELEVATION 1284.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KOUN">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-97.46235,35.236058</coordinates>
+</Point>
+</Placemark>
+<Placemark id="194">
+<name>CHARLESTON</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KCLX</td></tr>
+<tr><td>STATE SC</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 32.655528</td></tr>
+<tr><td>LONGITUDE -81.042194</td></tr>
+<tr><td>ELEVATION 229.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KCLX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-81.042194,32.655528</coordinates>
+</Point>
+</Placemark>
+<Placemark id="195">
+<name>PUEBLO</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KPUX</td></tr>
+<tr><td>STATE CO</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 38.45955</td></tr>
+<tr><td>LONGITUDE -104.18135</td></tr>
+<tr><td>ELEVATION 5363.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KPUX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-104.18135,38.45955</coordinates>
+</Point>
+</Placemark>
+<Placemark id="196">
+<name>SALT LAKE CITY</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:TSLC</td></tr>
+<tr><td>STATE UT</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 40.966944</td></tr>
+<tr><td>LONGITUDE -111.93</td></tr>
+<tr><td>ELEVATION 4295.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:TSLC">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-111.93,40.966944</coordinates>
+</Point>
+</Placemark>
+<Placemark id="197">
+<name>HOULTON</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KCBW</td></tr>
+<tr><td>STATE ME</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 46.039249999999996</td></tr>
+<tr><td>LONGITUDE -67.806431</td></tr>
+<tr><td>ELEVATION 860.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KCBW">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-67.806431,46.039249999999996</coordinates>
+</Point>
+</Placemark>
+<Placemark id="198">
+<name>FT CAMPBELL</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KHPX</td></tr>
+<tr><td>STATE KY</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 36.736972</td></tr>
+<tr><td>LONGITUDE -87.285583</td></tr>
+<tr><td>ELEVATION 613.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KHPX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-87.285583,36.736972</coordinates>
+</Point>
+</Placemark>
+<Placemark id="199">
+<name>JACKSON</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KJKL</td></tr>
+<tr><td>STATE KY</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 37.590832999999996</td></tr>
+<tr><td>LONGITUDE -83.313056</td></tr>
+<tr><td>ELEVATION 1461.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KJKL">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-83.313056,37.590832999999996</coordinates>
+</Point>
+</Placemark>
+<Placemark id="200">
+<name>LITTLE ROCK</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KLZK</td></tr>
+<tr><td>STATE AR</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 34.8365</td></tr>
+<tr><td>LONGITUDE -92.262194</td></tr>
+<tr><td>ELEVATION 649.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KLZK">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-92.262194,34.8365</coordinates>
+</Point>
+</Placemark>
+<Placemark id="201">
+<name>EDWARDS</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KEYX</td></tr>
+<tr><td>STATE CA</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 35.09785</td></tr>
+<tr><td>LONGITUDE -117.56075</td></tr>
+<tr><td>ELEVATION 2873.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KEYX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-117.56075,35.09785</coordinates>
+</Point>
+</Placemark>
+<Placemark id="202">
+<name>PHOENIX</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:TPHX</td></tr>
+<tr><td>STATE AZ</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 33.421110999999996</td></tr>
+<tr><td>LONGITUDE -112.16305</td></tr>
+<tr><td>ELEVATION 1089.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:TPHX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-112.16305,33.421110999999996</coordinates>
+</Point>
+</Placemark>
+<Placemark id="203">
+<name>WASHINGTON NATL</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:TDCA</td></tr>
+<tr><td>STATE MD</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 38.758888999999996</td></tr>
+<tr><td>LONGITUDE -76.961944</td></tr>
+<tr><td>ELEVATION 344.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:TDCA">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-76.961944,38.758888999999996</coordinates>
+</Point>
+</Placemark>
+<Placemark id="204">
+<name>WICHITA</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:TICH</td></tr>
+<tr><td>STATE KS</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 37.506944</td></tr>
+<tr><td>LONGITUDE -97.436944</td></tr>
+<tr><td>ELEVATION 1352.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:TICH">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-97.436944,37.506944</coordinates>
+</Point>
+</Placemark>
+<Placemark id="205">
+<name>BOISE</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KCBX</td></tr>
+<tr><td>STATE ID</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 43.490217</td></tr>
+<tr><td>LONGITUDE -116.23603299999999</td></tr>
+<tr><td>ELEVATION 3172.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KCBX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-116.23603299999999,43.490217</coordinates>
+</Point>
+</Placemark>
+<Placemark id="206">
+<name>FT RUCKER</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KEOX</td></tr>
+<tr><td>STATE AL</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 31.460555999999997</td></tr>
+<tr><td>LONGITUDE -85.459389</td></tr>
+<tr><td>ELEVATION 537.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KEOX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-85.459389,31.460555999999997</coordinates>
+</Point>
+</Placemark>
+<Placemark id="207">
+<name>ROANOKE</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KFCX</td></tr>
+<tr><td>STATE VA</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 37.0244</td></tr>
+<tr><td>LONGITUDE -80.273969</td></tr>
+<tr><td>ELEVATION 2965.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KFCX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-80.273969,37.0244</coordinates>
+</Point>
+</Placemark>
+<Placemark id="208">
+<name>CHICAGO</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KLOT</td></tr>
+<tr><td>STATE IL</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 41.604444</td></tr>
+<tr><td>LONGITUDE -88.08444399999999</td></tr>
+<tr><td>ELEVATION 760.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KLOT">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-88.08444399999999,41.604444</coordinates>
+</Point>
+</Placemark>
+<Placemark id="209">
+<name>RALEIGH DURHAM</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KRAX</td></tr>
+<tr><td>STATE NC</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 35.665518999999996</td></tr>
+<tr><td>LONGITUDE -78.48975</td></tr>
+<tr><td>ELEVATION 462.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KRAX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-78.48975,35.665518999999996</coordinates>
+</Point>
+</Placemark>
+<Placemark id="210">
+<name>DETROIT</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:TDTW</td></tr>
+<tr><td>STATE MI</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 42.111111</td></tr>
+<tr><td>LONGITUDE -83.515</td></tr>
+<tr><td>ELEVATION 771.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:TDTW">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-83.515,42.111111</coordinates>
+</Point>
+</Placemark>
+<Placemark id="211">
+<name>LAS VEGAS</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KESX</td></tr>
+<tr><td>STATE NV</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 35.70135</td></tr>
+<tr><td>LONGITUDE -114.89165</td></tr>
+<tr><td>ELEVATION 4948.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KESX">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-114.89165,35.70135</coordinates>
+</Point>
+</Placemark>
+<Placemark id="212">
+<name>RAFAEL HERNANDEZ AP</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:TJBQ</td></tr>
+<tr><td>STATE PR</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 18.485</td></tr>
+<tr><td>LONGITUDE -67.143</td></tr>
+<tr><td>ELEVATION 280.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:TJBQ">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-67.143,18.485</coordinates>
+</Point>
+</Placemark>
+<Placemark id="213">
+<name>BINGHAMTON</name>
+<description>
+<![CDATA[
+<table>
+<tr><td>SITE ID NEXRAD:KBGM</td></tr>
+<tr><td>STATE NY</td></tr>
+<tr><td>COUNTRY UNITED STATES</td></tr>
+<tr><td>LATITUDE 42.199694</td></tr>
+<tr><td>LONGITUDE -75.98472199999999</td></tr>
+<tr><td>ELEVATION 1703.0</td></tr>
+<tr><td><a href="http://www.ncdc.noaa.gov/nexradinv/chooseday.jsp?id=NEXRAD:KBGM">Order Data</a></td></tr>
+</table>
+]]>
+</description>
+<Point>
+<coordinates>-75.98472199999999,42.199694</coordinates>
+</Point>
+</Placemark>
+</Document></kml>

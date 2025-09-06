@@ -38,5 +38,11 @@ func main() {
 	r.GET("/l3/:site/:product/:fn/radial", l3FileRadialHandler)
 	r.GET("/l3/:site/:product/:fn/render", l3FileRenderHandler)
 
+	// Serve production frontend build (if present)
+	r.Static("/assets", "./web/dist/assets")
+	r.StaticFile("/nexrad.kml", "./nexrad.kml")
+	r.StaticFile("/", "./web/dist/index.html")
+	r.NoRoute(func(c *gin.Context) { c.File("./web/dist/index.html") })
+
 	r.Run(":8081")
 }
