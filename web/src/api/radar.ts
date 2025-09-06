@@ -55,3 +55,15 @@ export async function fetchL2RadialCenter(site: string, fn: string): Promise<{ l
   const data = await res.json()
   return { lat: data.Lat, lon: data.Lon }
 }
+
+// Fetch full radial set JSON for a specific elevation
+export async function fetchL2Radial(
+  site: string,
+  fn: string,
+  product: 'ref' | 'vel',
+  elv: number
+): Promise<import('../types').RadialSet> {
+  const res = await fetch(`${API_BASE}/l2/${encodeURIComponent(site)}/${encodeURIComponent(fn)}/${product}/${elv}/radial`)
+  if (!res.ok) throw new Error(`Failed to fetch L2 radial for elv ${elv}`)
+  return res.json()
+}

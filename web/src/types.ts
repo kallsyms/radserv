@@ -5,3 +5,20 @@ export interface L2Meta {
 }
 
 export type ViewMode = '2d' | '3d'
+
+// JSON shape returned by /l2/:site/:fn/:product/:elv/radial
+export interface Radial {
+  AzimuthAngle: number
+  AzimuthResolution: number
+  StartRange: number
+  GateInterval: number
+  Gates: number[]
+}
+
+export interface RadialSet {
+  Lat: number
+  Lon: number
+  Radius: number
+  ElevationAngle: number
+  Radials: Radial[]
+}

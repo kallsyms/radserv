@@ -14,7 +14,9 @@ import {
   fetchL2RadialCenter,
 } from './api/radar'
 import { loadSiteCoords, type SiteCoordMap } from './utils/sites'
-import IsoView3D from './three/IsoView3D'
+import IsoView3D from './three/IsoView3D' // server OBJ (fallback)
+import IsoView3DClient from './three/IsoView3DClient'
+import VolumeView3D from './three/VolumeView3D'
 import 'maplibre-gl/dist/maplibre-gl.css'
 
 export default function App() {
@@ -38,6 +40,9 @@ export default function App() {
     return { ds, site, prod, file, elv, auto, base, labels, roads, lat, lon, z }
   }, [])
 
+  // Store URL params as a ref to prevent re-parsing and maintain initial values
+  const urlParams = React.useRef(init)
+  
   const [dataSource, setDataSource] = useState<DataSource>(init.ds as DataSource)
 
   const [sites, setSites] = useState<string[]>([])
@@ -82,11 +87,23 @@ export default function App() {
   const thresholdTimer = React.useRef<number | null>(null)
   const [l2Center, setL2Center] = useState<{ lat: number; lon: number } | null>(null)
   const [threeLoading, setThreeLoading] = useState(false)
+  const [render3d, setRender3d] = useState<'volume'|'iso'>(() => {
+    const raw = window.location.hash.startsWith('#') ? window.location.hash.slice(1) : window.location.hash
+    const p = new URLSearchParams(raw)
+    return (p.get('r3d') as 'volume'|'iso') || 'volume'
+  })
+  const [solidIso, setSolidIso] = useState<boolean>(() => {
+    const raw = window.location.hash.startsWith('#') ? window.location.hash.slice(1) : window.location.hash
+    const p = new URLSearchParams(raw)
+    const v = p.get('solid')
+    return v === '1' || v === 'true' || false
+  })
 
   const showElevation = dataSource === 'L2' && mode === '2d'
 
   // Load sites when data source changes
   useEffect(() => {
+    console.log('Sites loading effect triggered, dataSource:', dataSource)
     // load station coordinates once
     if (!sitesLoaded) {
       loadSiteCoords().then(m => { setSiteCoords(m); setSitesLoaded(true) }).catch(() => setSitesLoaded(true))
@@ -97,23 +114,144 @@ export default function App() {
       try {
         const s = dataSource === 'L2' ? await fetchL2Sites() : await fetchL3Sites()
         if (cancelled) return
-        setSites(s)
-        // Prefer existing selection from URL if available
-        if (site && s.includes(site)) {
-          setSite(site)
-        } else {
-          setSite(s[0])
+        // Fallback: if API returns empty, derive site list from bundled KML
+        let siteList = (Array.isArray(s) && s.length > 0)
+          ? s
+          : Object.keys(siteCoords).filter(k => /^[A-Z0-9]{3,4}$/.test(k))
+        // Ensure URL-specified site is present and first in the list (so it won't be lost)
+        const urlSiteRaw = urlParams.current.site
+        if (urlSiteRaw) {
+          const hasUrl = siteList.some(x => x.toUpperCase() === urlSiteRaw.toUpperCase() || x.slice(1).toUpperCase() === urlSiteRaw.toUpperCase() || urlSiteRaw.slice(1).toUpperCase() === x.toUpperCase())
+          if (!hasUrl) {
+            siteList = [urlSiteRaw, ...siteList]
+          } else {
+            // move url site to front to avoid being replaced by first
+            siteList = [siteList.find(x => x.toUpperCase() === urlSiteRaw.toUpperCase())!, ...siteList.filter(x => x.toUpperCase() !== urlSiteRaw.toUpperCase())]
+          }
         }
+        setSites(siteList)
+        // Prefer existing selection from current state if valid; else use URL; else fallback to first
+        const listUpper = siteList.map(s => s.toUpperCase())
+        const findMatch = (code?: string): string | undefined => {
+          if (!code) return undefined
+          const up = code.toUpperCase()
+          // exact match
+          const idxExact = listUpper.indexOf(up)
+          if (idxExact !== -1) return siteList[idxExact]
+          // normalize to 3-letter core
+          const core3 = up.length === 3 ? up : (up.length >= 4 ? up.slice(1) : up)
+          // try prefixed 4-letter in list
+          for (const pref of ['K','P','T']) {
+            const cand = pref + core3
+            const i = listUpper.indexOf(cand)
+            if (i !== -1) return siteList[i]
+          }
+          // try 3-letter in list
+          const i3 = listUpper.findIndex(s => s === core3)
+          if (i3 !== -1) return siteList[i3]
+          return undefined
+        }
+        // Priority: current state site if valid, then URL site if valid, then first in list
+        const currentMatch = findMatch(site)
+        const urlMatch = findMatch(urlSiteRaw)
+        
+        console.log('Site selection debug:', {
+          currentSite: site,
+          urlSiteRaw,
+          siteList: siteList.slice(0, 5), // first 5 for brevity
+          currentMatch,
+          urlMatch
+        })
+        
+        if (currentMatch) {
+          // Current state site is valid, keep it
+          console.log('Keeping current site:', currentMatch)
+          setSite(currentMatch)
+        } else if (urlMatch) {
+          // URL site is valid, use it
+          console.log('Using URL site:', urlMatch)
+          setSite(urlMatch)
+        } else if (!site) {
+          // No current site and no valid URL site, use first as fallback
+          console.log('Using fallback (first site):', siteList[0])
+          setSite(siteList[0])
+        } else {
+          console.log('No change to site selection')
+        }
+        // If we have a current site but it's not in the new list and there's no URL match,
+        // keep the current site (don't overwrite with first)
       } catch (e) {
-        setSites([])
-        setSite(undefined)
+        console.log('Sites loading failed, attempting KML fallback, error:', e)
+        // On error, attempt KML-based fallback
+        try {
+          const kml = await loadSiteCoords()
+          if (cancelled) return
+          let siteList = Object.keys(kml).filter(k => /^[A-Z0-9]{4}$/.test(k))
+          console.log('KML fallback sites:', siteList.slice(0, 5))
+          
+          // Apply same logic as main path: respect URL site
+          const urlSiteRaw = urlParams.current.site
+          if (urlSiteRaw) {
+            const hasUrl = siteList.some(x => x.toUpperCase() === urlSiteRaw.toUpperCase() || x.slice(1).toUpperCase() === urlSiteRaw.toUpperCase() || urlSiteRaw.slice(1).toUpperCase() === x.toUpperCase())
+            if (!hasUrl) {
+              siteList = [urlSiteRaw, ...siteList]
+            } else {
+              // move url site to front to avoid being replaced by first
+              siteList = [siteList.find(x => x.toUpperCase() === urlSiteRaw.toUpperCase())!, ...siteList.filter(x => x.toUpperCase() !== urlSiteRaw.toUpperCase())]
+            }
+          }
+          
+          setSites(siteList)
+          
+          // Use same findMatch logic for KML fallback
+          const listUpper = siteList.map(s => s.toUpperCase())
+          const findMatch = (code?: string): string | undefined => {
+            if (!code) return undefined
+            const up = code.toUpperCase()
+            // exact match
+            const idxExact = listUpper.indexOf(up)
+            if (idxExact !== -1) return siteList[idxExact]
+            // normalize to 3-letter core
+            const core3 = up.length === 3 ? up : (up.length >= 4 ? up.slice(1) : up)
+            // try prefixed 4-letter in list
+            for (const pref of ['K','P','T']) {
+              const cand = pref + core3
+              const i = listUpper.indexOf(cand)
+              if (i !== -1) return siteList[i]
+            }
+            // try 3-letter in list
+            const i3 = listUpper.findIndex(s => s === core3)
+            if (i3 !== -1) return siteList[i3]
+            return undefined
+          }
+          
+          const currentMatch = findMatch(site)
+          const urlMatch = findMatch(urlSiteRaw)
+          
+          console.log('KML fallback site selection:', { currentMatch, urlMatch, fallback: siteList[0] })
+          
+          if (currentMatch) {
+            console.log('KML: Keeping current site:', currentMatch)
+            setSite(currentMatch)
+          } else if (urlMatch) {
+            console.log('KML: Using URL site:', urlMatch)
+            setSite(urlMatch)
+          } else if (!site) {
+            console.log('KML: Using fallback site:', siteList[0])
+            setSite(siteList[0])
+          } else {
+            console.log('KML: No change to site')
+          }
+        } catch {
+          console.log('KML fallback also failed')
+          setSites([])
+          setSite(undefined)
+        }
       } finally {
         if (!cancelled) setLoadingSites(false)
       }
     }
-    // reset dependent state
-    setFiles([]); setFile(undefined)
-    setElevations([]); setElevation(undefined)
+    // Do not reset file/elevation here; let downstream effects handle resets
     if (dataSource === 'L2') {
       setProducts(['ref', 'vel'])
       // honor existing product if valid, else default to ref
@@ -171,10 +309,22 @@ export default function App() {
           : await fetchL3Files(site, product)
         if (cancelled) return
         setFiles(fs)
+        // Prefer URL-selected file if present
+        const urlFile = urlParams.current.file
+        
+        // Priority: current file if valid, URL file if valid, most recent file
+        let newFile: string | undefined
         if (file && fs.includes(file)) {
-          setFile(file)
+          newFile = file  // Keep current selection if valid
+        } else if (urlFile && fs.includes(urlFile)) {
+          newFile = urlFile  // Use URL file if valid
         } else {
-          setFile(fs[fs.length - 1])
+          newFile = fs[fs.length - 1]  // Fallback to most recent
+        }
+        
+        // Only update if necessary
+        if (newFile !== file) {
+          setFile(newFile)
         }
       } catch (e) {
         setFiles([])
@@ -221,8 +371,9 @@ export default function App() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [site, file, dataSource])
 
-  // Persist state to URL hash
+  // Persist state to URL hash (only once we have a site to avoid wiping selection on boot)
   useEffect(() => {
+    if (!site) return
     const p = new URLSearchParams()
     p.set('src', dataSource)
     if (site) p.set('site', site)
@@ -242,6 +393,8 @@ export default function App() {
     }
     p.set('mode', mode)
     if (mode === '3d') p.set('thr', String(effectiveThreshold))
+    if (mode === '3d') p.set('r3d', render3d)
+    if (mode === '3d' && render3d === 'iso' && solidIso) p.set('solid', '1')
     const newHash = '#' + p.toString()
     if (window.location.hash !== newHash) {
       history.replaceState(null, '', newHash)
@@ -306,6 +459,10 @@ export default function App() {
     const [r,g,b] = dbzColorNOAA(effectiveThreshold)
     return [r, g, b, Math.round(0.5 * 255)]
   }, [effectiveThreshold])
+  const isoRgba = useMemo(() => {
+    const [r,g,b] = isoColor
+    return [r, g, b, solidIso ? 255 : Math.round(0.5 * 255)] as [number, number, number, number]
+  }, [isoColor, solidIso])
 
   // Debounce threshold changes: fire after 2s or on commit
   useEffect(() => {
@@ -337,16 +494,27 @@ export default function App() {
         />
       ) : (
         <>
-          <IsoView3D
-            site={site!}
-            file={file!}
-            threshold={effectiveThreshold}
-            color={isoColor}
-            center={l2Center}
-            showLabels={showLabels}
-            showRoads={showRoads}
-            onLoading={setThreeLoading}
-          />
+          {render3d === 'volume' ? (
+            <VolumeView3D
+              site={site!}
+              file={file!}
+              center={l2Center}
+              showLabels={showLabels}
+              showRoads={showRoads}
+              onLoading={setThreeLoading}
+            />
+          ) : (
+            <IsoView3DClient
+              site={site!}
+              file={file!}
+              threshold={effectiveThreshold}
+              color={isoRgba}
+              center={l2Center}
+              showLabels={showLabels}
+              showRoads={showRoads}
+              onLoading={setThreeLoading}
+            />
+          )}
           {threeLoading && (
             <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-[1100]">
               <div className="bg-black/60 text-white text-xs rounded-md px-3 py-1 shadow flex items-center gap-2">
@@ -396,6 +564,8 @@ export default function App() {
             setProduct('ref')
           }
         }}
+        render3d={render3d}
+        onRender3dChange={setRender3d}
         threshold={threshold}
         onThresholdChange={setThreshold}
         onThresholdCommit={() => {
@@ -405,6 +575,8 @@ export default function App() {
           }
           setEffectiveThreshold(threshold)
         }}
+        solidIso={solidIso}
+        onSolidIsoChange={setSolidIso}
       />
     </div>
   )
