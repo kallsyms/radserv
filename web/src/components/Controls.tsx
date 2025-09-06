@@ -1,5 +1,5 @@
 import React from 'react'
-import type { DataSource } from '../types'
+import type { DataSource, ViewMode } from '../types'
 
 type Props = {
   dataSource: DataSource
@@ -27,15 +27,17 @@ type Props = {
 
   showElevation: boolean
 
-  autoRefresh: boolean
-  onAutoRefreshChange: (v: boolean) => void
-
   basemap: 'satellite' | 'osm'
   onBasemapChange: (v: 'satellite' | 'osm') => void
   showLabels: boolean
   onShowLabelsChange: (v: boolean) => void
   showRoads: boolean
   onShowRoadsChange: (v: boolean) => void
+  mode: ViewMode
+  onModeChange: (m: ViewMode) => void
+  threshold: number
+  onThresholdChange: (v: number) => void
+  onThresholdCommit: () => void
 }
 
 export default function Controls(props: Props) {
@@ -51,6 +53,20 @@ export default function Controls(props: Props) {
           <option value="L2">L2</option>
           <option value="L3">L3</option>
         </select>
+      </div>
+
+      <div className="flex gap-2 items-center">
+        <label className="text-xs text-gray-600 dark:text-gray-300 w-24">Mode</label>
+        <div className="flex-1 grid grid-cols-2 gap-2">
+          <button
+            className={`px-2 py-1 rounded border text-sm ${props.mode==='2d'?'bg-blue-600 text-white border-blue-600':'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700'}`}
+            onClick={() => props.onModeChange('2d')}
+          >2D</button>
+          <button
+            className={`px-2 py-1 rounded border text-sm ${props.mode==='3d'?'bg-blue-600 text-white border-blue-600':'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700'}`}
+            onClick={() => props.onModeChange('3d')}
+          >3D</button>
+        </div>
       </div>
 
       <div className="flex gap-2 items-center">
@@ -107,15 +123,32 @@ export default function Controls(props: Props) {
         </div>
       )}
 
-      <div className="flex gap-2 items-center">
-        <label className="text-xs text-gray-600 dark:text-gray-300 w-24">Auto Refresh</label>
-        <input
-          type="checkbox"
-          checked={props.autoRefresh}
-          onChange={e => props.onAutoRefreshChange(e.target.checked)}
-        />
-        <span className="text-xs text-gray-500 dark:text-gray-400">every 60s</span>
-      </div>
+      {props.mode === '3d' && (
+        <div className="flex gap-2 items-center">
+          <label className="text-xs text-gray-600 dark:text-gray-300 w-24">Threshold</label>
+          <input
+            type="range"
+            min={5}
+            max={75}
+            step={5}
+            value={props.threshold}
+            onChange={e => props.onThresholdChange(parseInt(e.target.value))}
+            onMouseUp={props.onThresholdCommit}
+            onTouchEnd={props.onThresholdCommit}
+            className="flex-1"
+          />
+          <input
+            type="number"
+            min={0}
+            max={80}
+            step={1}
+            value={props.threshold}
+            onChange={e => props.onThresholdChange(parseInt(e.target.value))}
+            onBlur={props.onThresholdCommit}
+            className="w-16 border rounded px-2 py-1 text-sm bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100"
+          />
+        </div>
+      )}
 
       <div className="flex gap-2 items-center">
         <label className="text-xs text-gray-600 dark:text-gray-300 w-24">Base Layer</label>

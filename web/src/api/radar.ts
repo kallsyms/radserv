@@ -47,3 +47,11 @@ export async function fetchL3Files(site: string, product: string): Promise<strin
 export function l3RenderUrl(site: string, product: string, fn: string): string {
   return `${API_BASE}/l3/${encodeURIComponent(site)}/${encodeURIComponent(product)}/${encodeURIComponent(fn)}/render`
 }
+
+// L2 radial for center lat/lon (use ref/1, metadata identical for center across products)
+export async function fetchL2RadialCenter(site: string, fn: string): Promise<{ lat: number; lon: number }> {
+  const res = await fetch(`${API_BASE}/l2/${encodeURIComponent(site)}/${encodeURIComponent(fn)}/ref/1/radial`)
+  if (!res.ok) throw new Error('Failed to fetch L2 radial meta')
+  const data = await res.json()
+  return { lat: data.Lat, lon: data.Lon }
+}

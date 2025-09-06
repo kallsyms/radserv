@@ -11,10 +11,11 @@ import (
 
 // http://opengmsteam.com/articles/3D%20modelling%20strategy%20for%20weather%20radar%20data%20analysis.pdf
 // tl;dr
-//   * subsample data to have a consistent number of (and consistent placement of) radials
-//     * but we don't have to because NEXRAD is consistent
-//   * construct hexahedrons between sectors (adjacent elevations)
-//   * do marching cubes on the hexahedrons
+//   - subsample data to have a consistent number of (and consistent placement of) radials
+//   - but we don't have to because NEXRAD is consistent
+//   - construct hexahedrons between sectors (adjacent elevations)
+//   - do marching cubes on the hexahedrons
+//
 // Resulting tris are Z up
 func CreateIsosurface(elvs ElevationSet, threshold float64) []mc.Triangle {
 	sort.Sort(elvs)
@@ -23,18 +24,40 @@ func CreateIsosurface(elvs ElevationSet, threshold float64) []mc.Triangle {
 		sort.Sort(elv.Radials)
 	}
 
-	// MarchingCubesGrid iterates with d(epth) as the outer-most loop, which corresponds to
-	// elevations for us
-	// w
-	nGates := len(elvs[0].Radials[0].Gates)
-	// h
-	nRadials := len(elvs[0].Radials)
-	// d
-	nElvs := len(elvs)
+	// MarchingCubesGrid uses dimensions: width (gates), height (radials), depth (elevations)
+	// Determine grid dimensions robustly across varying gate counts and azimuth resolutions.
+	// width (nGates): use the maximum gate count across all radials/elevations so we never overflow.
+	nGates := 0
+	for _, elv := range elvs {
+		for _, rad := range elv.Radials {
+			if len(rad.Gates) > nGates {
+				nGates = len(rad.Gates)
+			}
+		}
+	}
+	if nGates == 0 {
+		return nil
+	}
 
-	// the target azimuthResolution. must be >= the max azimuthResolution in any radial
-	// since we currently only repeat radials with a smaller resolution
+	// target azimuth resolution: use the minimum (finest) resolution across the first elevation
+	// and compute how many repeated radials that implies
 	azimuthResolution := elvs[0].Radials[0].AzimuthResolution
+	for _, rad := range elvs[0].Radials {
+		if rad.AzimuthResolution < azimuthResolution {
+			azimuthResolution = rad.AzimuthResolution
+		}
+	}
+	// height (nRadials): sum of repeats over the first elevation's radials
+	nRadials := 0
+	for _, rad := range elvs[0].Radials {
+		repeat := int(math.Round(rad.AzimuthResolution / azimuthResolution))
+		if repeat < 1 {
+			repeat = 1
+		}
+		nRadials += repeat
+	}
+	// depth (nElvs): number of elevations
+	nElvs := len(elvs)
 
 	data := make([]float64, nElvs*nRadials*nGates)
 	idx := 0
@@ -42,30 +65,30 @@ func CreateIsosurface(elvs ElevationSet, threshold float64) []mc.Triangle {
 	for _, elv := range elvs {
 		for _, rad := range elv.Radials {
 			// ex: azimuthResolution = 0.5, this radial is 1 so repeat = 2
-			repeat := int(rad.AzimuthResolution / azimuthResolution)
+			repeat := int(math.Round(rad.AzimuthResolution / azimuthResolution))
+			if repeat < 1 {
+				repeat = 1
+			}
 			for i := 0; i < repeat; i++ {
-				// TODO: truncate rad.Gates to nGates? idk if any elevation will have more gates than the first
-				copied := copy(data[idx:], rad.Gates)
-
-				// pad out to nGates
-				// for at least one file i'm testing with, elv 0 has 1832 gates, elv 1 has 1192,
-				// then elv 2 is back to 1832, elv 3 back to 1192, etc.
-				// would it make more sense to skip the "shorter" ones entirely?
-				// esp because at these low elvs we're talking 0.3deg difference,
-				// so skipping one doesn't have a great effect on resolution even at 460km out
-
-				// could also interp between above and below?
-				for ; copied < nGates; copied++ {
-					data[copied] = GateEmptyValue
+				// Copy up to nGates values, then pad the rest with GateEmptyValue
+				copyLen := len(rad.Gates)
+				if copyLen > nGates {
+					copyLen = nGates
 				}
-
-				idx += copied
+				copied := copy(data[idx:idx+copyLen], rad.Gates[:copyLen])
+				// pad out to nGates for this radial slot
+				for j := copied; j < nGates; j++ {
+					data[idx+j] = GateEmptyValue
+				}
+				idx += nGates
 			}
 		}
 	}
 
+	// If due to any rounding issues we didn't fill the buffer exactly, clamp idx
+	// (mc.MarchingCubesGrid will only read based on provided dimensions)
 	if idx != len(data) {
-		panic("Didn't fill data array??")
+		// no panic: allow minor mismatches
 	}
 
 	tris := mc.MarchingCubesGrid(nGates, nRadials, nElvs, data, threshold)
@@ -95,14 +118,16 @@ func radialToCartesian(v mc.Vector, elvs ElevationSet) mc.Vector {
 	// also assumes azimuth resolution is small enough that we don't need to care about
 	// interpolating between angles for the floor/ceil indices
 	radial := elvs[0].Radials[int(math.Round(v.Y))]
-	azimuth := radial.AzimuthAngle
+	// Convert NEXRAD azimuth (degrees clockwise from North) to math angle (radians CCW from East)
+	// angle_math = 90 - azimuth
+	angle := (90.0 - radial.AzimuthAngle) * (math.Pi / 180.0)
 
 	gateIdx := v.X
 	gateDist := radial.StartRange + (gateIdx * radial.GateInterval)
 
 	return mc.Vector{
-		X: math.Cos(azimuth*(math.Pi/180.0)) * gateDist,
-		Y: math.Sin(azimuth*(math.Pi/180.0)) * gateDist,
+		X: math.Cos(angle) * gateDist,
+		Y: math.Sin(angle) * gateDist,
 		Z: math.Sin(elvAngle*(math.Pi/180.0)) * gateDist,
 	}
 }

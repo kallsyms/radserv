@@ -4,3 +4,4 @@ export interface L2Meta {
   ElevationChunks: number[][]
 }
 
+export type ViewMode = '2d' | '3d'
