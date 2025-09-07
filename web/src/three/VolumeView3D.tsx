@@ -48,12 +48,12 @@ function mat4Scale(m: Float32Array, x: number, y: number, z: number): Float32Arr
 
 type VolumeTexture2D = { tex: WebGLTexture; w: number; h: number; d: number; radiusMeters: number; innerRadiusMeters: number; heightMeters: number; baseAzDeg: number }
 
-function resamplePolarToCartesian(grid: VolumeGrid, maxDims = { x: 128, y: 128, z: 48 }): { data2D: Uint8Array; w: number; h: number; d: number; radiusMeters: number; innerRadiusMeters: number; heightMeters: number; baseAzDeg: number } {
+function resamplePolarToCartesian(grid: VolumeGrid, maxDims = { x: 128, y: 128, z: 128 }): { data2D: Uint8Array; w: number; h: number; d: number; radiusMeters: number; innerRadiusMeters: number; heightMeters: number; baseAzDeg: number } {
   const [ng, nr, ne] = grid.dims
   // Target dims (cap to max and keep square XY)
   const w = Math.min(maxDims.x, ng)
   const h = Math.min(maxDims.y, nr)
-  const d = Math.min(maxDims.z, Math.max(4, ne))
+  const d = maxDims.z // Use full Z resolution, not limited by number of elevations
 
   const data = new Uint8Array(w * h * d)
   const start = grid.startRange
@@ -62,7 +62,18 @@ function resamplePolarToCartesian(grid: VolumeGrid, maxDims = { x: 128, y: 128, 
   const maxRange = start + gi * (ng - 1)
   const radiusMeters = maxRange
   const innerRadiusMeters = start
-  const heightMeters = Math.max(500, Math.sin(maxEl * Math.PI / 180) * maxRange)
+  // Calculate a more reasonable height based on a typical range (e.g., 100km)
+  const typicalRange = Math.min(100000, maxRange) // 100km or max range, whichever is smaller
+  const heightMeters = Math.max(20000, Math.sin(maxEl * Math.PI / 180) * typicalRange)
+  
+  // Debug elevation info
+  console.log('Volumetric grid info:', {
+    elevations: grid.elevationAngles,
+    maxEl,
+    heightMeters,
+    dimensions: [w, h, d],
+    maxRange
+  })
 
   // Transfer function window (dBZ range)
   const dbzMin = -10
@@ -85,56 +96,127 @@ function resamplePolarToCartesian(grid: VolumeGrid, maxDims = { x: 128, y: 128, 
     return grid.data[e * (nx * ny) + r * nx + g]
   }
 
-  // Iterate cart grid
-  for (let kz = 0; kz < d; kz++) {
-    const zMeters = (kz / Math.max(1, d - 1)) * heightMeters
+  // New approach: instead of mapping height slices to elevations,
+  // directly populate based on each elevation's actual height at each range
+  data.fill(0) // start with empty volume
+  
+  const populatedSlices = new Set<number>()
+  const sliceStats = new Map<number, { count: number, maxVal: number }>()
+  
+  // For each elevation angle, calculate its contribution to the volume
+  for (let elIdx = 0; elIdx < grid.elevationAngles.length; elIdx++) {
+    const elAngle = grid.elevationAngles[elIdx]
+    const elRad = elAngle * Math.PI / 180
+    // Processing elevation ${elIdx}: ${elAngle.toFixed(2)}°
+    
     for (let ky = 0; ky < h; ky++) {
       // map ky to radar azimuth degrees (0=N, clockwise positive)
       const azDeg = (ky / h) * 360
-      const azRad = azDeg * Math.PI / 180
-      // Match isosurface orientation (X east, Y north) with +90° CCW correction:
-      // X = -cos(az) * r, Y = sin(az) * r
-      const negCos = -Math.cos(azRad)
-      const sinA = Math.sin(azRad)
+      // Match 2D rendering approach: subtract 90° to align with expected coordinate system
+      const adjustedAz = azDeg - 90
+      const azRad = adjustedAz * Math.PI / 180
+      // Use sine and cosine directly on the adjusted angle
+      const cosAngle = Math.cos(azRad)
+      const sinAngle = Math.sin(azRad)
+      
       for (let kx = 0; kx < w; kx++) {
         // map kx to radius [start, maxRange]
         const rMeters = start + (kx / Math.max(1, w - 1)) * (maxRange - start)
-        const x = negCos * rMeters
-        const y = sinA * rMeters
+        const x = cosAngle * rMeters
+        const y = sinAngle * rMeters
+        
         // Skip inside first valid gate to avoid artificial column at site
-        if (rMeters < start + 0.75 * gi) { data[kz * (w * h) + ky * w + kx] = 0; continue }
-        // If target height exceeds what any elevation can reach at this range, mark empty
-        const maxHAtR = Math.sin(maxEl * Math.PI / 180) * rMeters
-        const heightMargin = Math.max(150, 0.5 * gi) // meters
-        if (zMeters > maxHAtR + heightMargin) { data[kz * (w * h) + ky * w + kx] = 0; continue }
-        // Infer elevation slice by matching height ~ sin(elv) * r
-        const targetH = zMeters
-        const elAngles = grid.elevationAngles
-        let best = 0
-        let bestDiff = Infinity
-        for (let i = 0; i < elAngles.length; i++) {
-          const hPred = Math.sin(elAngles[i] * Math.PI / 180) * rMeters
-          const diff = Math.abs(hPred - targetH)
-          if (diff < bestDiff) { best = i; bestDiff = diff }
-        }
-
-        // Map (x,y) -> (gate, azIdx)
+        if (rMeters < start + 0.75 * gi) continue
+        
+        // Calculate the actual height of this elevation at this range
+        const actualHeight = Math.sin(elRad) * rMeters
+        
+        // Find which height slice this corresponds to
+        const kz = Math.round((actualHeight / heightMeters) * (d - 1))
+        if (kz < 0 || kz >= d) continue
+        
+        // Debug height mapping removed
+        
+        // Map (x,y) -> (gate, azIdx) with interpolation
         const r = Math.sqrt(x * x + y * y)
-        let gIdx = Math.round((r - start) / gi)
-        if (gIdx < 0 || gIdx >= ng) { data[kz * (w * h) + ky * w + kx] = 0; continue }
-        // Inverse mapping consistent with the above XY: az = atan2(Y, -X) in degrees
-        let az = Math.atan2(y, -x) * 180 / Math.PI
+        const gIdxFloat = (r - start) / gi
+        const gIdx0 = Math.floor(gIdxFloat)
+        const gIdx1 = Math.ceil(gIdxFloat)
+        const gFrac = gIdxFloat - gIdx0
+        
+        if (gIdx0 < 0 || gIdx1 >= ng) continue
+        
+        // Inverse mapping: convert back to NEXRAD azimuth with interpolation
+        let adjustedAzBack = Math.atan2(y, x) * 180 / Math.PI
+        let az = adjustedAzBack + 90.0
         // normalize to [0,360)
         az = ((az % 360) + 360) % 360
-        let j = Math.round((az - baseAz) / azRes)
-        // wrap
-        j = ((j % nRadials) + nRadials) % nRadials
+        const jFloat = (az - baseAz) / azRes
+        const j0 = Math.floor(jFloat)
+        const j1 = Math.ceil(jFloat)
+        const jFrac = jFloat - j0
+        
+        // wrap both indices
+        const j0Wrapped = ((j0 % nRadials) + nRadials) % nRadials
+        const j1Wrapped = ((j1 % nRadials) + nRadials) % nRadials
 
-        const v = at(gIdx, j, best)
-        data[kz * (w * h) + ky * w + kx] = toU8(v)
+        // Bilinear interpolation: range x azimuth
+        const v00 = at(gIdx0, j0Wrapped, elIdx)
+        const v01 = at(gIdx0, j1Wrapped, elIdx) 
+        const v10 = at(gIdx1, j0Wrapped, elIdx)
+        const v11 = at(gIdx1, j1Wrapped, elIdx)
+        
+        // Interpolate in range direction first
+        let vBottom = v00, vTop = v10
+        if (v00 !== GATE_EMPTY_VALUE && v10 !== GATE_EMPTY_VALUE) {
+          vBottom = v00 + (v10 - v00) * gFrac
+        } else if (v00 !== GATE_EMPTY_VALUE) {
+          vBottom = v00
+        } else if (v10 !== GATE_EMPTY_VALUE) {
+          vBottom = v10
+        } else {
+          vBottom = GATE_EMPTY_VALUE
+        }
+        
+        if (v01 !== GATE_EMPTY_VALUE && v11 !== GATE_EMPTY_VALUE) {
+          vTop = v01 + (v11 - v01) * gFrac
+        } else if (v01 !== GATE_EMPTY_VALUE) {
+          vTop = v01
+        } else if (v11 !== GATE_EMPTY_VALUE) {
+          vTop = v11
+        } else {
+          vTop = GATE_EMPTY_VALUE
+        }
+        
+        // Then interpolate in azimuth direction
+        let v = vBottom // fallback
+        if (vBottom !== GATE_EMPTY_VALUE && vTop !== GATE_EMPTY_VALUE) {
+          v = vBottom + (vTop - vBottom) * jFrac
+        } else if (vBottom !== GATE_EMPTY_VALUE) {
+          v = vBottom
+        } else if (vTop !== GATE_EMPTY_VALUE) {
+          v = vTop
+        } else {
+          v = GATE_EMPTY_VALUE
+        }
+        if (v !== GATE_EMPTY_VALUE && isFinite(v)) {
+          data[kz * (w * h) + ky * w + kx] = toU8(v)
+          populatedSlices.add(kz)
+          
+          const current = sliceStats.get(kz) || { count: 0, maxVal: 0 }
+          current.count++
+          current.maxVal = Math.max(current.maxVal, v)
+          sliceStats.set(kz, current)
+        }
       }
     }
   }
+
+  // Debug slice population
+  console.log('Populated slices:', Array.from(populatedSlices).sort((a, b) => a - b))
+  console.log('Slice statistics:', Array.from(sliceStats.entries())
+    .sort(([a], [b]) => a - b)
+    .map(([slice, stats]) => ({ slice, ...stats })))
 
   // Pack slices into a single 2D texture of size w x (h*d)
   const data2D = new Uint8Array(w * h * d)
@@ -205,10 +287,58 @@ export function makeVolumeLayer(id: string, getGrid: () => ReturnType<typeof bui
   uniform float u_innerRadius; // meters; startRange of radar
 
   vec3 tf(float t) {
-    float r = smoothstep(0.6, 1.0, t);
-    float g = smoothstep(0.2, 0.8, t);
-    float b = smoothstep(0.0, 0.4, 1.0 - t);
-    return vec3(r, g, b);
+    // NOAA reflectivity color map with smooth transitions but preserved peak values
+    // t is normalized [0,1] representing dBZ range [-10, 70]
+    float dbz = -10.0 + t * 80.0;
+    
+    if (dbz < 5.0) {
+      return vec3(0.0, 0.0, 0.0);
+    }
+    
+    // Use smoother transitions but don't dilute the core colors
+    if (dbz >= 65.0) {
+      if (dbz >= 70.0) {
+        return vec3(0.569, 0.380, 0.769); // purple for 70+
+      }
+      float frac = smoothstep(65.0, 70.0, dbz);
+      return mix(vec3(0.933, 0.204, 0.980), vec3(0.569, 0.380, 0.769), frac); // magenta to purple
+    } else if (dbz >= 60.0) {
+      float frac = smoothstep(60.0, 65.0, dbz);
+      return mix(vec3(0.663, 0.031, 0.075), vec3(0.933, 0.204, 0.980), frac); // darker red to magenta
+    } else if (dbz >= 55.0) {
+      float frac = smoothstep(55.0, 60.0, dbz);
+      return mix(vec3(0.796, 0.020, 0.086), vec3(0.663, 0.031, 0.075), frac); // dark red to darker red
+    } else if (dbz >= 50.0) {
+      float frac = smoothstep(50.0, 55.0, dbz);
+      return mix(vec3(0.973, 0.039, 0.149), vec3(0.796, 0.020, 0.086), frac); // red to dark red
+    } else if (dbz >= 45.0) {
+      float frac = smoothstep(45.0, 52.0, dbz); // wider transition to preserve reds
+      return mix(vec3(0.965, 0.584, 0.180), vec3(0.973, 0.039, 0.149), frac); // light red to red
+    } else if (dbz >= 40.0) {
+      float frac = smoothstep(40.0, 47.0, dbz); // wider transition
+      return mix(vec3(0.922, 0.706, 0.200), vec3(0.965, 0.584, 0.180), frac); // orange to light red
+    } else if (dbz >= 35.0) {
+      float frac = smoothstep(35.0, 42.0, dbz); // wider transition
+      return mix(vec3(0.996, 0.961, 0.263), vec3(0.922, 0.706, 0.200), frac); // yellow to orange
+    } else if (dbz >= 30.0) {
+      float frac = smoothstep(30.0, 37.0, dbz); // wider transition
+      return mix(vec3(0.153, 0.549, 0.118), vec3(0.996, 0.961, 0.263), frac); // dark green to yellow
+    } else if (dbz >= 25.0) {
+      float frac = smoothstep(25.0, 32.0, dbz);
+      return mix(vec3(0.212, 0.761, 0.180), vec3(0.153, 0.549, 0.118), frac); // green to dark green
+    } else if (dbz >= 20.0) {
+      float frac = smoothstep(20.0, 27.0, dbz);
+      return mix(vec3(0.286, 0.984, 0.243), vec3(0.212, 0.761, 0.180), frac); // light green to green
+    } else if (dbz >= 15.0) {
+      float frac = smoothstep(15.0, 22.0, dbz);
+      return mix(vec3(0.000, 0.188, 0.929), vec3(0.286, 0.984, 0.243), frac); // blue to light green
+    } else if (dbz >= 10.0) {
+      float frac = smoothstep(10.0, 17.0, dbz);
+      return mix(vec3(0.149, 0.643, 0.980), vec3(0.000, 0.188, 0.929), frac); // light blue to blue
+    } else {
+      float frac = smoothstep(5.0, 12.0, dbz);
+      return mix(vec3(0.251, 0.910, 0.890), vec3(0.149, 0.643, 0.980), frac); // cyan to light blue
+    }
   }
 
   void main() {
@@ -220,9 +350,10 @@ export function makeVolumeLayer(id: string, getGrid: () => ReturnType<typeof bui
     float rMeters = length(v_xyMeters);
     if (rMeters > u_radius || rMeters < u_innerRadius) discard;
     float rN = clamp((rMeters - u_innerRadius) / max(u_radius - u_innerRadius, 1.0), 0.0, 1.0);
-    // Compute azimuth (0° = North, clockwise positive) consistent with isosurface orientation
-    // Inverse of X = -cos(az)*r, Y = sin(az)*r is az = atan(Y, -X)
-    float azDeg = degrees(atan(v_xyMeters.y, -v_xyMeters.x));
+    // Compute azimuth (0° = North, clockwise positive) for NEXRAD convention
+    // Match the coordinate system: azimuth = atan2(Y, X) + 90
+    float adjustedAz = degrees(atan(v_xyMeters.y, v_xyMeters.x));
+    float azDeg = adjustedAz + 90.0;
     if (azDeg < 0.0) azDeg += 360.0;
     // Align with atlas azimuth zero
     // atlas rows are packed from 0..360 with 0 at north; no additional offset
@@ -230,8 +361,9 @@ export function makeVolumeLayer(id: string, getGrid: () => ReturnType<typeof bui
     // Sample atlas: y spans slices stacked vertically: (layer + azN) / depth
     float v = (v_layer + azN) / max(u_depth, 1.0);
     float s = texture2D(u_volume2D, vec2(rN, v)).r;
-    float a = pow(clamp(s, 0.0, 1.0), 1.5) * u_opacity;
-    if (a < 0.02) discard;
+    // Better alpha calculation to prevent overdraw washout
+    float a = pow(clamp(s, 0.0, 1.0), 1.8) * u_opacity * 0.3; // Balanced alpha
+    if (a < 0.01) discard;
     vec3 c = tf(s);
     gl_FragColor = vec4(c, a);
   }
@@ -381,10 +513,11 @@ export function makeVolumeLayer(id: string, getGrid: () => ReturnType<typeof bui
         return
       }
 
-      // Enable blending just for our draws
+      // Enable blending with additive mode to prevent white washout
       const hadBlend = gl.isEnabled(gl.BLEND)
       if (!hadBlend) gl.enable(gl.BLEND)
-      gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
+      // Use additive blending for better volumetric appearance
+      gl.blendFunc(gl.SRC_ALPHA, gl.ONE)
 
       // Multi-slice sampling front-to-back
       gl.activeTexture(gl.TEXTURE0)
