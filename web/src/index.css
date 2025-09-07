@@ -1,9 +1,9 @@
+/* Leaflet default styles */
+@import url('leaflet/dist/leaflet.css');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-/* Leaflet default styles */
-@import url('leaflet/dist/leaflet.css');
 
 /* App layout helpers */
 html, body, #root { height: 100%; }

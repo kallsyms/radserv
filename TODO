@@ -1,0 +1,12 @@
+P0:
+* 3D volumetric + isosurface isnt aligned right
+* L2 velocity doesnt work at all
+
+P1:
+* L3 real time fails to decode NCR and similar (`Error #01: Unsupported product code 30938`)
+
+P2:
+* L3 archive needs a better data source (GCS archive is incomplete and annoying AF to work with)
+* L3 real time needs color maps for more things
+* maybe show nice timestamps instead of filenames?
+* more L2 products

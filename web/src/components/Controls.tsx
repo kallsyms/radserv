@@ -20,6 +20,17 @@ type Props = {
   onFileChange: (v: string) => void
   loadingFiles?: boolean
 
+  // L2 listing mode
+  l2Mode?: 'realtime' | 'archive'
+  onL2ModeChange?: (v: 'realtime' | 'archive') => void
+  l2Date?: string // YYYY-MM-DD for input[type=date]
+  onL2DateChange?: (v: string) => void
+  // L3 listing mode
+  l3Mode?: 'realtime' | 'archive'
+  onL3ModeChange?: (v: 'realtime' | 'archive') => void
+  l3Date?: string // YYYY-MM-DD
+  onL3DateChange?: (v: string) => void
+
   elevations: number[]
   elevation?: number
   onElevationChange: (v: number) => void
@@ -35,42 +46,51 @@ type Props = {
   onShowRoadsChange: (v: boolean) => void
   mode: ViewMode
   onModeChange: (m: ViewMode) => void
+  showIso: boolean
+  onShowIsoChange: (v: boolean) => void
+  volumeOpacity?: number
+  onVolumeOpacityChange?: (v: number) => void
+  isoOpacity?: number
+  onIsoOpacityChange?: (v: number) => void
   threshold: number
   onThresholdChange: (v: number) => void
   onThresholdCommit: () => void
+
+  // Sequence playback
+  sequenceEnabled?: boolean
+  onSequenceEnabledChange?: (v: boolean) => void
+  sequenceLength?: number
+  onSequenceLengthChange?: (v: number) => void
 }
 
 export default function Controls(props: Props) {
+  const sortedSites = React.useMemo(() => {
+    return [...props.sites].sort((a, b) => a.localeCompare(b))
+  }, [props.sites])
   return (
-    <div className="absolute top-4 left-4 z-[1000] bg-white/70 dark:bg-gray-900/60 backdrop-blur-md backdrop-saturate-150 rounded-xl shadow-lg ring-1 ring-black/10 dark:ring-white/10 p-3 space-y-2 w-[340px] text-gray-900 dark:text-gray-100">
-      <div className="flex gap-2">
-        <label className="text-xs text-gray-600 dark:text-gray-300 w-24">Data Source</label>
-        <select
-          className="flex-1 border rounded px-2 py-1 text-sm bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100"
-          value={props.dataSource}
-          onChange={e => props.onDataSourceChange(e.target.value as any)}
-        >
-          <option value="L2">L2</option>
-          <option value="L3">L3</option>
-        </select>
-      </div>
-
-      {props.dataSource === 'L2' && (
+    <div className="absolute top-4 left-4 z-[1000] bg-white/70 dark:bg-gray-900/60 backdrop-blur-md backdrop-saturate-150 rounded-xl shadow-lg ring-1 ring-black/10 dark:ring-white/10 p-3 space-y-3 w-[360px] text-gray-900 dark:text-gray-100">
+      {/* Level */}
+      <div className="space-y-2">
+        <div className="text-[10px] font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Level</div>
         <div className="flex gap-2 items-center">
-          <label className="text-xs text-gray-600 dark:text-gray-300 w-24">Mode</label>
+          <label className="text-xs text-gray-600 dark:text-gray-300 w-24">Data</label>
           <div className="flex-1 grid grid-cols-2 gap-2">
             <button
-              className={`px-2 py-1 rounded border text-sm ${props.mode==='2d'?'bg-blue-600 text-white border-blue-600':'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700'}`}
-              onClick={() => props.onModeChange('2d')}
-            >2D</button>
+              className={`px-2 py-1 rounded border text-sm ${props.dataSource==='L2'?'bg-blue-600 text-white border-blue-600':'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700'}`}
+              onClick={() => props.onDataSourceChange('L2')}
+            >L2</button>
             <button
-              className={`px-2 py-1 rounded border text-sm ${props.mode==='3d'?'bg-blue-600 text-white border-blue-600':'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700'}`}
-              onClick={() => props.onModeChange('3d')}
-            >3D</button>
+              className={`px-2 py-1 rounded border text-sm ${props.dataSource==='L3'?'bg-blue-600 text-white border-blue-600':'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700'}`}
+              onClick={() => props.onDataSourceChange('L3')}
+            >L3</button>
           </div>
         </div>
-      )}
+      </div>
+      
 
+      {/* File */}
+      <div className="space-y-2 pt-1">
+        <div className="text-[10px] font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">File</div>
       <div className="flex gap-2 items-center">
         <label className="text-xs text-gray-600 dark:text-gray-300 w-24">Site</label>
         <select
@@ -79,7 +99,7 @@ export default function Controls(props: Props) {
           onChange={e => props.onSiteChange(e.target.value)}
           disabled={props.loadingSites || props.sites.length === 0}
         >
-          {props.sites.map(s => <option key={s} value={s}>{s}</option>)}
+          {sortedSites.map(s => <option key={s} value={s}>{s}</option>)}
         </select>
         {props.loadingSites && <span className="text-xs text-gray-500 dark:text-gray-400">Loading…</span>}
       </div>
@@ -97,6 +117,62 @@ export default function Controls(props: Props) {
         {props.loadingProducts && <span className="text-xs text-gray-500 dark:text-gray-400">Loading…</span>}
       </div>
 
+      {props.dataSource === 'L2' && (
+        <div className="flex gap-2 items-center">
+          <label className="text-xs text-gray-600 dark:text-gray-300 w-24">L2 Mode</label>
+          <div className="flex-1 grid grid-cols-2 gap-2">
+            <button
+              className={`px-2 py-1 rounded border text-sm ${props.l2Mode==='realtime'?'bg-blue-600 text-white border-blue-600':'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700'}`}
+              onClick={() => props.onL2ModeChange && props.onL2ModeChange('realtime')}
+            >Realtime</button>
+            <button
+              className={`px-2 py-1 rounded border text-sm ${props.l2Mode==='archive'?'bg-blue-600 text-white border-blue-600':'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700'}`}
+              onClick={() => props.onL2ModeChange && props.onL2ModeChange('archive')}
+            >Archive</button>
+          </div>
+        </div>
+      )}
+
+      {props.dataSource === 'L2' && props.l2Mode === 'archive' && (
+        <div className="flex gap-2 items-center">
+          <label className="text-xs text-gray-600 dark:text-gray-300 w-24">Date</label>
+          <input
+            type="date"
+            className="flex-1 border rounded px-2 py-1 text-sm bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100"
+            value={props.l2Date || ''}
+            onChange={e => props.onL2DateChange && props.onL2DateChange(e.target.value)}
+          />
+        </div>
+      )}
+
+      {props.dataSource === 'L3' && (
+        <div className="flex gap-2 items-center">
+          <label className="text-xs text-gray-600 dark:text-gray-300 w-24">L3 Mode</label>
+          <div className="flex-1 grid grid-cols-2 gap-2">
+            <button
+              className={`px-2 py-1 rounded border text-sm ${props.l3Mode==='realtime'?'bg-blue-600 text-white border-blue-600':'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700'}`}
+              onClick={() => props.onL3ModeChange && props.onL3ModeChange('realtime')}
+            >Realtime</button>
+            <button
+              className={`px-2 py-1 rounded border text-sm ${props.l3Mode==='archive'?'bg-blue-600 text-white border-blue-600':'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700'}`}
+              onClick={() => props.onL3ModeChange && props.onL3ModeChange('archive')}
+            >Archive</button>
+          </div>
+        </div>
+      )}
+
+      {props.dataSource === 'L3' && props.l3Mode === 'archive' && (
+        <div className="flex gap-2 items-center">
+          <label className="text-xs text-gray-600 dark:text-gray-300 w-24">Date</label>
+          <input
+            type="date"
+            className="flex-1 border rounded px-2 py-1 text-sm bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100"
+            value={props.l3Date || ''}
+            onChange={e => props.onL3DateChange && props.onL3DateChange(e.target.value)}
+          />
+        </div>
+      )}
+
       <div className="flex gap-2 items-center">
         <label className="text-xs text-gray-600 dark:text-gray-300 w-24">File</label>
         <select
@@ -109,6 +185,43 @@ export default function Controls(props: Props) {
         </select>
         {props.loadingFiles && <span className="text-xs text-gray-500 dark:text-gray-400">Loading…</span>}
       </div>
+
+      {/* Image Sequence toggle and settings */}
+      {props.dataSource === 'L2' && (
+        <div className="pl-24 space-y-2">
+          <label className="inline-flex items-center gap-2 text-xs text-gray-700 dark:text-gray-300">
+            <input
+              type="checkbox"
+              checked={!!props.sequenceEnabled}
+              onChange={e => props.onSequenceEnabledChange && props.onSequenceEnabledChange(e.target.checked)}
+            />
+            Image Sequence
+          </label>
+          {props.sequenceEnabled && (
+            <div className="flex gap-2 items-center">
+              <label className="text-xs text-gray-600 dark:text-gray-300 w-24">Frames (prev)</label>
+              <input
+                type="range"
+                min={1}
+                max={50}
+                step={1}
+                value={props.sequenceLength ?? 5}
+                onChange={e => props.onSequenceLengthChange && props.onSequenceLengthChange(parseInt(e.target.value))}
+                className="flex-1"
+              />
+              <input
+                type="number"
+                min={1}
+                max={100}
+                step={1}
+                value={props.sequenceLength ?? 5}
+                onChange={e => props.onSequenceLengthChange && props.onSequenceLengthChange(Math.max(1, Math.min(100, parseInt(e.target.value) || 1)))}
+                className="w-20 border rounded px-2 py-1 text-sm bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100"
+              />
+            </div>
+          )}
+        </div>
+      )}
 
       {props.showElevation && (
         <div className="flex gap-2 items-center">
@@ -124,48 +237,130 @@ export default function Controls(props: Props) {
           {props.loadingElevations && <span className="text-xs text-gray-500 dark:text-gray-400">Loading…</span>}
         </div>
       )}
+      </div>
 
-      {props.mode === '3d' && (
+      {/* Visualization */}
+      <div className="space-y-2 pt-1">
+        <div className="text-[10px] font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Visualization</div>
+        {props.dataSource === 'L2' && (
+          <div className="flex gap-2 items-center">
+            <label className="text-xs text-gray-600 dark:text-gray-300 w-24">Mode</label>
+            <div className="flex-1 grid grid-cols-2 gap-2">
+              <button
+                className={`px-2 py-1 rounded border text-sm ${props.mode==='2d'?'bg-blue-600 text-white border-blue-600':'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700'}`}
+                onClick={() => props.onModeChange('2d')}
+              >2D</button>
+              <button
+                className={`px-2 py-1 rounded border text-sm ${props.mode==='3d'?'bg-blue-600 text-white border-blue-600':'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700'}`}
+                onClick={() => props.onModeChange('3d')}
+              >3D</button>
+            </div>
+          </div>
+        )}
+      {props.dataSource === 'L2' && props.mode === '3d' && props.onVolumeOpacityChange && (
         <div className="flex gap-2 items-center">
-          <label className="text-xs text-gray-600 dark:text-gray-300 w-24">Threshold</label>
+          <label className="text-xs text-gray-600 dark:text-gray-300 w-24">Opacity</label>
           <input
             type="range"
-            min={5}
-            max={75}
-            step={5}
-            value={props.threshold}
-            onChange={e => props.onThresholdChange(parseInt(e.target.value))}
-            onMouseUp={props.onThresholdCommit}
-            onTouchEnd={props.onThresholdCommit}
+            min={0}
+            max={100}
+            step={1}
+            value={Math.round((props.volumeOpacity ?? 0.7) * 100)}
+            onChange={e => props.onVolumeOpacityChange!(parseInt(e.target.value) / 100)}
             className="flex-1"
           />
           <input
             type="number"
             min={0}
-            max={80}
-            step={1}
-            value={props.threshold}
-            onChange={e => props.onThresholdChange(parseInt(e.target.value))}
-            onBlur={props.onThresholdCommit}
+            max={1}
+            step={0.05}
+            value={(props.volumeOpacity ?? 0.7).toFixed(2)}
+            onChange={e => props.onVolumeOpacityChange!(Math.max(0, Math.min(1, parseFloat(e.target.value) || 0)))}
             className="w-16 border rounded px-2 py-1 text-sm bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100"
           />
         </div>
       )}
 
-      <div className="flex gap-2 items-center">
-        <label className="text-xs text-gray-600 dark:text-gray-300 w-24">Base Layer</label>
-        <select
-          className="flex-1 border rounded px-2 py-1 text-sm bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100"
-          value={props.basemap}
-          onChange={e => props.onBasemapChange(e.target.value as any)}
-        >
-          <option value="satellite">Satellite (Esri)</option>
-          <option value="osm">Streets (OSM)</option>
-        </select>
-      </div>
+      
 
-      {props.basemap === 'satellite' && (
-        <div className="flex gap-3 items-center pl-24 -mt-1">
+      {props.dataSource === 'L2' && props.mode === '3d' && (
+        <div className="space-y-2">
+          <div className="flex gap-2 items-center">
+            <label className="text-xs text-gray-600 dark:text-gray-300 w-24">Isosurface</label>
+            <label className="inline-flex items-center gap-2 text-sm">
+              <input type="checkbox" checked={props.showIso} onChange={e => props.onShowIsoChange(e.target.checked)} />
+              Show inside volume
+            </label>
+          </div>
+          {props.showIso && (
+            <div className="pl-24 space-y-2">
+              <div className="flex gap-2 items-center">
+                <label className="text-xs text-gray-600 dark:text-gray-300 w-24">Threshold</label>
+                <input
+                  type="range"
+                  min={5}
+                  max={75}
+                  step={5}
+                  value={props.threshold}
+                  onChange={e => props.onThresholdChange(parseInt(e.target.value))}
+                  onMouseUp={props.onThresholdCommit}
+                  onTouchEnd={props.onThresholdCommit}
+                  className="flex-1"
+                />
+                <input
+                  type="number"
+                  min={0}
+                  max={80}
+                  step={1}
+                  value={props.threshold}
+                  onChange={e => props.onThresholdChange(parseInt(e.target.value))}
+                  onBlur={props.onThresholdCommit}
+                  className="w-16 border rounded px-2 py-1 text-sm bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100"
+                />
+              </div>
+              {props.onIsoOpacityChange && (
+                <div className="flex gap-2 items-center">
+                  <label className="text-xs text-gray-600 dark:text-gray-300 w-24">Iso Opacity</label>
+                  <input
+                    type="range"
+                    min={0}
+                    max={100}
+                    step={1}
+                    value={Math.round((props.isoOpacity ?? 0.6) * 100)}
+                    onChange={e => props.onIsoOpacityChange!(parseInt(e.target.value) / 100)}
+                    className="flex-1"
+                  />
+                  <input
+                    type="number"
+                    min={0}
+                    max={1}
+                    step={0.05}
+                    value={(props.isoOpacity ?? 0.6).toFixed(2)}
+                    onChange={e => props.onIsoOpacityChange!(Math.max(0, Math.min(1, parseFloat(e.target.value) || 0)))}
+                    className="w-16 border rounded px-2 py-1 text-sm bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100"
+                  />
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      )}
+
+
+        <div className="flex gap-2 items-center">
+          <label className="text-xs text-gray-600 dark:text-gray-300 w-24">Base Layer</label>
+          <select
+            className="flex-1 border rounded px-2 py-1 text-sm bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100"
+            value={props.basemap}
+            onChange={e => props.onBasemapChange(e.target.value as any)}
+          >
+            <option value="satellite">Satellite (Esri)</option>
+            <option value="osm">Streets (OSM)</option>
+          </select>
+        </div>
+
+        {props.basemap === 'satellite' && (
+          <div className="flex gap-3 items-center pl-24 -mt-1">
           <label className="inline-flex items-center gap-2 text-xs text-gray-700 dark:text-gray-300">
             <input type="checkbox" checked={props.showLabels} onChange={e => props.onShowLabelsChange(e.target.checked)} />
             Labels/Boundaries
@@ -174,8 +369,9 @@ export default function Controls(props: Props) {
             <input type="checkbox" checked={props.showRoads} onChange={e => props.onShowRoadsChange(e.target.checked)} />
             Roads
           </label>
-        </div>
-      )}
+          </div>
+        )}
+      </div>
     </div>
   )
 }
