@@ -279,7 +279,7 @@ export function makeVolumeLayer(id: string, getGrid: () => ReturnType<typeof bui
     // LUMINANCE for single channel in WebGL1
     gl!.texImage2D(gl!.TEXTURE_2D, 0, gl!.LUMINANCE, res.w, res.h * res.d, 0, gl!.LUMINANCE, gl!.UNSIGNED_BYTE, res.data2D)
     volume = { tex, w: res.w, h: res.h, d: res.d, radiusMeters: res.radiusMeters, innerRadiusMeters: res.innerRadiusMeters, heightMeters: res.heightMeters, baseAzDeg: res.baseAzDeg }
-    try { console.log('Volume texture created', volume) } catch {}
+    
   }
 
   function ensureProgramAndBuffers(): void {
@@ -292,7 +292,6 @@ export function makeVolumeLayer(id: string, getGrid: () => ReturnType<typeof bui
         gl.deleteShader(vs)
         gl.deleteShader(fs)
       } catch (e) {
-        console.warn('Volume shader compile/link failed', e)
         program = null
         return
       }
@@ -340,13 +339,12 @@ export function makeVolumeLayer(id: string, getGrid: () => ReturnType<typeof bui
     setOpacity(v: number) { overlayOpacity = Math.max(0, Math.min(1, v)); },
     onAdd(map: MapLibreMap, _gl: WebGLRenderingContext) {
       gl = _gl
-    try { console.log('Volume layer onAdd') } catch {}
       try {
         ensureProgramAndBuffers()
         ensureTexture()
         // Avoid mutating global GL state here; MapLibre manages state for 2D layers.
       } catch (e) {
-        console.warn('Volume onAdd init failed', e)
+        // swallow
       }
     },
     onRemove(map: MapLibreMap, _gl: WebGLRenderingContext) {
@@ -359,7 +357,6 @@ export function makeVolumeLayer(id: string, getGrid: () => ReturnType<typeof bui
     // MapLibre v2 render signature: (gl, matrix)
     render(glParam: WebGLRenderingContext, matrix: number[]) {
       gl = glParam
-      try { console.log('Volume render tick') } catch {}
       if (!program) { ensureProgramAndBuffers(); if (!program) return }
 
       gl.useProgram(program)
@@ -449,8 +446,7 @@ export default function VolumeView3D({ site, file, center, viewCenter = null, vi
       attributionControl: true,
     })
     mapRef.current = map
-    try { console.log('VolumeView3D: map created') } catch {}
-    map.on('load', () => { try { console.log('VolumeView3D: map load event') } catch {} })
+    
     map.on('error', (e: any) => { try { console.error('MapLibre error', e && e.error || e) } catch {} })
     // propagate view changes to parent
     map.on('moveend', () => {
@@ -475,7 +471,6 @@ export default function VolumeView3D({ site, file, center, viewCenter = null, vi
     const map = mapRef.current
     if (!map) return
     if (!site || !file) {
-      console.log('VolumeView3D: waiting for site/file selection before fetching')
       return
     }
     if (map.getLayer('labels')) map.setLayoutProperty('labels', 'visibility', showLabels ? 'visible' : 'none')
@@ -488,7 +483,6 @@ export default function VolumeView3D({ site, file, center, viewCenter = null, vi
     if (!map) return
     let cancelled = false
     onLoading(true)
-    try { console.log('VolumeView3D: starting fetch/meta for volume') } catch {}
     ;(async () => {
       try {
         // Discover elevations with data from metadata
@@ -516,7 +510,7 @@ export default function VolumeView3D({ site, file, center, viewCenter = null, vi
         }
         const custom = makeVolumeLayer(id, () => gridState || grid, [originLon as number, originLat as number])
         map.addLayer(custom)
-        try { console.log('VolumeView3D: custom layer added') } catch {}
+        
         // If parent hasn't provided a persisted view, optionally fit to radar center once
         if (firstLoadRef.current && !viewCenter && center) {
           firstLoadRef.current = false

@@ -98,7 +98,7 @@ export default function IsoView3DClient({ site, file, threshold, color, center, 
       workerRef.current.onmessage = (ev: MessageEvent<any>) => {
         const { id, positions, indices } = ev.data || {}
         if (id !== taskIdRef.current) return
-        try { console.log('iso worker result', id, positions?.byteLength || 0, indices?.byteLength || 0) } catch {}
+        
         const map = mapRef.current
         const overlay = overlayRef.current
         const curCenter = centerRef.current
@@ -126,7 +126,7 @@ export default function IsoView3DClient({ site, file, threshold, color, center, 
           _normalsEnabled: false,
         } as any)
         overlay.setProps({ layers: [layer] })
-        try { console.log('Iso3DClient: worker result applied, set loading=false') } catch {}
+        
         inFlightRef.current = false
         onLoading(false)
       }
@@ -167,7 +167,7 @@ export default function IsoView3DClient({ site, file, threshold, color, center, 
   useEffect(() => {
     const map = mapRef.current
     if (!map || !overlayRef.current || !center) return
-    try { console.log('Iso3DClient: building grid, set loading=true') } catch {}
+    
     onLoading(true)
     const myGen = ++genRef.current
     ;(async () => {
@@ -185,7 +185,7 @@ export default function IsoView3DClient({ site, file, threshold, color, center, 
         const mesh = generateIsosurface(grid, threshold)
         meshRef.current = { positions: mesh.positions, indices: mesh.indices }
         if (mesh.positions.length === 0) {
-          console.warn('Iso: empty mesh (no crossings at threshold)')
+          // empty mesh
         }
         if (genRef.current !== myGen) return
         const layer = new SimpleMeshLayer({
@@ -207,14 +207,14 @@ export default function IsoView3DClient({ site, file, threshold, color, center, 
           _normalsEnabled: false,
         } as any)
         overlayRef.current!.setProps({ layers: [layer] })
-        try { console.log('Iso3DClient: grid built + mesh, set loading=false') } catch {}
+        
         onLoading(false)
         // If parent hasn't provided a persisted view, optionally fit to radar center once
         if (!viewCenter && center) {
           map.easeTo({ center: [center.lon, center.lat], zoom: Math.max(map.getZoom(), 6), duration: 400 })
         }
       } catch (e) {
-        if (genRef.current === myGen) { try { console.log('Iso3DClient: grid build error, set loading=false') } catch {}; onLoading(false) }
+        if (genRef.current === myGen) { onLoading(false) }
       }
     })()
   }, [site, file, center])
@@ -233,7 +233,7 @@ export default function IsoView3DClient({ site, file, threshold, color, center, 
     }
     lastJobRef.current = jobKey
     const id = ++taskIdRef.current
-    try { console.log('Iso3DClient: posting worker job', { id, threshold }) } catch {}
+    
     inFlightRef.current = true
     onLoading(true)
     const copied = grid.data.buffer.slice(0)
@@ -247,7 +247,7 @@ export default function IsoView3DClient({ site, file, threshold, color, center, 
       gateInterval: grid.gateInterval,
     }
     if (workerRef.current) {
-      try { console.log('iso worker post (update)', id, threshold) } catch {}
+      
       workerRef.current.postMessage({ id, type: 'iso', grid: pg, threshold })
     } else {
       const mesh = generateIsosurface(grid, threshold)
@@ -270,7 +270,7 @@ export default function IsoView3DClient({ site, file, threshold, color, center, 
         _normalsEnabled: false,
       } as any)
       overlay.setProps({ layers: [layer] })
-      try { console.log('Iso3DClient: worker result applied, set loading=false') } catch {}
+      
       inFlightRef.current = false
       onLoading(false)
     }

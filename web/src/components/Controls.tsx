@@ -258,11 +258,36 @@ export default function Controls(props: Props) {
             </div>
           </div>
         )}
+      {props.dataSource === 'L2' && props.mode === '3d' && props.onVolumeOpacityChange && (
+        <div className="flex gap-2 items-center">
+          <label className="text-xs text-gray-600 dark:text-gray-300 w-24">Opacity</label>
+          <input
+            type="range"
+            min={0}
+            max={100}
+            step={1}
+            value={Math.round((props.volumeOpacity ?? 0.7) * 100)}
+            onChange={e => props.onVolumeOpacityChange!(parseInt(e.target.value) / 100)}
+            className="flex-1"
+          />
+          <input
+            type="number"
+            min={0}
+            max={1}
+            step={0.05}
+            value={(props.volumeOpacity ?? 0.7).toFixed(2)}
+            onChange={e => props.onVolumeOpacityChange!(Math.max(0, Math.min(1, parseFloat(e.target.value) || 0)))}
+            className="w-16 border rounded px-2 py-1 text-sm bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100"
+          />
+        </div>
+      )}
+
+      
 
       {props.dataSource === 'L2' && props.mode === '3d' && (
         <div className="space-y-2">
           <div className="flex gap-2 items-center">
-            <label className="text-xs text-gray-600 dark:text-gray-300 w-24">IsoSurface</label>
+            <label className="text-xs text-gray-600 dark:text-gray-300 w-24">Isosurface</label>
             <label className="inline-flex items-center gap-2 text-sm">
               <input type="checkbox" checked={props.showIso} onChange={e => props.onShowIsoChange(e.target.checked)} />
               Show inside volume
@@ -322,31 +347,6 @@ export default function Controls(props: Props) {
         </div>
       )}
 
-      {props.dataSource === 'L2' && props.mode === '3d' && props.onVolumeOpacityChange && (
-        <div className="flex gap-2 items-center">
-          <label className="text-xs text-gray-600 dark:text-gray-300 w-24">Opacity</label>
-          <input
-            type="range"
-            min={0}
-            max={100}
-            step={1}
-            value={Math.round((props.volumeOpacity ?? 0.7) * 100)}
-            onChange={e => props.onVolumeOpacityChange!(parseInt(e.target.value) / 100)}
-            className="flex-1"
-          />
-          <input
-            type="number"
-            min={0}
-            max={1}
-            step={0.05}
-            value={(props.volumeOpacity ?? 0.7).toFixed(2)}
-            onChange={e => props.onVolumeOpacityChange!(Math.max(0, Math.min(1, parseFloat(e.target.value) || 0)))}
-            className="w-16 border rounded px-2 py-1 text-sm bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100"
-          />
-        </div>
-      )}
-
-      
 
         <div className="flex gap-2 items-center">
           <label className="text-xs text-gray-600 dark:text-gray-300 w-24">Base Layer</label>

@@ -19,6 +19,8 @@ export default function ThreeMap({ center, viewCenter = null, viewZoom = null, s
   const containerRef = useRef<HTMLDivElement | null>(null)
   const mapRef = useRef<MapLibreMap | null>(null)
   const firstFitRef = useRef(true)
+  const prevViewRef = useRef<{ lat: number; lon: number } | null>(null)
+  const prevCenterRef = useRef<{ lat: number; lon: number } | null>(null)
 
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return
@@ -82,10 +84,27 @@ export default function ThreeMap({ center, viewCenter = null, viewZoom = null, s
     const map = mapRef.current
     if (!map || !center) return
     if (viewCenter) return
-    if (!firstFitRef.current) return
-    firstFitRef.current = false
-    map.easeTo({ center: [center.lon, center.lat], zoom: Math.max(map.getZoom(), 6), duration: 400 })
+    // If we have no persisted view, follow center changes (for initial load and site switches)
+    const cur = map.getCenter()
+    const needsMove = Math.abs(cur.lat - center.lat) > 1e-6 || Math.abs(cur.lng - center.lon) > 1e-6
+    if (needsMove) {
+      map.easeTo({ center: [center.lon, center.lat], zoom: Math.max(map.getZoom(), 6), duration: 400 })
+    }
   }, [center, viewCenter])
+
+  // Apply external persisted view updates immediately when changed
+  useEffect(() => {
+    const map = mapRef.current
+    if (!map) return
+    if (!viewCenter && viewZoom == null) return
+    const prev = prevViewRef.current
+    const changedCenter = !!viewCenter && (!prev || Math.abs(prev.lat - viewCenter.lat) > 1e-6 || Math.abs(prev.lon - viewCenter.lon) > 1e-6)
+    const changedZoom = (viewZoom != null) && Math.abs(map.getZoom() - viewZoom) > 1e-6
+    if (changedCenter || changedZoom) {
+      map.jumpTo({ center: viewCenter ? [viewCenter.lon, viewCenter.lat] : map.getCenter(), zoom: viewZoom ?? map.getZoom() })
+      prevViewRef.current = viewCenter ?? prevViewRef.current
+    }
+  }, [viewCenter, viewZoom])
 
   return (
     <div className="absolute inset-0" ref={containerRef}>

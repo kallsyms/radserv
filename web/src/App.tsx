@@ -167,10 +167,11 @@ export default function App() {
   // Reset direction when starting playback or toggling rock
   useEffect(() => { if (isPlaying) playDirRef.current = 1 }, [isPlaying, rock])
 
-  // Keyboard controls: ArrowLeft/ArrowRight for prev/next frame (wrap)
+  // Keyboard controls
+  // - Left/Right: scrub frames (when sequence enabled) with wrap
+  // - Up/Down: change elevation slice in 2D (L2)
   useEffect(() => {
     function onKeyDown(e: KeyboardEvent) {
-      if (dataSource !== 'L2' || !sequenceEnabled || sequenceFiles.length <= 1) return
       // Ignore when typing in inputs/textareas/controls
       const target = e.target as HTMLElement | null
       if (target) {
@@ -178,17 +179,51 @@ export default function App() {
         const editable = (target as any).isContentEditable || tag === 'input' || tag === 'textarea' || tag === 'select'
         if (editable) return
       }
-      if (e.key === 'ArrowLeft') {
-        e.preventDefault(); e.stopPropagation(); (e as any).stopImmediatePropagation?.()
-        setTimelineIndex(i => (i - 1 + sequenceFiles.length) % sequenceFiles.length)
-      } else if (e.key === 'ArrowRight') {
-        e.preventDefault(); e.stopPropagation(); (e as any).stopImmediatePropagation?.()
-        setTimelineIndex(i => (i + 1) % sequenceFiles.length)
+
+      // Frame/file scrubbing with Left/Right
+      if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+        // When sequence is enabled and has >1 frames, scrub the sequence
+        if (dataSource === 'L2' && sequenceEnabled && sequenceFiles.length > 1) {
+          e.preventDefault(); e.stopPropagation(); (e as any).stopImmediatePropagation?.()
+          if (e.key === 'ArrowLeft') setTimelineIndex(i => (i - 1 + sequenceFiles.length) % sequenceFiles.length)
+          else setTimelineIndex(i => (i + 1) % sequenceFiles.length)
+          return
+        }
+        // Otherwise, move to prev/next file in the current files list (L2 or L3)
+        if (files && files.length > 1 && file) {
+          e.preventDefault(); e.stopPropagation(); (e as any).stopImmediatePropagation?.()
+          const idx = files.indexOf(file)
+          if (idx !== -1) {
+            const nextIdx = e.key === 'ArrowLeft'
+              ? (idx - 1 + files.length) % files.length
+              : (idx + 1) % files.length
+            setFile(files[nextIdx])
+          }
+          return
+        }
+      }
+
+      // Elevation slice control (2D L2 only)
+      if (dataSource === 'L2' && mode === '2d' && elevations && elevations.length > 0) {
+        if (e.key === 'ArrowUp' || e.key === 'Up') {
+          e.preventDefault(); e.stopPropagation(); (e as any).stopImmediatePropagation?.()
+          const idx = Math.max(0, elevations.findIndex(v => v === elevation))
+          const next = Math.min(elevations.length - 1, idx + 1)
+          if (next !== idx) setElevation(elevations[next])
+          return
+        }
+        if (e.key === 'ArrowDown' || e.key === 'Down') {
+          e.preventDefault(); e.stopPropagation(); (e as any).stopImmediatePropagation?.()
+          const idx = Math.max(0, elevations.findIndex(v => v === elevation))
+          const prev = Math.max(0, idx - 1)
+          if (prev !== idx) setElevation(elevations[prev])
+          return
+        }
       }
     }
     window.addEventListener('keydown', onKeyDown, { capture: true })
     return () => window.removeEventListener('keydown', onKeyDown, { capture: true } as any)
-  }, [dataSource, sequenceEnabled, sequenceFiles])
+  }, [dataSource, sequenceEnabled, sequenceFiles, mode, elevations, elevation])
 
   // Load sites when data source changes
   useEffect(() => {
