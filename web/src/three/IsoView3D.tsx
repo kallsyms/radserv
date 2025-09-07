@@ -84,8 +84,8 @@ export default function IsoView3D({ site, file, threshold, color, center, showLa
     // Clear previous layer and mark loading
     overlayRef.current.setProps({ layers: [] })
     onLoading(true)
-    // API route: /l2/:site/:fn/:product/isosurface/:threshold (no elevation segment)
-    const url = `/l2/${encodeURIComponent(site)}/${encodeURIComponent(file)}/ref/isosurface/${encodeURIComponent(String(threshold))}`
+    // API route: /api/l2/:site/:fn/:product/isosurface/:threshold (no elevation segment)
+    const url = `/api/l2/${encodeURIComponent(site)}/${encodeURIComponent(file)}/ref/isosurface/${encodeURIComponent(String(threshold))}`
     const myGen = ++genRef.current
     load(url, OBJLoader).then((mesh: any) => {
       if (genRef.current !== myGen) return

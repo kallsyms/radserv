@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/gin-contrib/cache"
@@ -34,30 +35,35 @@ func main() {
 	r := gin.Default()
 	store := persistence.NewInMemoryStore(time.Minute)
 
-	r.GET("/l2", cachePageWithClientHeaders(store, 24*time.Hour, l2ListSitesHandler))
-	r.GET("/l2/:site", cachePageWithClientHeaders(store, 1*time.Minute, l2ListFilesHandler))
-	r.GET("/l2/:site/date/:date", cachePageWithClientHeaders(store, 1*time.Minute, l2ListFilesHandler))
-	r.GET("/l2/:site/:fn", cachePageWithClientHeaders(store, 1*time.Hour, l2FileMetaHandler))
-	r.GET("/l2/:site/:fn/:product/isosurface/:threshold", cachePageWithClientHeaders(store, 1*time.Hour, l2FileIsosurfaceHandler))
-	r.GET("/l2/:site/:fn/:product/:elv/radial", l2FileRadialHandler)
-	r.GET("/l2/:site/:fn/:product/:elv/render", l2FileRenderHandler)
+	// API routes
+	r.GET("/api/l2", cachePageWithClientHeaders(store, 24*time.Hour, l2ListSitesHandler))
+	r.GET("/api/l2/:site", cachePageWithClientHeaders(store, 1*time.Minute, l2ListFilesHandler))
+	r.GET("/api/l2/:site/date/:date", cachePageWithClientHeaders(store, 1*time.Minute, l2ListFilesHandler))
+	r.GET("/api/l2/:site/:fn", cachePageWithClientHeaders(store, 1*time.Hour, l2FileMetaHandler))
+	r.GET("/api/l2/:site/:fn/:product/isosurface/:threshold", cachePageWithClientHeaders(store, 1*time.Hour, l2FileIsosurfaceHandler))
+	r.GET("/api/l2/:site/:fn/:product/:elv/radial", l2FileRadialHandler)
+	r.GET("/api/l2/:site/:fn/:product/:elv/render", l2FileRenderHandler)
 
-	r.GET("/l2-realtime/:site/:volume", realtimeMetaHandler)
-	r.GET("/l2-realtime/:site/:volume/:elv/:product/render", realtimeRenderHandler)
+	r.GET("/api/l2-realtime/:site/:volume", realtimeMetaHandler)
+	r.GET("/api/l2-realtime/:site/:volume/:elv/:product/render", realtimeRenderHandler)
 
-	r.GET("/l3", cachePageWithClientHeaders(store, 24*time.Hour, l3ListSitesHandler))
-	r.GET("/l3/:site", cachePageWithClientHeaders(store, 24*time.Hour, l3ListProductsHandler))
-	r.GET("/l3/:site/:product", cachePageWithClientHeaders(store, 1*time.Minute, l3ListFilesHandler))
-	r.GET("/l3/:site/:product/date/:date", cachePageWithClientHeaders(store, 1*time.Minute, l3ListFilesByDateHandler))
-	r.GET("/l3/:site/:product/:fn", cachePageWithClientHeaders(store, 1*time.Hour, l3FileMetaHandler))
-	r.GET("/l3/:site/:product/:fn/radial", l3FileRadialHandler)
-	r.GET("/l3/:site/:product/:fn/render", l3FileRenderHandler)
+	r.GET("/api/l3", cachePageWithClientHeaders(store, 24*time.Hour, l3ListSitesHandler))
+	r.GET("/api/l3/:site", cachePageWithClientHeaders(store, 24*time.Hour, l3ListProductsHandler))
+	r.GET("/api/l3/:site/:product", cachePageWithClientHeaders(store, 1*time.Minute, l3ListFilesHandler))
+	r.GET("/api/l3/:site/:product/date/:date", cachePageWithClientHeaders(store, 1*time.Minute, l3ListFilesByDateHandler))
+	r.GET("/api/l3/:site/:product/:fn", cachePageWithClientHeaders(store, 1*time.Hour, l3FileMetaHandler))
+	r.GET("/api/l3/:site/:product/:fn/radial", l3FileRadialHandler)
+	r.GET("/api/l3/:site/:product/:fn/render", l3FileRenderHandler)
 
-	// Serve production frontend build (if present)
+	// Static files - specific routes first, then fallback
 	r.Static("/assets", "./web/dist/assets")
 	r.StaticFile("/nexrad.kml", "./nexrad.kml")
-	r.StaticFile("/", "./web/dist/index.html")
+	r.GET("/", func(c *gin.Context) { c.File("./web/dist/index.html") })
 	r.NoRoute(func(c *gin.Context) { c.File("./web/dist/index.html") })
 
-	r.Run(":8081")
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8081"
+	}
+	r.Run(":" + port)
 }
