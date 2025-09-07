@@ -27,6 +27,11 @@ export function sortElevations(elvs: RadialSet[]): RadialSet[] {
 export function buildVolumeGrid(elevations: RadialSet[]): VolumeGrid {
   if (!elevations.length) throw new Error('No elevations provided')
   const elvs = sortElevations(elevations)
+  
+  // Sort radials within each elevation by azimuth angle (matches Go sorting)
+  for (const elv of elvs) {
+    elv.Radials.sort((a, b) => a.AzimuthAngle - b.AzimuthAngle)
+  }
 
   // Max gates across all radials/elevations
   let nGates = 0

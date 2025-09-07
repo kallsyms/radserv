@@ -46,9 +46,9 @@ export function generateIsosurface(grid: VolumeGrid, threshold: number): MeshDat
     const elvRad = elvAngle * Math.PI / 180.0
     const horiz = Math.cos(elvRad) * gateDist // ground distance
     // Map radar azimuth (0°=north, CW positive) to ENU meters (x=east, y=north).
-    // Current observations indicate a 90° clockwise rotation; correct by rotating +90° CCW here.
-    const X = -Math.sin(angle) * horiz
-    const Y = Math.cos(angle) * horiz
+    // Fix north-south mirroring by using positive Y component
+    const X = Math.cos(angle) * horiz
+    const Y = Math.sin(angle) * horiz
     const Z = Math.sin(elvRad) * gateDist
     return [X, Y, Z]
   }
