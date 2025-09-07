@@ -6,15 +6,7 @@ export default defineConfig({
   plugins: [react()],
   server: {
     proxy: {
-      '/l2': {
-        target: 'http://localhost:8081',
-        changeOrigin: true,
-      },
-      '/l3': {
-        target: 'http://localhost:8081',
-        changeOrigin: true,
-      },
-      '/l2-realtime': {
+      '/api': {
         target: 'http://localhost:8081',
         changeOrigin: true,
       },
